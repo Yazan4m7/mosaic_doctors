@@ -1,8 +1,11 @@
+import 'package:mosaic_doctors/models/discount.dart';
+
 class Doctor {
   String id;
   String name;
   String balance;
   String phone;
+  Map <int, Discount> discounts = Map <int, Discount>();
   Doctor(
       {this.id,this.name,this.balance,this.phone});
 

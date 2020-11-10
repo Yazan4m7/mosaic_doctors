@@ -36,6 +36,7 @@ class AuthService {
   }
 
   static signOut() {
+
     FirebaseAuth.instance.signOut();
   }
 
@@ -44,7 +45,7 @@ class AuthService {
 
     await FirebaseAuth.instance.signInWithCredential(authCreds);
     handleAuth();
-  //  UserController.registerNotificationToken();
+    //  UserController.registerNotificationToken();
     // send supplier to his screen with phone number as paramenter
   }
 

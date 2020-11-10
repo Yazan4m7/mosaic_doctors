@@ -40,13 +40,13 @@ class MyFontStyles {
         .headline1
         .copyWith(
       fontFamily: "droid",
-      fontSize: 16.0,
+      fontSize: 15.0,
 
       color: Colors.black,);
   }
   static TextStyle statementHeaderFontStyle(BuildContext context) {
     return Theme.of(context).textTheme.headline1.copyWith(
-        fontSize: 17.0,
+        fontSize: 15.0,
         fontWeight: FontWeight.w600,
         color: Colors.black,
        );

@@ -20,8 +20,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
 
   getAccountStatement() async{
 
-    accountStatementEntrys =
-          DatabaseAPI.getDoctorAccountStatement(getIt<SessionData>().doctor.id);
+   // accountStatementEntrys =          DatabaseAPI.getDoctorAccountStatement(getIt<SessionData>().doctor.id);
 
   }
   @override

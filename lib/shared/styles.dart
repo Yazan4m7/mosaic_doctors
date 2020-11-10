@@ -116,7 +116,7 @@ class GlobalTheme{
 
       primaryColor: Colors.lightBlue[800],
       accentColor: Colors.cyan[600],
-      scaffoldBackgroundColor: Color(0xfff4f4f4),
+      scaffoldBackgroundColor: Colors.white,
 // Define the default font family.
       fontFamily: 'Droid',
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mosaic_doctors/SignIn_with_phone.dart';
 import 'package:mosaic_doctors/models/doctor.dart';
 import 'package:mosaic_doctors/models/sessionData.dart';
 import 'package:mosaic_doctors/services/DatabaseAPI.dart';
@@ -21,11 +22,18 @@ class _homeViewState extends State<HomeView> {
   getDoctorData() async {
     Doctor doctor =
         await DatabaseAPI.getDoctorInfo(getIt<SessionData>().phoneNumber);
-    doctorName = doctor.name;
-    isLoading = false;
-    setState(() {
+    if (doctor==null){
+      getIt<SessionData>().loginWelcomeMessage = "Number not assiocated with a doctor account, please contact MOSAIC";
+      print("doc is null");
+      AuthService.signOut();
+     }
+    else {
+      doctorName = doctor.name;
+      isLoading = false;
+      setState(() {
 
-    });
+      });
+    }
   }
 
   @override
@@ -47,7 +55,7 @@ class _homeViewState extends State<HomeView> {
 
           key: _scaffoldKey,
           backgroundColor: Colors.white.withOpacity(.97),
-          body:isLoading ? SpinKitChasingDots(color: Colors.grey,) : Column(
+          body:isLoading ? Container(child: SpinKitWanderingCubes(color: Colors.black,)) : Column(
             children: [
               SharedWidgets.getAppBarUI(context, _scaffoldKey,"HOME"),
               Image.asset(
