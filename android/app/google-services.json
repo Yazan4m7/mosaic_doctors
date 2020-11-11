@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "690646858547",
+    "firebase_url": "https://mosaic-doctors.firebaseio.com",
+    "project_id": "mosaic-doctors",
+    "storage_bucket": "mosaic-doctors.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:690646858547:android:655323ff14654eb01f5c46",
+        "android_client_info": {
+          "package_name": "com.manshore.mosaic_doctors"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "690646858547-f4rhugs8d6r1b83nej6fdquupc3ru9lk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDprKD9o8ihFwm5dMl6Deo6vBswfK5FyhA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "690646858547-f4rhugs8d6r1b83nej6fdquupc3ru9lk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
