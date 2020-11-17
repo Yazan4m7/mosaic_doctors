@@ -6,6 +6,8 @@ import 'package:mosaic_doctors/models/sessionData.dart';
 import 'package:mosaic_doctors/shared/locator.dart';
 import 'package:mosaic_doctors/views/home.dart';
 
+import 'notifications.dart';
+
 
 class AuthService {
   getUserData() {
@@ -20,11 +22,16 @@ class AuthService {
     return StreamBuilder(
         stream: FirebaseAuth.instance.onAuthStateChanged,
         builder: (BuildContext context, snapshot) {
+
           if (snapshot.hasData) {
             print("handleAuth() snapshot has data");
 
             FirebaseUser user = snapshot.data;
             getIt<SessionData>().phoneNumber = user.phoneNumber;
+
+            Notifications.initialize(context);
+            Notifications.scheduleNotification();
+
             return HomeView();
 
           } else {

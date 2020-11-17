@@ -27,10 +27,10 @@ dependencies:
   intl: ^0.16.0
   flutter_spinkit: ^4.0.0
   jiffy: ^3.0.1
-  workmanager: ^0.2.0
+
   printing: ^3.7.0
   flutter_local_notifications: ^3.0.1+2
-
+  rxdart: ^0.23.1
   linked_scroll_controller: ^0.1.2
   firebase_messaging: ^6.0.13
   firebase_core: ^0.4.0

@@ -33,11 +33,13 @@ class DatabaseAPI {
   static String currentYearMonth = Jiffy().format("yy-MM");
   static List<dynamic> entries = List<dynamic>();
       static Future getMonthlyStatement(String doctorId, String month) async {
-    if (accountStatementEntrys.isEmpty)
-      await getDoctorAccountStatement(doctorId, true);
+    if (accountStatementEntrys.isEmpty){
+      print("ASE empty, loading it.");
+      await getDoctorAccountStatement(doctorId, false);
+    }
 
     print("Requested month : $month");
-    print(accountStatementEntrys.first.createdAt.substring(2, 7));
+   // print(accountStatementEntrys.first.createdAt.substring(2, 7));
     List<dynamic> singleMonthAccountStatementEntrys= accountStatementEntrys
         .where((element) => element.createdAt.substring(2, 7) == month)
         .toList();
