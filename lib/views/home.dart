@@ -6,6 +6,7 @@ import 'package:mosaic_doctors/services/DatabaseAPI.dart';
 import 'package:mosaic_doctors/services/auth_service.dart';
 import 'package:mosaic_doctors/shared/font_styles.dart';
 import 'package:mosaic_doctors/shared/locator.dart';
+import 'package:mosaic_doctors/shared/responsive_helper.dart';
 import 'package:mosaic_doctors/shared/styles.dart';
 import 'package:mosaic_doctors/shared/widgets.dart';
 import 'package:mosaic_doctors/views/accountStatement.dart';
@@ -60,7 +61,7 @@ class _homeViewState extends State<HomeView> {
               SharedWidgets.getAppBarUI(context, _scaffoldKey,"HOME"),
               Image.asset(
                 'assets/images/logo_black.png',
-                width: 280,
+                width: Responsiveness.logoWidth,
               ),
               Padding(
                   padding: EdgeInsets.all(10),

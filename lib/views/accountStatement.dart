@@ -36,6 +36,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
   @override
   void initState() {
     getAccountStatement();
+
     _scrollControllers = LinkedScrollControllerGroup();
     _titleScrollCont = _scrollControllers.addAndGet();
     _tableScrollCont = _scrollControllers.addAndGet();
@@ -59,7 +60,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
     double screenHeight = MediaQuery.of(context).size.height;
     double rowWidth = MediaQuery.of(context).size.width - 16; // 16 padding
     double screenWidth = MediaQuery.of(context).size.width; // 16 padding
-    print("width of header : $rowWidth");
+    print("screenWidth: $screenWidth screenHieght: $screenHeight");
     return Scaffold(
       body: SafeArea(
         key: _scaffoldKey,

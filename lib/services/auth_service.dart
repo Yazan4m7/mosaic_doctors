@@ -4,6 +4,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:mosaic_doctors/SignIn_with_phone.dart';
 import 'package:mosaic_doctors/models/sessionData.dart';
 import 'package:mosaic_doctors/shared/locator.dart';
+import 'package:mosaic_doctors/shared/responsive_helper.dart';
 import 'package:mosaic_doctors/views/home.dart';
 
 import 'notifications.dart';
@@ -25,7 +26,7 @@ class AuthService {
 
           if (snapshot.hasData) {
             print("handleAuth() snapshot has data");
-
+            Responsiveness.setResponsiveProperties(context);
             FirebaseUser user = snapshot.data;
             getIt<SessionData>().phoneNumber = user.phoneNumber;
 

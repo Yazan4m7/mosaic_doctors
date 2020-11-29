@@ -4,10 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mosaic_doctors/services/notifications.dart';
 import 'package:mosaic_doctors/services/scheduler.dart';
 import 'package:mosaic_doctors/shared/locator.dart';
+import 'package:mosaic_doctors/shared/responsive_helper.dart';
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  //FirebaseAuth.instance.signOut();
 
 
 

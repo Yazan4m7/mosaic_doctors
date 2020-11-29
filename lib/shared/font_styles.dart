@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mosaic_doctors/shared/responsive_helper.dart';
 
 
 class MyFontStyles {
@@ -40,13 +41,13 @@ class MyFontStyles {
         .headline1
         .copyWith(
       fontFamily: "droid",
-      fontSize: 15.0,
+      fontSize: Responsiveness.entryFontSize,
 
       color: Colors.black,);
   }
   static TextStyle statementHeaderFontStyle(BuildContext context) {
     return Theme.of(context).textTheme.headline1.copyWith(
-        fontSize: 15.0,
+        fontSize: Responsiveness.entryFontSize,
         fontWeight: FontWeight.w600,
         color: Colors.black,
        );
@@ -62,7 +63,7 @@ class MyFontStyles {
   }
   static TextStyle doctorNameFontStyle(BuildContext context) {
     return Theme.of(context).textTheme.headline1.copyWith(
-        fontFamily: "droid", fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.black87);
+        fontFamily: "droid", fontSize:Responsiveness.docNameFontSize, fontWeight: FontWeight.bold, color: Colors.black87);
   }
 
 
