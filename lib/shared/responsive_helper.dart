@@ -20,7 +20,7 @@ class Responsiveness {
     }else if (screenWidth >= 412 && screenWidth < 600){
       docNameFontSize= 35.0;
       logoWidth= 400.0;
-      entryFontSize=20.0;
+      entryFontSize=17.0;
     }else if (screenWidth >= 600){
       docNameFontSize= 40.0;
       logoWidth= 500.0;

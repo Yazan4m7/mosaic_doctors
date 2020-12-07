@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:mosaic_doctors/models/AccountStatementEntry.dart';
@@ -51,6 +53,8 @@ class _AccountStatementViewState extends State<AccountStatementView> {
     _tableScrollCont.dispose();
     super.dispose();
   }
+
+
 
   final formatter = new NumberFormat("#,###");
 
