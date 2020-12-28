@@ -2,13 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:mosaic_doctors/models/AccountStatementEntry.dart';
-import 'package:mosaic_doctors/models/payment.dart';
-import 'package:mosaic_doctors/models/previousMonthBalance.dart';
+
 import 'package:mosaic_doctors/models/sessionData.dart';
-import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 import 'package:mosaic_doctors/services/DatabaseAPI.dart';
-import 'package:mosaic_doctors/services/notifications.dart';
+import 'package:mosaic_doctors/shared/customDialogBox.dart';
 import 'package:mosaic_doctors/shared/font_styles.dart';
 import 'package:mosaic_doctors/shared/widgets.dart';
 import 'package:mosaic_doctors/shared/locator.dart';
@@ -23,25 +22,25 @@ class AccountStatementView extends StatefulWidget {
 class _AccountStatementViewState extends State<AccountStatementView> {
   // build bottom banner when statement is ready
   bool isStatementReady = false;
-  Future accountStatementEntrys;
+  Future accountStatementEntries;
+  double roundedBalance=0;
 
-  // scroll both header and body togother
-  LinkedScrollControllerGroup _scrollControllers;
-  ScrollController _titleScrollCont;
-  ScrollController _tableScrollCont;
+  bool isOldestMonth=false;
+  Jiffy twoMonthsAgo = Jiffy()..subtract(months: 2);
+  bool isNewestMonth = true;
+  static Jiffy previousMonth = Jiffy()..subtract(months: 1);
+  static Jiffy currentMonth = Jiffy();
 
+  List<PopupMenuEntry<String>> options=List<PopupMenuEntry<String>>() ;
   getAccountStatement() {
-    accountStatementEntrys = DatabaseAPI.getDoctorAccountStatement(
+    accountStatementEntries = DatabaseAPI.getDoctorAccountStatement(
         getIt<SessionData>().doctor.id, false);
   }
 
   @override
   void initState() {
     getAccountStatement();
-
-    _scrollControllers = LinkedScrollControllerGroup();
-    _titleScrollCont = _scrollControllers.addAndGet();
-    _tableScrollCont = _scrollControllers.addAndGet();
+    roundedBalance=0;
 
     setState(() {});
     super.initState();
@@ -49,32 +48,55 @@ class _AccountStatementViewState extends State<AccountStatementView> {
 
   @override
   void dispose() {
-    _titleScrollCont.dispose();
-    _tableScrollCont.dispose();
     super.dispose();
   }
 
 
 
+
   final formatter = new NumberFormat("#,###");
+  bool _roundedBalanceBuilt=false;
 
   @override
   Widget build(BuildContext context) {
+    _setMonthsNavigationFlags();
+
+    _roundedBalanceBuilt = false;
     GlobalKey _scaffoldKey = GlobalKey<ScaffoldState>();
     double screenHeight = MediaQuery.of(context).size.height;
-    double rowWidth = MediaQuery.of(context).size.width - 16; // 16 padding
+    double rowWidth = MediaQuery.of(context).size.width ; // 16 padding
     double screenWidth = MediaQuery.of(context).size.width; // 16 padding
-    print("screenWidth: $screenWidth screenHieght: $screenHeight");
+
     return Scaffold(
+      floatingActionButton:  Padding(
+        padding: const EdgeInsets.only(bottom: 50.0),
+        child: FloatingActionButton.extended(
+          backgroundColor: Colors.black87,
+          onPressed: () {showMOSAICDialog("Sorry, Payments are currently unavailable, Thank you for your interest");},
+          icon: Icon(Icons.payment),
+          label: Text("MAKE A PAYMENT"),
+
+        ),
+      ),
       body: SafeArea(
         key: _scaffoldKey,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             SharedWidgets.getAppBarUI(
-                context, _scaffoldKey, "Account Statetment"),
+                context, _scaffoldKey, "Account Statetment ${currentMonth.format("yy-MM")}",
+                PopupMenuButton<String>(
+                  onSelected: changeMonth,
+                  itemBuilder: (BuildContext context){
+                    options.clear();
+                    if(!isOldestMonth)options.add(PopupMenuItem(child: Text("Previous Month",style: TextStyle(color: Colors.grey),),value: "Previous Month",));
+                    if(!isNewestMonth)options.add(PopupMenuItem(child: Text("Next Month",style: TextStyle(color: Colors.grey)),value: "Next Month"));
+                    return options;
+                  },
+                )
+            ),
             FutureBuilder(
-                future: accountStatementEntrys,
+                future: accountStatementEntries,
                 builder: (context, accountStatementEntrys) {
                   if (accountStatementEntrys.connectionState ==
                           ConnectionState.none ||
@@ -97,29 +119,34 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                   }
 
                   return Column(
+
+                    mainAxisSize: MainAxisSize.min,
+
                     children: [
                       Container(
                         width: rowWidth,
+
                         child: Column(
                           //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            SizedBox(
-                              height: 10,
-                            ),
+
                             Padding(
-                              padding: const EdgeInsets.all(0.0),
+                              padding: const EdgeInsets.only(left:0),
                               child: Column(
                                 children: [
                                   Container(
                                     height: screenHeight / 20,
                                     child: Container(
+
                                       child: SingleChildScrollView(
-                                        controller: _titleScrollCont,
+
                                         child: Row(
                                           children: [
                                             Container(
+
+
                                               width: rowWidth / 4.7,
-                                              child: Text("Date",
+                                              child: Text(" Date",
                                                   style: MyFontStyles
                                                       .statementHeaderFontStyle(
                                                           context)),
@@ -135,7 +162,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                                             Container(
                                               alignment: Alignment.center,
                                               width: rowWidth / 5.4,
-                                              child: Text("Payment",
+                                              child: Text("Credit",
                                                   style: MyFontStyles
                                                       .statementHeaderFontStyle(
                                                           context)),
@@ -143,7 +170,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                                             Container(
                                               alignment: Alignment.center,
                                               width: rowWidth / 5.4,
-                                              child: Text("Trans.",
+                                              child: Text("Debit",
                                                   style: MyFontStyles
                                                       .statementHeaderFontStyle(
                                                           context)),
@@ -156,9 +183,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                                                       .statementHeaderFontStyle(
                                                           context)),
                                             ),
-                                            SizedBox(
-                                              height: 50,
-                                            )
+
                                           ],
                                         ),
                                         scrollDirection: Axis.horizontal,
@@ -167,43 +192,25 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                                   ),
                                   Divider(),
                                   SingleChildScrollView(
-                                    controller: _tableScrollCont,
+
                                     scrollDirection: Axis.horizontal,
                                     child: Container(
-                                      height: screenHeight / 1.58,
+                                      height: screenHeight / 1.48,
                                       width: rowWidth,
                                       child: ListView.builder(
                                           scrollDirection: Axis.vertical,
                                           itemCount: accountStatementEntrys
                                               .data.length,
                                           itemBuilder: (context, index) {
-                                            print(
-                                                "Entrys length : ${accountStatementEntrys.data.length}");
 
-                                            if (accountStatementEntrys
-                                                    .data[index]
-                                                is AccountStatementEntry) {
                                               AccountStatementEntry ASE =
                                                   accountStatementEntrys
                                                       .data[index];
-                                              print(
-                                                  "Building entry for ${ASE.toString()}");
-                                              return EntryItem(ASE);
-                                            }
-                                            if (accountStatementEntrys
-                                                .data[index] is Payment) {
-                                              Payment payment =
-                                                  accountStatementEntrys
-                                                      .data[index];
-                                              print(
-                                                  "Building entry for ${payment.toString()}");
-                                              return EntryItem(payment);
-                                            } else {
-                                              PreviousMonthBalance preBalance =
-                                                  accountStatementEntrys
-                                                      .data[index];
-                                              return EntryItem(preBalance);
-                                            }
+                                              print(ASE.createdAt.substring(2, 7) + "current "+currentMonth.format("yy-MM") );
+                                                if(ASE.createdAt.substring(2, 7) != currentMonth.format("yy-MM")) return SizedBox();
+                                                if(!_roundedBalanceBuilt) return Column(children: [_buildRoundedBalanceEntry(ASE),EntryItem(ASE)],) ;
+                                                else return EntryItem(ASE);
+
                                           }),
                                     ),
                                   ),
@@ -213,10 +220,14 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                           ],
                         ),
                       ),
-                      _buildBottomCounters(screenHeight, screenWidth)
+
                     ],
                   );
                 }),
+          FutureBuilder(
+              future: accountStatementEntries,
+              builder: (context, accountStatementEntrys) {
+            return _buildBottomCounters(screenHeight, screenWidth); })
           ],
         ),
       ),
@@ -286,7 +297,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                         children: [
                           Text(
                               formatter.format(
-                                  DatabaseAPI.totals.totalDebit - DatabaseAPI.totals.totalCredit).toString(),
+                                  double.parse(getIt<SessionData>().doctor.balance)),
                               style:
                                   MyFontStyles.statementHeaderFontStyle(context)
                                       .copyWith(fontSize: 20)),
@@ -300,52 +311,209 @@ class _AccountStatementViewState extends State<AccountStatementView> {
             ),
           ),
         ),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                  color: Colors.grey.withOpacity(0.4),
-                  offset: const Offset(0, 2),
-                  blurRadius: 8.0),
-            ],
-          ),
-          height: screenHeight / 13,
-          width: screenWidth + 16,
-          child: FlatButton(
-            color: Colors.blue,
-            textColor: Colors.white,
-            splashColor: Colors.blueAccent,
-            child: Text("MAKE A PAYMENT", style: TextStyle(fontSize: 18.0)),
-            onPressed: () {
-              showDialog(
-                  context: context,
-                  child: new AlertDialog(
-                    title: Center(child: new Text("Alert")),
-                    content: Container(
-                        height: 90,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text("Payments will be availabe soon! Thank you."),
-                            RaisedButton(
-                              child: Text(
-                                "Ok",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              color: Colors.blue,
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            )
-                          ],
-                        )),
-                  ));
-            },
-          ),
-        )
+
+//        Container(
+//          decoration: BoxDecoration(
+//            color: Colors.white,
+//            boxShadow: <BoxShadow>[
+//              BoxShadow(
+//                  color: Colors.grey.withOpacity(0.4),
+//                  offset: const Offset(0, 2),
+//                  blurRadius: 8.0),
+//            ],
+//          ),
+//          height: screenHeight / 13,
+//          width: screenWidth + 16,
+//          child: ,
+////            FlatButton(
+////              color: Colors.blue,
+////              textColor: Colors.white,
+////              splashColor: Colors.blueAccent,
+////              child: Text("MAKE A PAYMENT", style: TextStyle(fontSize: 18.0)),
+////              onPressed: () {
+////                showDialog(
+////                    context: context,
+////                    child: new AlertDialog(
+////                      title: Center(child: new Text("Alert")),
+////                      content: Container(
+////                          height: 90,
+////                          child: Column(
+////                            mainAxisAlignment: MainAxisAlignment.start,
+////                            crossAxisAlignment: CrossAxisAlignment.center,
+////                            children: [
+////                              Text("Payments will be availabe soon! Thank you."),
+////                              RaisedButton(
+////                                child: Text(
+////                                  "Ok",
+////                                  style: TextStyle(color: Colors.white),
+////                                ),
+////                                color: Colors.blue,
+////                                onPressed: () {
+////                                  Navigator.pop(context);
+////                                },
+////                              )
+////                            ],
+////                          )),
+////                    ));
+////              },
+////            )
+//        )
       ],
     );
+  }
+
+  addToRoundedBalance(AccountStatementEntry entry){
+
+    if(entry.debit !="N/A"){
+      print("Rounded balance $roundedBalance - ${entry} = ${roundedBalance-double.parse(entry.debit)}");
+      roundedBalance += double.parse(entry.debit);
+    }
+    else{
+      print("Rounded balance $roundedBalance + ${entry} = ${roundedBalance-double.parse(entry.credit)}");
+      roundedBalance -= double.parse(entry.credit);
+  }
+  }
+
+
+
+
+  Widget _buildRoundedBalanceEntry(AccountStatementEntry ASE) {
+    double rowWidth = MediaQuery.of(context).size.width ;
+      double openingBalance=0;
+    if(ASE.credit !="N/A")openingBalance=double.parse(ASE.balance) + double.parse(ASE.credit);
+    else  openingBalance=double.parse(ASE.balance)  - double.parse(ASE.debit) ;
+    _roundedBalanceBuilt = true;
+    return  InkWell(
+      child: Container(
+        decoration:
+        BoxDecoration(color: Colors.transparent),
+
+        child: Row(
+          children: [
+            Container(
+              width: rowWidth / 4.7,
+              child: Text( ""
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(left :rowWidth / 5 / 10),
+              width: rowWidth / 4.0,
+              child: Text("رصيد مدور",
+                style: MyFontStyles.statementPatientNameFontStyle(context),
+              textAlign: TextAlign.right,)
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: rowWidth / 5 / 5),
+              width: rowWidth / 5.4,
+              child: Text(""
+
+
+
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(left :rowWidth / 5 / 5),
+              width: rowWidth / 5.4,
+              child: Text( ""
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(left :rowWidth / 5 / 10),
+              width: rowWidth / 6,
+              child: Text(openingBalance.toString(),
+                style:
+                MyFontStyles.statementEntryFontStyle(context),
+                textAlign: TextAlign.left,
+              ),
+            )
+          ],
+        ),
+      ),
+      onTap: () {
+        goBackAMonth();
+
+      },
+    );
+
+  }
+  goBackAMonth(){
+
+    Jiffy threeMonthsAgo = Jiffy()..subtract(months: 3);
+    if (currentMonth.format("yy-MM") ==  twoMonthsAgo.format("yy-MM")){
+      showMOSAICDialog("Sorry, If you wish to view the statement of ${threeMonthsAgo.format("MMMM, yyyy")} Please contact us.");
+      return;}
+    print(Jiffy(DatabaseAPI.firstEntryDate, "yyyy-MM-dd").format("yy-MM") + "===" +currentMonth.format("yy-MM"));
+    if(Jiffy(DatabaseAPI.firstEntryDate, "yyyy-MM-dd").format("yy-MM") == currentMonth.format("yy-MM")){
+    showMOSAICDialog("Sorry, You have no transactions in that month");
+    return;}
+    setState(() {
+
+      currentMonth = currentMonth
+        ..subtract(months: 1);
+    });
+
+  }
+  goForwardAMonth(){
+if (currentMonth.format("yy-MM") == Jiffy().format("yy-MM")){
+  showMOSAICDialog("Sorry, We can't tell the future");
+  return;}
+    setState(() {
+      currentMonth = currentMonth
+        ..add(months: 1);
+    });
+
+  }
+  changeMonth(String optionSelected){
+    return showMOSAICDialog("Currently unavailable");
+    switch(optionSelected){
+      case "Next Month" :goForwardAMonth();break;
+      case "Previous Month" :goBackAMonth();break;
+    }
+
+  }
+  Widget showMOSAICDialog(String text){
+    showDialog(context: context,
+        builder: (BuildContext context){
+          return CustomDialogBox(title:"Alert",descriptions: text,text: "Ok",
+          );
+        }
+    );
+
+
+//    showDialog(
+//                    context: context,
+//                    child: new AlertDialog(
+//                      title: Center(child: new Text("Alert")),
+//                      content: Container(
+//                          height: 120,
+//                          child: Column(
+//                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                            crossAxisAlignment: CrossAxisAlignment.center,
+//                            children: [
+//                              Text(text),
+//                              RaisedButton(
+//                                child: Text(
+//                                  "Ok",
+//                                  style: TextStyle(color: Colors.white),
+//                                ),
+//                                color: Colors.blue,
+//                                onPressed: () {
+//                                  Navigator.pop(context);
+//                                },
+//                              )
+//                            ],
+//                          )),
+//                    ));
+  }
+  _setMonthsNavigationFlags(){
+    if (currentMonth.format("yy-MM") == Jiffy().format("yy-MM"))
+     setState(() {isNewestMonth = true; });
+    else
+      setState(() {isNewestMonth = false; });
+    if (currentMonth.format("yy-MM") ==  twoMonthsAgo.format("yy-MM"))
+      setState(() {isOldestMonth =true; });
+      else
+      setState(() {isOldestMonth =false; });
+
   }
 }

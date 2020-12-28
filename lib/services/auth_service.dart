@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:mosaic_doctors/SignIn_with_phone.dart';
 import 'package:mosaic_doctors/models/sessionData.dart';
 import 'package:mosaic_doctors/shared/locator.dart';
@@ -31,13 +30,13 @@ class AuthService {
             getIt<SessionData>().phoneNumber = user.phoneNumber;
 
             Notifications.initialize(context);
-            Notifications.scheduleNotification();
+            //Notifications.scheduleNotification();
 
             return HomeView();
 
           } else {
             print("handleAuth() snapshot no data");
-            print("handleAuth()");
+
             return LoginPage();
           }
         });
@@ -51,8 +50,14 @@ class AuthService {
   //SignIn
   signIn(AuthCredential authCreds) async {
 
-    await FirebaseAuth.instance.signInWithCredential(authCreds);
-    handleAuth();
+    try {
+      await FirebaseAuth.instance.signInWithCredential(authCreds);
+      handleAuth();
+    }catch(e){
+      getIt<SessionData>().loginWelcomeMessage =
+      " Error: ${e.message}";
+      AuthService.signOut();
+    }
     //  UserController.registerNotificationToken();
     // send supplier to his screen with phone number as paramenter
   }

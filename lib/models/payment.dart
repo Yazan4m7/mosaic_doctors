@@ -1,30 +1,24 @@
-import 'package:mosaic_doctors/models/discount.dart';
 
 class Payment {
   String id;
   String amount;
-  String notes;
   String doctorId;
-  String collector;
+  String paymentId;
+  String caseId;
   String createdAt;
   String balance;
 
-  Payment({this.id, this.amount, this.notes, this.doctorId, this.collector,
-      this.createdAt});
+  Payment({this.id, this.amount,  this.doctorId, this.paymentId,this.caseId,this.createdAt});
 
 
-  @override
-  String toString() {
-    return 'Payment{id: $id, amount: $amount, notes: $notes, doctorId: $doctorId, collector: $collector, createdAt: $createdAt}';
-  }
 
   factory Payment.fromJson(Map<String, dynamic> json) {
     return Payment(
         id : json['id']==null? "N/A":json['id'],
-        amount : json['amount']==null? "N/A":json['amount'],
-        notes : json['notes']==null? "N/A":json['notes'],
+        amount : json['credit']==null? "N/A":json['credit'],
         doctorId : json['doctor_id']==null? "N/A":json['doctor_id'],
-        collector : json['collector']==null? "N/A":json['collector'],
+        paymentId : json['payment_id']==null? "N/A":json['payment_id'],
+        caseId : json['case_id']==null? "N/A":json['case_id'],
         createdAt : json['created_at']==null? "N/A":json['created_at']);
   }
 }

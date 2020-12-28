@@ -106,7 +106,7 @@ class Notifications {
         0,
         'Your account statement for last month is ready!',
         'Click here to view',
-        tz.TZDateTime.now(tz.local).add(const Duration(days: 1)),
+        tz.TZDateTime.now(tz.local).add( Duration(days: daysUntilNextMonth)),
         platformChannelSpecifics,
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:

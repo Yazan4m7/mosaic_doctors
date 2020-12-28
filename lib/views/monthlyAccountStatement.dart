@@ -17,10 +17,12 @@ class MonthlyAccountStatementView extends StatefulWidget {
   final String month;
   MonthlyAccountStatementView({this.month});
   @override
-  _MonthlyAccountStatementViewState createState() => _MonthlyAccountStatementViewState();
+  _MonthlyAccountStatementViewState createState() =>
+      _MonthlyAccountStatementViewState();
 }
 
-class _MonthlyAccountStatementViewState extends State<MonthlyAccountStatementView> {
+class _MonthlyAccountStatementViewState
+    extends State<MonthlyAccountStatementView> {
   // build bottom banner when statement is ready
   bool isStatementReady = false;
   Future accountStatementEntrys;
@@ -31,12 +33,11 @@ class _MonthlyAccountStatementViewState extends State<MonthlyAccountStatementVie
   ScrollController _tableScrollCont;
 
   getAccountStatement() async {
-
-      if(getIt<SessionData>().doctor == null)
-          await DatabaseAPI.getDoctorInfo(getIt<SessionData>().phoneNumber);
-       else
-        accountStatementEntrys = DatabaseAPI.getMonthlyStatement(
-        getIt<SessionData>().doctor.id, widget.month);
+    if (getIt<SessionData>().doctor == null)
+      await DatabaseAPI.getDoctorInfo(getIt<SessionData>().phoneNumber);
+    else
+      accountStatementEntrys = DatabaseAPI.getMonthlyStatement(
+          getIt<SessionData>().doctor.id, widget.month);
   }
 
   @override
@@ -63,8 +64,8 @@ class _MonthlyAccountStatementViewState extends State<MonthlyAccountStatementVie
 
     GlobalKey _scaffoldKey = GlobalKey<ScaffoldState>();
     double screenHeight = MediaQuery.of(context).size.height;
-    double rowWidth = MediaQuery.of(context).size.width-16 ; // 16 padding
-    double screenWidth = MediaQuery.of(context).size.width ; // 16 padding
+    double rowWidth = MediaQuery.of(context).size.width - 16; // 16 padding
+    double screenWidth = MediaQuery.of(context).size.width; // 16 padding
     print("width of header : $rowWidth");
     return Scaffold(
       body: SafeArea(
@@ -73,7 +74,7 @@ class _MonthlyAccountStatementViewState extends State<MonthlyAccountStatementVie
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             SharedWidgets.getAppBarUI(
-                context, _scaffoldKey, "Account Statetment "+ widget.month ),
+                context, _scaffoldKey, "Account Statetment " + widget.month),
             FutureBuilder(
                 future: accountStatementEntrys,
                 builder: (context, accountStatementEntrys) {
@@ -108,7 +109,7 @@ class _MonthlyAccountStatementViewState extends State<MonthlyAccountStatementVie
                           children: [
                             Container(
                               height: screenHeight / 20,
-                              width: rowWidth ,
+                              width: rowWidth,
                               child: Container(
                                 child: SingleChildScrollView(
                                   controller: _titleScrollCont,
@@ -119,7 +120,7 @@ class _MonthlyAccountStatementViewState extends State<MonthlyAccountStatementVie
                                         child: Text("Date",
                                             style: MyFontStyles
                                                 .statementHeaderFontStyle(
-                                                context)),
+                                                    context)),
                                       ),
                                       Container(
                                         alignment: Alignment.center,
@@ -127,7 +128,7 @@ class _MonthlyAccountStatementViewState extends State<MonthlyAccountStatementVie
                                         child: Text("Entry",
                                             style: MyFontStyles
                                                 .statementHeaderFontStyle(
-                                                context)),
+                                                    context)),
                                       ),
                                       Container(
                                         alignment: Alignment.center,
@@ -135,7 +136,7 @@ class _MonthlyAccountStatementViewState extends State<MonthlyAccountStatementVie
                                         child: Text("Payment",
                                             style: MyFontStyles
                                                 .statementHeaderFontStyle(
-                                                context)),
+                                                    context)),
                                       ),
                                       Container(
                                         alignment: Alignment.center,
@@ -143,7 +144,7 @@ class _MonthlyAccountStatementViewState extends State<MonthlyAccountStatementVie
                                         child: Text("Trans.",
                                             style: MyFontStyles
                                                 .statementHeaderFontStyle(
-                                                context)),
+                                                    context)),
                                       ),
                                       Container(
                                         alignment: Alignment.center,
@@ -151,7 +152,7 @@ class _MonthlyAccountStatementViewState extends State<MonthlyAccountStatementVie
                                         child: Text("Balance",
                                             style: MyFontStyles
                                                 .statementHeaderFontStyle(
-                                                context)),
+                                                    context)),
                                       ),
                                       SizedBox(
                                         height: 50,
@@ -174,25 +175,26 @@ class _MonthlyAccountStatementViewState extends State<MonthlyAccountStatementVie
                                     itemCount:
                                         accountStatementEntrys.data.length,
                                     itemBuilder: (context, index) {
-                                      print("Entrys length : ${accountStatementEntrys.data.length}");
+                                      print(
+                                          "Entrys length : ${accountStatementEntrys.data.length}");
 
-                                      if (accountStatementEntrys.data[index] is AccountStatementEntry){
-                                      AccountStatementEntry ASE =
-                                          accountStatementEntrys.data[index];
-                                        print("Building entry for ${ASE.toString()}");
-                                      return EntryItem(ASE);}
-                                      if (accountStatementEntrys.data[index] is Payment)
-                                        {
-                                          Payment payment = accountStatementEntrys.data[index];
-                                          print("Building entry for ${payment.toString()}");
-                                          return  EntryItem(payment);
-
-                                        }
-                                      else{
-                                        PreviousMonthBalance preBalance = accountStatementEntrys.data[index];
-                                        return  EntryItem(preBalance);
-
-
+                                      if (accountStatementEntrys.data[index]
+                                          is AccountStatementEntry) {
+                                        AccountStatementEntry ASE =
+                                            accountStatementEntrys.data[index];
+                                        //print( "Building entry for ${ASE.toString()}");
+                                        return EntryItem(ASE);
+                                      }
+                                      if (accountStatementEntrys.data[index]
+                                          is Payment) {
+                                        Payment payment =
+                                            accountStatementEntrys.data[index];
+                                        //print("Building entry for ${payment.toString()}");
+                                        return EntryItem(payment);
+                                      } else {
+                                        PreviousMonthBalance preBalance =
+                                            accountStatementEntrys.data[index];
+                                        return EntryItem(preBalance);
                                       }
                                     }),
                               ),
@@ -213,7 +215,7 @@ class _MonthlyAccountStatementViewState extends State<MonthlyAccountStatementVie
                               ],
                             ),
                             height: screenHeight / 13,
-                            width: screenWidth +5000,
+                            width: screenWidth + 5000,
                             child: Padding(
                               padding: EdgeInsets.only(
                                   left: (screenWidth + 16) / 10,
@@ -230,32 +232,34 @@ class _MonthlyAccountStatementViewState extends State<MonthlyAccountStatementVie
                                           children: [
                                             Text(
                                                 formatter.format(DatabaseAPI
-                                                    .singleMonthTotals.totalDebit),
+                                                    .singleMonthTotals
+                                                    .totalDebit),
                                                 style: MyFontStyles
                                                     .statementHeaderFontStyle(
-                                                    context)),
+                                                        context)),
                                             Text(" JOD", style: TextStyle())
                                           ],
                                         ),
                                       ],
                                       crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                     ),
                                   ),
                                   Flexible(
                                     child: Column(
                                       crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text("Credit: "),
                                         Row(
                                           children: [
                                             Text(
                                                 formatter.format(DatabaseAPI
-                                                    .singleMonthTotals.totalCredit),
+                                                    .singleMonthTotals
+                                                    .totalCredit),
                                                 style: MyFontStyles
                                                     .statementHeaderFontStyle(
-                                                    context)),
+                                                        context)),
                                             Text(" JOD")
                                           ],
                                         ),
@@ -265,18 +269,23 @@ class _MonthlyAccountStatementViewState extends State<MonthlyAccountStatementVie
                                   Flexible(
                                     child: Column(
                                       crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text("Balance: "),
                                         Row(
                                           children: [
                                             Text(
-                                                formatter.format(DatabaseAPI
-                                                    .singleMonthTotals.totalDebit - DatabaseAPI
-                                                    .singleMonthTotals.totalCredit).toString(),
+                                                formatter
+                                                    .format(DatabaseAPI
+                                                            .singleMonthTotals
+                                                            .totalDebit -
+                                                        DatabaseAPI
+                                                            .singleMonthTotals
+                                                            .totalCredit)
+                                                    .toString(),
                                                 style: MyFontStyles
                                                     .statementHeaderFontStyle(
-                                                    context)),
+                                                        context)),
                                             Text(" JOD")
                                           ],
                                         ),
@@ -298,40 +307,51 @@ class _MonthlyAccountStatementViewState extends State<MonthlyAccountStatementVie
                               ],
                             ),
                             height: screenHeight / 13,
-                            width: screenWidth ,
+                            width: screenWidth,
                             child: FlatButton(
                               color: Colors.blue,
                               textColor: Colors.white,
                               splashColor: Colors.blueAccent,
-                              child: Text("MAKE A PAYMENT",style: TextStyle(fontSize: 18.0)),
-                              onPressed: (){
-                                showDialog(context: context, child:
-                                new AlertDialog(
-
-                                  title: Center(child: new Text("Alert")),
-                                  content: Container(
-                                      height: 90,
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          Text("Payments will be availabe soon! Thank you."),
-                                          RaisedButton(child: Text("Ok",style: TextStyle(color: Colors.white),),
-                                            color: Colors.blue,
-
-                                            onPressed: (){Navigator.pop(context);},)
-                                        ],
-                                      )),
-                                )
-                                );
-                              },),
+                              child: Text("MAKE A PAYMENT",
+                                  style: TextStyle(fontSize: 18.0)),
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    child: new AlertDialog(
+                                      title: Center(child: new Text("Alert")),
+                                      content: Container(
+                                          height: 90,
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                  "Payments will be availabe soon! Thank you."),
+                                              RaisedButton(
+                                                child: Text(
+                                                  "Ok",
+                                                  style: TextStyle(
+                                                      color: Colors.white),
+                                                ),
+                                                color: Colors.blue,
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                              )
+                                            ],
+                                          )),
+                                    ));
+                              },
+                            ),
                           )
                         ],
                       ),
                     ],
                   );
                 }),
-            ],
+          ],
         ),
       ),
     );

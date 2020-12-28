@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mosaic_doctors/services/auth_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:mosaic_doctors/services/notifications.dart';
-import 'package:mosaic_doctors/services/scheduler.dart';
 import 'package:mosaic_doctors/shared/locator.dart';
-import 'package:mosaic_doctors/shared/responsive_helper.dart';
+
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,6 +12,25 @@ main() async {
 
   setupLocator();
     runApp(MaterialApp(
-        home: AuthService().handleAuth()));
+      home: Scaffold(
+          body: EntryPoint()),
+    ));
 }
+class EntryPoint extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
 
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    return ScreenUtilInit(
+      designSize: Size(screenWidth, screenHeight),
+      allowFontScaling: false,
+      child:  AuthService().handleAuth()
+    );
+  }
+}
