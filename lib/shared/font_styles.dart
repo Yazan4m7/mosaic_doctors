@@ -60,7 +60,7 @@ class MyFontStyles {
         .headline1
         .copyWith(
       fontFamily: "droid",
-      fontSize: Responsiveness.entryFontSize.sp,
+      fontSize: Responsiveness.patientNameFontSize.sp,
       fontWeight: FontWeight.w600,
       color: Colors.black,);
   }

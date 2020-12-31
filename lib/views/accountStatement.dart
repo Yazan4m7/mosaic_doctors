@@ -63,21 +63,21 @@ class _AccountStatementViewState extends State<AccountStatementView> {
 
     _roundedBalanceBuilt = false;
     GlobalKey _scaffoldKey = GlobalKey<ScaffoldState>();
-    double screenHeight = MediaQuery.of(context).size.height;
+    double screenHeight = MediaQuery.of(context).size.height-22;
     double rowWidth = MediaQuery.of(context).size.width ; // 16 padding
     double screenWidth = MediaQuery.of(context).size.width; // 16 padding
 
     return Scaffold(
-      floatingActionButton:  Padding(
-        padding: const EdgeInsets.only(bottom: 50.0),
-        child: FloatingActionButton.extended(
-          backgroundColor: Colors.black87,
-          onPressed: () {showMOSAICDialog("Sorry, Payments are currently unavailable, Thank you for your interest");},
-          icon: Icon(Icons.payment),
-          label: Text("MAKE A PAYMENT"),
-
-        ),
-      ),
+//      floatingActionButton:  Padding(
+//        padding: const EdgeInsets.only(bottom: 50.0),
+//        child: FloatingActionButton.extended(
+//          backgroundColor: Colors.black87,
+//          onPressed: () {showMOSAICDialog("Sorry, Payments are currently unavailable, Thank you for your interest");},
+//          icon: Icon(Icons.payment),
+//          label: Text("MAKE A PAYMENT"),
+//
+//        ),
+//      ),
       body: SafeArea(
         key: _scaffoldKey,
         child: Column(
@@ -312,52 +312,52 @@ class _AccountStatementViewState extends State<AccountStatementView> {
           ),
         ),
 
-//        Container(
-//          decoration: BoxDecoration(
-//            color: Colors.white,
-//            boxShadow: <BoxShadow>[
-//              BoxShadow(
-//                  color: Colors.grey.withOpacity(0.4),
-//                  offset: const Offset(0, 2),
-//                  blurRadius: 8.0),
-//            ],
-//          ),
-//          height: screenHeight / 13,
-//          width: screenWidth + 16,
-//          child: ,
-////            FlatButton(
-////              color: Colors.blue,
-////              textColor: Colors.white,
-////              splashColor: Colors.blueAccent,
-////              child: Text("MAKE A PAYMENT", style: TextStyle(fontSize: 18.0)),
-////              onPressed: () {
-////                showDialog(
-////                    context: context,
-////                    child: new AlertDialog(
-////                      title: Center(child: new Text("Alert")),
-////                      content: Container(
-////                          height: 90,
-////                          child: Column(
-////                            mainAxisAlignment: MainAxisAlignment.start,
-////                            crossAxisAlignment: CrossAxisAlignment.center,
-////                            children: [
-////                              Text("Payments will be availabe soon! Thank you."),
-////                              RaisedButton(
-////                                child: Text(
-////                                  "Ok",
-////                                  style: TextStyle(color: Colors.white),
-////                                ),
-////                                color: Colors.blue,
-////                                onPressed: () {
-////                                  Navigator.pop(context);
-////                                },
-////                              )
-////                            ],
-////                          )),
-////                    ));
-////              },
-////            )
-//        )
+        Container(
+          decoration: BoxDecoration(
+            color:Colors.black87,
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                  color: Colors.grey.withOpacity(0.4),
+                  offset: const Offset(0, 2),
+                  blurRadius: 8.0),
+            ],
+          ),
+          height: screenHeight / 13,
+          width: screenWidth + 16,
+          child:
+            FlatButton(
+
+              textColor: Colors.white,
+              splashColor: Colors.blueAccent,
+              child: Text("MAKE A PAYMENT", style: TextStyle(fontSize: 18.0)),
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    child: new AlertDialog(
+                      title: Center(child: new Text("Alert")),
+                      content: Container(
+                          height: 90,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text("Payments will be availabe soon! Thank you."),
+                              RaisedButton(
+                                child: Text(
+                                  "Ok",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                color: Colors.blue,
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              )
+                            ],
+                          )),
+                    ));
+              },
+            )
+        )
       ],
     );
   }
