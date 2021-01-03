@@ -61,7 +61,7 @@ class MyFontStyles {
         .copyWith(
       fontFamily: "droid",
       fontSize: Responsiveness.patientNameFontSize.sp,
-      fontWeight: FontWeight.w600,
+
       color: Colors.black,);
   }
   static TextStyle textFieldsLabelStyle(BuildContext context){

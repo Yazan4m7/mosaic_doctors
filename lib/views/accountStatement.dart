@@ -9,6 +9,7 @@ import 'package:mosaic_doctors/models/sessionData.dart';
 import 'package:mosaic_doctors/services/DatabaseAPI.dart';
 import 'package:mosaic_doctors/shared/customDialogBox.dart';
 import 'package:mosaic_doctors/shared/font_styles.dart';
+import 'package:mosaic_doctors/shared/responsive_helper.dart';
 import 'package:mosaic_doctors/shared/widgets.dart';
 import 'package:mosaic_doctors/shared/locator.dart';
 import 'package:mosaic_doctors/views/StatementEntry.dart';
@@ -158,6 +159,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                                                         context)),
                                               ),
                                               Container(
+                                                padding: EdgeInsets.only(left :(rowWidth-16) / 5 / 10),
                                                 alignment: Alignment.center,
                                                 width: rowWidth / 4,
                                                 child: Text("Entry",
@@ -166,28 +168,30 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                                                         context)),
                                               ),
                                               Container(
-                                                alignment: Alignment.center,
+                                                padding: EdgeInsets.symmetric(horizontal: (rowWidth-16) / 4 / 6),
+                                                //alignment: Alignment.center,
                                                 width: rowWidth / 5.4,
                                                 child: Text("Credit",
                                                     style: MyFontStyles
                                                         .statementHeaderFontStyle(
-                                                        context)),
+                                                        context),textAlign: TextAlign.left),
                                               ),
                                               Container(
-                                                alignment: Alignment.center,
+                                                padding: EdgeInsets.only(left :(rowWidth-16) / 5 / 6),
                                                 width: rowWidth / 5.4,
                                                 child: Text("Debit",
                                                     style: MyFontStyles
                                                         .statementHeaderFontStyle(
-                                                        context)),
+                                                        context),textAlign: TextAlign.left),
                                               ),
                                               Container(
-                                                alignment: Alignment.center,
+                                                padding: EdgeInsets.only(left :rowWidth / 5 / 30),
+                                               // alignment: Alignment.center,
                                                 width: rowWidth / 6,
                                                 child: Text("Balance",
                                                     style: MyFontStyles
                                                         .statementHeaderFontStyle(
-                                                        context)),
+                                                        context),textAlign: TextAlign.left),
                                               ),
 
                                             ],
@@ -258,8 +262,10 @@ class _AccountStatementViewState extends State<AccountStatementView> {
 
   Widget _buildBottomCounters(double screenHeight, double screenWidth) {
     return Column(
+
       children: [
         Container(
+          padding: EdgeInsets.only(left:screenWidth/8,top: (screenHeight / 12)/6 ),
           decoration: BoxDecoration(
             color: Colors.white,
             boxShadow: <BoxShadow>[
@@ -271,66 +277,65 @@ class _AccountStatementViewState extends State<AccountStatementView> {
           ),
           height: screenHeight / 12,
           width: screenWidth,
-          child: Padding(
-            padding: EdgeInsets.only(
-                left: (screenWidth + 16) / 10, top: (screenHeight / 13) / 7),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Flexible(
-                  child: Column(
-                    children: [
-                      Text("Debit: "),
-                      Row(
-                        children: [
-                          Text(formatter.format(DatabaseAPI.totals.totalDebit),
-                              style: MyFontStyles.statementHeaderFontStyle(
-                                  context)),
-                          Text(" JOD", style: TextStyle())
-                        ],
-                      ),
-                    ],
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                  ),
+          child: Row(
+
+            children: [
+              Flexible(
+                flex: 3,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Debit: "),
+                    Row(
+                      children: [
+                        Text(formatter.format(DatabaseAPI.totals.totalDebit),
+                            style: MyFontStyles.statementHeaderFontStyle(
+                                context),textAlign: TextAlign.left),
+                        Text(" JOD", style: TextStyle())
+                      ],
+                    ),
+                  ],
+
                 ),
-                Flexible(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Credit: "),
-                      Row(
-                        children: [
-                          Text(formatter.format(DatabaseAPI.totals.totalCredit),
-                              style: MyFontStyles.statementHeaderFontStyle(
-                                  context)),
-                          Text(" JOD")
-                        ],
-                      ),
-                    ],
-                  ),
+              ),
+              Flexible(
+                flex: 3,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Credit: "),
+                    Row(
+                      children: [
+                        Text(formatter.format(DatabaseAPI.totals.totalCredit),
+                            style: MyFontStyles.statementHeaderFontStyle(
+                                context)),
+                        Text(" JOD")
+                      ],
+                    ),
+                  ],
                 ),
-                Flexible(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Balance: "),
-                      Row(
-                        children: [
-                          Text(
-                              formatter.format(
-                                  double.parse(getIt<SessionData>().doctor.balance)),
-                              style:
-                                  MyFontStyles.statementHeaderFontStyle(context)
-                                      .copyWith(fontSize: 20)),
-                          Text(" JOD")
-                        ],
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            ),
+              ),
+              Flexible(
+                flex: 3,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Balance: "),
+                    Row(
+                      children: [
+                        Text(
+                            formatter.format(
+                                double.parse(getIt<SessionData>().doctor.balance)),
+                            style:
+                                MyFontStyles.statementHeaderFontStyle(context)
+                                    .copyWith(fontSize: Responsiveness.entryFontSize.sp+3,)),
+                        Text(" JOD")
+                      ],
+                    ),
+                  ],
+                ),
+              )
+            ],
           ),
         ),
 
@@ -348,13 +353,11 @@ class _AccountStatementViewState extends State<AccountStatementView> {
           width: screenWidth + 16,
           child:
             FlatButton(
-
               textColor: Colors.white,
               splashColor: Colors.blueAccent,
-              child: Text("MAKE A PAYMENT", style: TextStyle(fontSize: 18.sp)),
+              child: Text("MAKE A PAYMENT", style: TextStyle(fontSize: 20.sp)),
               onPressed: () {
                showMOSAICDialog("Payments will be available soon, Thank you for your interest.");
-
               },
             )
         )
@@ -365,11 +368,9 @@ class _AccountStatementViewState extends State<AccountStatementView> {
   addToRoundedBalance(AccountStatementEntry entry){
 
     if(entry.debit !="N/A"){
-      print("Rounded balance $roundedBalance - ${entry} = ${roundedBalance-double.parse(entry.debit)}");
       roundedBalance += double.parse(entry.debit);
     }
     else{
-      print("Rounded balance $roundedBalance + ${entry} = ${roundedBalance-double.parse(entry.credit)}");
       roundedBalance -= double.parse(entry.credit);
   }
   }
@@ -378,7 +379,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
 
 
   Widget _buildRoundedBalanceEntry(AccountStatementEntry ASE , [bool isCurrentMonthEntry = true]) {
-    double rowWidth = MediaQuery.of(context).size.width ;
+    double rowWidth = MediaQuery.of(context).size.width-16 ;
     double openingBalance=0;
     if(isCurrentMonthEntry)
     if (ASE.credit !="N/A") openingBalance = double.parse(ASE.balance) + double.parse(ASE.credit);
@@ -396,38 +397,35 @@ class _AccountStatementViewState extends State<AccountStatementView> {
         child: Row(
           children: [
             Container(
-              width: rowWidth / 4.7,
+              width: rowWidth / 4.8,
               child: Text(""
               ),
             ),
             Container(
-              padding: EdgeInsets.only(left :rowWidth / 5 / 10),
-              width: rowWidth / 4.0,
+              padding: EdgeInsets.only(left :rowWidth / 5 / 9),
+              width: rowWidth / 3.6,
               child: Text("رصيد مدور",
-                style: MyFontStyles.statementPatientNameFontStyle(context),
+                style: MyFontStyles.statementPatientNameFontStyle(context).copyWith(fontWeight: FontWeight.w700,),
               textAlign: TextAlign.right,)
             ),
             Container(
               padding: EdgeInsets.symmetric(horizontal: rowWidth / 5 / 5),
-              width: rowWidth / 5.4,
+              width: rowWidth / 5.6,
               child: Text(""
-
-
-
               ),
             ),
             Container(
               padding: EdgeInsets.only(left :rowWidth / 5 / 5),
-              width: rowWidth / 5.4,
+              width: rowWidth / 5.6,
               child: Text( ""
               ),
             ),
             Container(
-              padding: EdgeInsets.only(left :rowWidth / 5 / 10),
+              padding: EdgeInsets.only(left :rowWidth / 5 / 8),
               width: rowWidth / 6,
-              child: Text(openingBalance.toString(),
+              child: Text(addBracketsIfNegative(openingBalance.toString()),
                 style:
-                MyFontStyles.statementEntryFontStyle(context),
+                MyFontStyles.statementEntryFontStyle(context).copyWith(fontWeight: FontWeight.w600,),
                 textAlign: TextAlign.left,
               ),
             )
@@ -469,7 +467,7 @@ if (currentMonth.format("yy-MM") == Jiffy().format("yy-MM")){
 
   }
   changeMonth(String optionSelected){
-    return showMOSAICDialog("Currently unavailable");
+    //return showMOSAICDialog("Currently unavailable");
     switch(optionSelected){
       case "Next Month" :goForwardAMonth();break;
       case "Previous Month" :goBackAMonth();break;
@@ -510,6 +508,7 @@ if (currentMonth.format("yy-MM") == Jiffy().format("yy-MM")){
 //                          )),
 //                    ));
   }
+
   _setMonthsNavigationFlags(){
     if (currentMonth.format("yy-MM") == Jiffy().format("yy-MM"))
      setState(() {isNewestMonth = true; });
@@ -519,6 +518,12 @@ if (currentMonth.format("yy-MM") == Jiffy().format("yy-MM")){
       setState(() {isOldestMonth =true; });
       else
       setState(() {isOldestMonth =false; });
+  }
 
+  addBracketsIfNegative(String number){
+    double num = double.parse(number);
+    if(num.isNegative)
+      return ("(${num.abs()})");
+    return number;
   }
 }

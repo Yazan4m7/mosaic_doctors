@@ -35,14 +35,14 @@ class _EntryItemState extends State<EntryItem> {
       child: InkWell(
 
         child: Container(
-        padding: EdgeInsets.only(left: 1),
+        padding: EdgeInsets.only(left: 0),
           decoration:
               BoxDecoration(color: isEven ? Colors.grey.shade200 : Colors.transparent),
 
           child: Row(
             children: [
               Container(
-                width: rowWidth / 4.7,
+                width: rowWidth / 4.8,
                 child: Text( root is PreviousMonthBalance ?  "":
                   root.createdAt.length > 10 ? root.createdAt.substring(8, 11) + Jiffy([0000,int.parse(root.createdAt.substring(5, 7))+1,00]).format("MMM")
                       + "-" + root.createdAt.substring(2, 4) : root.createdAt,
@@ -51,7 +51,7 @@ class _EntryItemState extends State<EntryItem> {
               ),
               Container(
                 padding: EdgeInsets.only(left :rowWidth / 5 / 10),
-                width: rowWidth / 4.0,
+                width: rowWidth / 3.6,
                 child: Text(
 
                   root is AccountStatementEntry ? root.patientName :  "Payment",
@@ -60,7 +60,7 @@ class _EntryItemState extends State<EntryItem> {
               ),
               Container(
                     padding: EdgeInsets.symmetric(horizontal: rowWidth / 5 / 5),
-                width: rowWidth / 5.4,
+                width: rowWidth / 5.6,
                 child: Text(
 
                   root.credit =="N/A" ? "" :addBracketsIfNegative(root.credit),
@@ -71,7 +71,7 @@ class _EntryItemState extends State<EntryItem> {
               ),
               Container(
                 padding: EdgeInsets.only(left :rowWidth / 5 / 5),
-                width: rowWidth / 5.4,
+                width: rowWidth / 5.6,
                 child: Text(
                     root.debit =="N/A" ? "" : addBracketsIfNegative(root.debit),
                   style: MyFontStyles.statementEntryFontStyle(context),
