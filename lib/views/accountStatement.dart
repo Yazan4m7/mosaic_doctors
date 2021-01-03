@@ -80,155 +80,174 @@ class _AccountStatementViewState extends State<AccountStatementView> {
 //      ),
       body: SafeArea(
         key: _scaffoldKey,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            SharedWidgets.getAppBarUI(
-                context, _scaffoldKey, "Account Statetment ${currentMonth.format("yy-MM")}",
-                PopupMenuButton<String>(
-                  onSelected: changeMonth,
-                  itemBuilder: (BuildContext context){
-                    options.clear();
-                    if(!isOldestMonth)options.add(PopupMenuItem(child: Text("Previous Month",style: TextStyle(color: Colors.grey),),value: "Previous Month",));
-                    if(!isNewestMonth)options.add(PopupMenuItem(child: Text("Next Month",style: TextStyle(color: Colors.grey)),value: "Next Month"));
-                    return options;
-                  },
-                )
+        child: Flexible(
+          flex: 7,
+          child: Column(
+           //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+
+              Flexible(
+                flex: 3,
+                child: Column(
+
+            children: [ SharedWidgets.getAppBarUI(
+                  context, _scaffoldKey, "Account Statetment ${currentMonth.format("yy-MM")}",
+                  PopupMenuButton<String>(
+                    onSelected: changeMonth,
+                    itemBuilder: (BuildContext context){
+                      options.clear();
+                      if(!isOldestMonth)options.add(PopupMenuItem(child: Text("Previous Month",style: TextStyle(color: Colors.grey),),value: "Previous Month",));
+                      if(!isNewestMonth)options.add(PopupMenuItem(child: Text("Next Month",style: TextStyle(color: Colors.grey)),value: "Next Month"));
+                      return options;
+                    },
+                  )
             ),
-            FutureBuilder(
-                future: accountStatementEntries,
-                builder: (context, accountStatementEntrys) {
-                  if (accountStatementEntrys.connectionState ==
+                FutureBuilder(
+                    future: accountStatementEntries,
+                    builder: (context, accountStatementEntrys) {
+                      if (accountStatementEntrys.connectionState ==
                           ConnectionState.none ||
-                      accountStatementEntrys.connectionState ==
-                          ConnectionState.waiting) {
-                    return Center(
-                      child: Container(
-                        height: screenHeight - 100,
-                        child: SpinKitWanderingCubes(
-                          color: Colors.black,
-                        ),
-                      ),
-                    );
-                  }
-                  if (accountStatementEntrys.data == null) {
-                    return Center(
-                        child: Text(
-                      "No Entrys",
-                    ));
-                  }
+                          accountStatementEntrys.connectionState ==
+                              ConnectionState.waiting) {
+                        return Center(
+                          child: Container(
+                            height: screenHeight - 100,
+                            child: SpinKitWanderingCubes(
+                              color: Colors.black,
+                            ),
+                          ),
+                        );
+                      }
+                      if (accountStatementEntrys.data == null) {
+                        return Center(
+                            child: Text(
+                              "No Entrys",
+                            ));
+                      }
 
-                  return Column(
+                      return Column(
 
-                    mainAxisSize: MainAxisSize.min,
+                        mainAxisSize: MainAxisSize.min,
 
-                    children: [
-                      Container(
-                        width: rowWidth,
+                        children: [
+                          Container(
+                            width: rowWidth,
 
-                        child: Column(
-                          //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
+                            child: Column(
+                              //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
 
-                            Padding(
-                              padding: const EdgeInsets.only(left:0),
-                              child: Column(
-                                children: [
-                                  Container(
-                                    height: screenHeight / 20,
-                                    child: Container(
+                                Padding(
+                                  padding: const EdgeInsets.only(left:0),
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        height: screenHeight / 20,
+                                        child: Container(
 
-                                      child: SingleChildScrollView(
+                                          child: SingleChildScrollView(
 
-                                        child: Row(
-                                          children: [
-                                            Container(
+                                            child: Row(
+                                              children: [
+                                                Container(
 
 
-                                              width: rowWidth / 4.7,
-                                              child: Text(" Date",
-                                                  style: MyFontStyles
-                                                      .statementHeaderFontStyle(
+                                                  width: rowWidth / 4.7,
+                                                  child: Text(" Date",
+                                                      style: MyFontStyles
+                                                          .statementHeaderFontStyle(
                                                           context)),
-                                            ),
-                                            Container(
-                                              alignment: Alignment.center,
-                                              width: rowWidth / 4,
-                                              child: Text("Entry",
-                                                  style: MyFontStyles
-                                                      .statementHeaderFontStyle(
+                                                ),
+                                                Container(
+                                                  alignment: Alignment.center,
+                                                  width: rowWidth / 4,
+                                                  child: Text("Entry",
+                                                      style: MyFontStyles
+                                                          .statementHeaderFontStyle(
                                                           context)),
-                                            ),
-                                            Container(
-                                              alignment: Alignment.center,
-                                              width: rowWidth / 5.4,
-                                              child: Text("Credit",
-                                                  style: MyFontStyles
-                                                      .statementHeaderFontStyle(
+                                                ),
+                                                Container(
+                                                  alignment: Alignment.center,
+                                                  width: rowWidth / 5.4,
+                                                  child: Text("Credit",
+                                                      style: MyFontStyles
+                                                          .statementHeaderFontStyle(
                                                           context)),
-                                            ),
-                                            Container(
-                                              alignment: Alignment.center,
-                                              width: rowWidth / 5.4,
-                                              child: Text("Debit",
-                                                  style: MyFontStyles
-                                                      .statementHeaderFontStyle(
+                                                ),
+                                                Container(
+                                                  alignment: Alignment.center,
+                                                  width: rowWidth / 5.4,
+                                                  child: Text("Debit",
+                                                      style: MyFontStyles
+                                                          .statementHeaderFontStyle(
                                                           context)),
-                                            ),
-                                            Container(
-                                              alignment: Alignment.center,
-                                              width: rowWidth / 6,
-                                              child: Text("Balance",
-                                                  style: MyFontStyles
-                                                      .statementHeaderFontStyle(
+                                                ),
+                                                Container(
+                                                  alignment: Alignment.center,
+                                                  width: rowWidth / 6,
+                                                  child: Text("Balance",
+                                                      style: MyFontStyles
+                                                          .statementHeaderFontStyle(
                                                           context)),
-                                            ),
+                                                ),
 
-                                          ],
+                                              ],
+                                            ),
+                                            scrollDirection: Axis.horizontal,
+                                          ),
                                         ),
-                                        scrollDirection: Axis.horizontal,
                                       ),
-                                    ),
-                                  ),
-                                  Divider(),
-                                  SingleChildScrollView(
+                                      Divider(),
+                                      SingleChildScrollView(
 
-                                    scrollDirection: Axis.horizontal,
-                                    child: Container(
-                                      height: screenHeight / 1.48,
-                                      width: rowWidth,
-                                      child: ListView.builder(
-                                          scrollDirection: Axis.vertical,
-                                          itemCount: accountStatementEntrys
-                                              .data.length,
-                                          itemBuilder: (context, index) {
+                                        scrollDirection: Axis.horizontal,
+                                        child: Container(
+                                          height: screenHeight / 1.48,
+                                          width: rowWidth,
+                                          child: ListView.builder(
+                                              scrollDirection: Axis.vertical,
+                                              itemCount: accountStatementEntrys
+                                                  .data.length,
+                                              itemBuilder: (context, index) {
 
-                                              AccountStatementEntry ASE =
-                                                  accountStatementEntrys
-                                                      .data[index];
-                                              print(ASE.createdAt.substring(2, 7) + "current "+currentMonth.format("yy-MM") );
+                                                AccountStatementEntry ASE =
+                                                accountStatementEntrys
+                                                    .data[index];
+                                                //if doctor has no transactions this month, and we're at the latest month, build rounded balance and exit.
+                                                if(!DatabaseAPI.drHasTransactionsThisMonth && !_roundedBalanceBuilt &&(currentMonth.format("yy-MM") == Jiffy().format("yy-MM")) ) {
+                                                  print("doctor has no trans this month");
+                                                  index= accountStatementEntrys
+                                                      .data.length-1;
+                                                  return _buildRoundedBalanceEntry(accountStatementEntrys
+                                                      .data[accountStatementEntrys
+                                                      .data.length-1],false);}
+
+                                                print(ASE.createdAt.substring(2, 7) + "current "+currentMonth.format("yy-MM") );
                                                 if(ASE.createdAt.substring(2, 7) != currentMonth.format("yy-MM")) return SizedBox();
                                                 if(!_roundedBalanceBuilt) return Column(children: [_buildRoundedBalanceEntry(ASE),EntryItem(ASE)],) ;
                                                 else return EntryItem(ASE);
 
-                                          }),
-                                    ),
+                                              }),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
+                          ),
 
-                    ],
-                  );
-                }),
-          FutureBuilder(
-              future: accountStatementEntries,
-              builder: (context, accountStatementEntrys) {
-            return _buildBottomCounters(screenHeight, screenWidth); })
-          ],
+                        ],
+                      );
+                    }),]),
+              ),
+
+            FutureBuilder(
+                future: accountStatementEntries,
+                builder: (context, accountStatementEntrys) {
+              return _buildBottomCounters(screenHeight, screenWidth); })
+            ],
+          ),
         ),
       ),
     );
@@ -377,11 +396,15 @@ class _AccountStatementViewState extends State<AccountStatementView> {
 
 
 
-  Widget _buildRoundedBalanceEntry(AccountStatementEntry ASE) {
+  Widget _buildRoundedBalanceEntry(AccountStatementEntry ASE , [bool isCurrentMonthEntry = true]) {
     double rowWidth = MediaQuery.of(context).size.width ;
-      double openingBalance=0;
-    if(ASE.credit !="N/A")openingBalance=double.parse(ASE.balance) + double.parse(ASE.credit);
-    else  openingBalance=double.parse(ASE.balance)  - double.parse(ASE.debit) ;
+    double openingBalance=0;
+    if(isCurrentMonthEntry)
+    if (ASE.credit !="N/A") openingBalance = double.parse(ASE.balance) + double.parse(ASE.credit);
+    else  openingBalance = double.parse(ASE.balance) - double.parse(ASE.debit)  ;
+    else{
+      openingBalance = double.parse(ASE.balance)   ;
+    }
     _roundedBalanceBuilt = true;
     return  InkWell(
       child: Container(
@@ -464,7 +487,7 @@ if (currentMonth.format("yy-MM") == Jiffy().format("yy-MM")){
 
   }
   changeMonth(String optionSelected){
-    return showMOSAICDialog("Currently unavailable");
+    //return showMOSAICDialog("Currently unavailable");
     switch(optionSelected){
       case "Next Month" :goForwardAMonth();break;
       case "Previous Month" :goBackAMonth();break;

@@ -33,6 +33,7 @@ class DatabaseAPI {
   static String currentYearMonth = Jiffy().format("yy-MM");
   static List<dynamic> entries = List<dynamic>();
   static String firstEntryDate;
+  static bool drHasTransactionsThisMonth = true;
   static Future get30sepBalance(String doctorId) async{
 
     var map = Map<String, dynamic>();
@@ -151,7 +152,8 @@ class DatabaseAPI {
     accountStatementEntrys.sort((a, b) {
       return a.createdAt.compareTo(b.createdAt);
     });
-
+    if (accountStatementEntrys.where((element) => element.createdAt == currentYearMonth).isEmpty) {drHasTransactionsThisMonth = false;}
+    print("Doctor current month trans : ${accountStatementEntrys.where((element) => element.createdAt == currentYearMonth).isEmpty}");
     return accountStatementEntrys;
   }
 

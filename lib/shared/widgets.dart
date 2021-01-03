@@ -34,7 +34,7 @@ color: Colors.white,
                 onTap: onBackButtonTap ?? (){Navigator.pop(context);},
                 child: Padding(
                   padding: const EdgeInsets.only(left:5.0),
-                  child: Icon(Icons.arrow_back),
+                  child: onBackButtonTap ==null ?  Icon(Icons.arrow_back) : Icon(Icons.clear_rounded),
                 ),
               ),
             ),
