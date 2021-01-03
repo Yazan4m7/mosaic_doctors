@@ -18,7 +18,7 @@ class MyFontStyles {
         .headline1
         .copyWith(
       fontFamily: "montserrat",
-      fontSize: 18.0.sp,
+      fontSize: 17.0.sp,
       letterSpacing: 0,
 
       fontWeight: FontWeight.w600,

@@ -405,6 +405,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
     else{
       openingBalance = double.parse(ASE.balance)   ;
     }
+
     _roundedBalanceBuilt = true;
     return  InkWell(
       child: Container(
@@ -415,7 +416,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
           children: [
             Container(
               width: rowWidth / 4.7,
-              child: Text( ""
+              child: Text(""
               ),
             ),
             Container(
@@ -487,7 +488,7 @@ if (currentMonth.format("yy-MM") == Jiffy().format("yy-MM")){
 
   }
   changeMonth(String optionSelected){
-    //return showMOSAICDialog("Currently unavailable");
+    return showMOSAICDialog("Currently unavailable");
     switch(optionSelected){
       case "Next Month" :goForwardAMonth();break;
       case "Previous Month" :goBackAMonth();break;
