@@ -7,6 +7,7 @@ import 'package:mosaic_doctors/models/AccountStatementEntry.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mosaic_doctors/models/sessionData.dart';
 import 'package:mosaic_doctors/services/DatabaseAPI.dart';
+import 'package:mosaic_doctors/services/auth_service.dart';
 import 'package:mosaic_doctors/shared/Constants.dart';
 import 'package:mosaic_doctors/shared/customDialogBox.dart';
 import 'package:mosaic_doctors/shared/font_styles.dart';
@@ -107,8 +108,6 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                   future: accountStatementEntries,
                   builder: (context, accountStatementEntrys) {
                     if (accountStatementEntrys.connectionState ==
-                        ConnectionState.none ||
-                        accountStatementEntrys.connectionState ==
                             ConnectionState.waiting) {
                       return Center(
                         child: Container(
@@ -119,13 +118,23 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                         ),
                       );
                     }
-                    if (accountStatementEntrys.data == null) {
-                      return Center(
-                          child: Text(
-                            "No Entrys",
-                          ));
-                    }
 
+
+
+                    if (accountStatementEntrys.data == null || accountStatementEntrys.connectionState ==
+                        ConnectionState.none ) {
+                      return Center(
+                          child: Container(
+                            height: screenHeight - 300,
+                            width: screenWidth -100,
+                            child: Center(
+                              child: Text(
+                                "Failed To Connect, Please check your connection to the internet",
+                              ),
+                            ),
+                          ));
+
+                     }
                     return Column(
 
                       //mainAxisSize: MainAxisSize.min,
@@ -217,6 +226,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                                               AccountStatementEntry ASE =
                                               accountStatementEntrys
                                                   .data[index];
+                                              print(DatabaseAPI.drHasTransactionsThisMonth);
                                               //if doctor has no transactions this month, and we're at the latest month, build rounded balance and exit.
                                               if(!DatabaseAPI.drHasTransactionsThisMonth && !_roundedBalanceBuilt &&(currentMonth.format("yy-MM") == Jiffy().format("yy-MM")) ) {
                                                 print("doctor has no trans this month");
@@ -469,7 +479,7 @@ if (currentMonth.format("yy-MM") == Jiffy().format("yy-MM")){
 
   }
   changeMonth(String optionSelected){
-   // return showMOSAICDialog("Currently unavailable");
+    return showMOSAICDialog("Currently unavailable");
     switch(optionSelected){
       case "Next Month" :goForwardAMonth();break;
       case "Previous Month" :goBackAMonth();break;

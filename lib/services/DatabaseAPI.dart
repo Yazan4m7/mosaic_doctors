@@ -152,8 +152,8 @@ class DatabaseAPI {
     accountStatementEntrys.sort((a, b) {
       return a.createdAt.compareTo(b.createdAt);
     });
-    if (accountStatementEntrys.where((element) => element.createdAt == currentYearMonth).isEmpty) {drHasTransactionsThisMonth = false;}
-    print("Doctor current month trans : ${accountStatementEntrys.where((element) => element.createdAt == currentYearMonth).isEmpty}");
+    if (accountStatementEntrys.where((element) => element.createdAt.substring(2, 7) == currentYearMonth).isEmpty) {drHasTransactionsThisMonth = false;}
+    print("Doctor current month trans : ${currentYearMonth}");
     return accountStatementEntrys;
   }
 
@@ -192,7 +192,9 @@ class DatabaseAPI {
     map['query'] = getDocInfoQuery;
     String responseText = "N/A";
     print("getting doc info");
-    final response = await http.post(ROOT, body: map);
+    try {
+      final response = await http.post(ROOT, body: map);
+
     print("finished posting");
     // If doctor was not found sign user out
     print(response.body);
@@ -206,6 +208,13 @@ class DatabaseAPI {
       getIt<SessionData>().doctor = doctor;
       await getDoctorDiscounts();
       return doctor;
+
+    }
+    }catch(e){
+      getIt<SessionData>().loginWelcomeMessage =
+      "Connection Failed, Please check your internet connection.";
+      print("doc is null");
+      AuthService.signOut();
     }
   }
 

@@ -88,7 +88,7 @@ class _CaseDetailsViewState extends State<CaseDetailsView> {
                                                 .doctorNameFontStyle(
                                                     context)
                                             .copyWith(
-                                                fontSize: 16,
+                                                fontSize: 14,
                                                 fontWeight:
                                                     FontWeight.w400),
                                       ),
@@ -118,8 +118,7 @@ class _CaseDetailsViewState extends State<CaseDetailsView> {
                                               .substring(0, 10),
                                       style: MyFontStyles
                                               .textValueheadingFontStyle(
-                                                  context)
-                                          .copyWith(fontSize: 19)))
+                                                  context)))
                                   ],
                                 ),
                           ]),

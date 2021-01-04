@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:mosaic_doctors/shared/customDialogBox.dart';
 
 
 import 'font_styles.dart';
@@ -88,4 +89,15 @@ color: Colors.white,
     );
   }
 
+  static showMOSAICDialog(String text,BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CustomDialogBox(
+            title: "Alert",
+            descriptions: text,
+            text: "Ok",
+          );
+        });
+  }
 }

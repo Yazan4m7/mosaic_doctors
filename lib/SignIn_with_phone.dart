@@ -9,6 +9,7 @@ import 'package:mosaic_doctors/services/auth_service.dart';
 import 'package:mosaic_doctors/shared/locator.dart';
 import 'package:mosaic_doctors/shared/styles.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:mosaic_doctors/shared/widgets.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -253,30 +254,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> verifyPhone(phoneNo) async {
     if (phoneNo == '') {
-      showDialog(
-          context: context,
-          child: new AlertDialog(
-            title: Center(child: new Text("Error")),
-            content: Container(
-                height: 90,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text("Invalid or empty phone number"),
-                    RaisedButton(
-                      child: Text(
-                        "Ok",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      color: Colors.blue,
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    )
-                  ],
-                )),
-          ));
+      SharedWidgets.showMOSAICDialog("Invalid or empty phone number", context);
       return;
     }
     final PhoneVerificationCompleted verified = (AuthCredential authResult) {
@@ -285,32 +263,8 @@ class _LoginPageState extends State<LoginPage> {
 
     final PhoneVerificationFailed verificationfailed =
         (AuthException authException) {
-      showDialog(
-          context: context,
-          child: new AlertDialog(
-            title: Center(child: new Text("Error ")),
-            content: Container(
-                height: 90,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                        "Invalid phone number, if error persists please try again later. ${authException.message}"),
-                    RaisedButton(
-                      child: Text(
-                        "Ok",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      color: Colors.blue,
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    )
-                  ],
-                )),
-          ));
-      print('${authException.message}');
+          SharedWidgets.showMOSAICDialog(authException.message, context);
+
     };
 
     final PhoneCodeSent smsSent = (String verId, [int forceResend]) {
