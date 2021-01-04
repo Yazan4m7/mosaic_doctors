@@ -96,7 +96,7 @@ class _homeViewState extends State<HomeView> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15.0),
                             ),
-                            elevation: 8,
+                            elevation: 3,
                             child: InkWell(
                               child: Container(
                                 decoration: BoxDecoration(
@@ -106,7 +106,7 @@ class _homeViewState extends State<HomeView> {
                                       end: Alignment.bottomLeft,
                                     ),
                                     borderRadius: BorderRadius.circular(15.0)),
-                                height: screenHeight / 6,
+                                height: screenHeight / 7.5,
                                 child: Padding(
                                   padding:
                                       const EdgeInsets.symmetric(horizontal: 25),
@@ -153,7 +153,7 @@ class _homeViewState extends State<HomeView> {
                                       end: Alignment.bottomLeft,
                                     ),
                                     borderRadius: BorderRadius.circular(15.0)),
-                                height: screenHeight / 6,
+                                height: screenHeight / 7.5,
                                 child: Padding(
                                   padding:
                                       const EdgeInsets.only(left: 25, right: 14),

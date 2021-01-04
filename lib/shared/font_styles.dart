@@ -47,7 +47,7 @@ class MyFontStyles {
       color: Colors.black,);
   }
   static TextStyle statementHeaderFontStyle(BuildContext context) {
-    return Theme.of(context).textTheme.headline1.copyWith(
+    return TextStyle(
       fontSize: Responsiveness.entryFontSize.sp,
       fontWeight: FontWeight.w600,
       color: Colors.black,

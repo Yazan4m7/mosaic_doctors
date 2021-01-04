@@ -7,6 +7,7 @@ import 'package:mosaic_doctors/models/AccountStatementEntry.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mosaic_doctors/models/sessionData.dart';
 import 'package:mosaic_doctors/services/DatabaseAPI.dart';
+import 'package:mosaic_doctors/shared/Constants.dart';
 import 'package:mosaic_doctors/shared/customDialogBox.dart';
 import 'package:mosaic_doctors/shared/font_styles.dart';
 import 'package:mosaic_doctors/shared/responsive_helper.dart';
@@ -127,11 +128,11 @@ class _AccountStatementViewState extends State<AccountStatementView> {
 
                     return Column(
 
-                      mainAxisSize: MainAxisSize.min,
+                      //mainAxisSize: MainAxisSize.min,
 
                       children: [
                         Container(
-                          width: rowWidth,
+                          width: rowWidth-16,
 
                           child: Column(
                             //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -152,42 +153,42 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                                               Container(
 
 
-                                                width: rowWidth / 4.7,
+                                                width: rowWidth / dateCellWidthFactor,
                                                 child: Text(" Date",
                                                     style: MyFontStyles
                                                         .statementHeaderFontStyle(
                                                         context)),
                                               ),
                                               Container(
-                                                padding: EdgeInsets.only(left :(rowWidth-16) / 5 / 10),
-                                                alignment: Alignment.center,
-                                                width: rowWidth / 4,
+
+
+                                                width: rowWidth / entryCellWidthFactor,
                                                 child: Text("Entry",
                                                     style: MyFontStyles
                                                         .statementHeaderFontStyle(
-                                                        context)),
+                                                        context),textAlign: TextAlign.center),
                                               ),
                                               Container(
-                                                padding: EdgeInsets.symmetric(horizontal: (rowWidth-16) / 4 / 6),
+                                                padding:EdgeInsets.only(left: 5),
                                                 //alignment: Alignment.center,
-                                                width: rowWidth / 5.4,
+                                                width: rowWidth / creditCellWidthFactor,
                                                 child: Text("Credit",
                                                     style: MyFontStyles
                                                         .statementHeaderFontStyle(
                                                         context),textAlign: TextAlign.left),
                                               ),
                                               Container(
-                                                padding: EdgeInsets.only(left :(rowWidth-16) / 5 / 6),
-                                                width: rowWidth / 5.4,
+
+                                                width: rowWidth / debitCellWidthFactor,
                                                 child: Text("Debit",
                                                     style: MyFontStyles
                                                         .statementHeaderFontStyle(
                                                         context),textAlign: TextAlign.left),
                                               ),
                                               Container(
-                                                padding: EdgeInsets.only(left :rowWidth / 5 / 30),
+
                                                // alignment: Alignment.center,
-                                                width: rowWidth / 6,
+                                                width: rowWidth / balanceCellWidthFactor,
                                                 child: Text("Balance",
                                                     style: MyFontStyles
                                                         .statementHeaderFontStyle(
@@ -397,32 +398,33 @@ class _AccountStatementViewState extends State<AccountStatementView> {
         child: Row(
           children: [
             Container(
-              width: rowWidth / 4.8,
+              width: rowWidth / dateCellWidthFactor,
               child: Text(""
               ),
             ),
             Container(
-              padding: EdgeInsets.only(left :rowWidth / 5 / 9),
-              width: rowWidth / 3.6,
+
+              width: rowWidth / entryCellWidthFactor,
               child: Text("رصيد مدور",
                 style: MyFontStyles.statementPatientNameFontStyle(context).copyWith(fontWeight: FontWeight.w700,),
               textAlign: TextAlign.right,)
             ),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: rowWidth / 5 / 5),
-              width: rowWidth / 5.6,
+
+              width: rowWidth / creditCellWidthFactor,
               child: Text(""
               ),
             ),
             Container(
-              padding: EdgeInsets.only(left :rowWidth / 5 / 5),
-              width: rowWidth / 5.6,
+
+              width: rowWidth / debitCellWidthFactor,
               child: Text( ""
               ),
             ),
             Container(
-              padding: EdgeInsets.only(left :rowWidth / 5 / 8),
-              width: rowWidth / 6,
+
+              padding: EdgeInsets.only(left: 15),
+              width: rowWidth / balanceCellWidthFactor,
               child: Text(addBracketsIfNegative(openingBalance.toString()),
                 style:
                 MyFontStyles.statementEntryFontStyle(context).copyWith(fontWeight: FontWeight.w600,),
@@ -467,7 +469,7 @@ if (currentMonth.format("yy-MM") == Jiffy().format("yy-MM")){
 
   }
   changeMonth(String optionSelected){
-    //return showMOSAICDialog("Currently unavailable");
+   // return showMOSAICDialog("Currently unavailable");
     switch(optionSelected){
       case "Next Month" :goForwardAMonth();break;
       case "Previous Month" :goBackAMonth();break;

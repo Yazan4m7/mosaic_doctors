@@ -8,7 +8,7 @@ import 'package:mosaic_doctors/models/sessionData.dart';
 import 'package:mosaic_doctors/services/auth_service.dart';
 import 'package:mosaic_doctors/shared/locator.dart';
 import 'package:mosaic_doctors/shared/styles.dart';
-import 'package:keyboard_visibility/keyboard_visibility.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -20,6 +20,7 @@ class _LoginPageState extends State<LoginPage> {
   int _start = 30;
   bool _sendCodeEnabled = true;
   bool _keyboardVisible = false;
+  var focusNode = FocusNode();
   void startTimer() {
     const oneSec = const Duration(seconds: 1);
 
@@ -49,21 +50,35 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
-    KeyboardVisibilityNotification().addNewListener(
-      onChange: (bool visible) {
-        setState(() {
-          _keyboardVisible = !_keyboardVisible;
-        });
-        if (visible)
-          _scrollController.animateTo(
-              _scrollController.position.maxScrollExtent + 150,
-              duration: Duration(milliseconds:600),
-              curve: Curves.easeInCirc);
-      },
-    );
+    var keyboardVisibilityController = KeyboardVisibilityController();
+    keyboardVisibilityController.onChange.listen((bool visible) {
+      print('Keyboard visibility update. Is visible: ${visible}');
+      setState(() {
+
+        _keyboardVisible =  visible;
+        print(_keyboardVisible);
+        if(visible)
+        _scrollToTop();
+        else
+          _scrollToBottom();
+      });
+
+    });
     super.initState();
   }
 
+   _scrollToTop(){
+     _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent + 550,
+        duration: Duration(milliseconds:600),
+        curve: Curves.ease);
+  }
+  _scrollToBottom(){
+    _scrollController.animateTo(
+        _scrollController.position.minScrollExtent - 550,
+        duration: Duration(milliseconds:600),
+        curve: Curves.ease);
+  }
   String phoneNo, verificationId, smsCode;
   TextEditingController phoneNoTxtController = TextEditingController();
   TextEditingController smsCodeTxtController = TextEditingController();
@@ -72,14 +87,15 @@ class _LoginPageState extends State<LoginPage> {
   GlobalKey formKey = GlobalKey();
   @override
   Widget build(BuildContext context) {
+
    // print(MediaQuery.of(context).viewInsets.bottom);
     double screenHeight = MediaQuery.of(context).size.height;
     //double screenWidth = MediaQuery.of(context).size.width;
     return MaterialApp(
       theme: GlobalTheme.globalTheme,
       home:Scaffold (
-        resizeToAvoidBottomPadding: false,
-//        resizeToAvoidBottomInset: false,
+      //resizeToAvoidBottomPadding: false,
+        resizeToAvoidBottomInset: false,
 
         body: Container(
           height: screenHeight,
@@ -126,7 +142,7 @@ class _LoginPageState extends State<LoginPage> {
                                   padding:  EdgeInsets.only(left: 50.0, right: 50.0),
                                   child: Text(
                                     getIt<SessionData>().loginWelcomeMessage,
-                                    style: TextStyle(color: Colors.red),
+                                    style: TextStyle(color: Colors.red,fontSize: 12),
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
@@ -140,7 +156,9 @@ class _LoginPageState extends State<LoginPage> {
                                             child: TextFormField(
                                               enabled: false,
                                               decoration:
-                                                  InputDecoration( prefixIcon: const Icon(
+                                                  InputDecoration(
+                                                    contentPadding: EdgeInsets.only(left:0,bottom: 0,top: 9,right: 0),
+                                                    prefixIcon: const Icon(
                                                     Icons.phone,
                                                     color: Colors.black87,
                                                   ),hintText: '+962',),
@@ -152,6 +170,7 @@ class _LoginPageState extends State<LoginPage> {
                                             keyboardType: TextInputType.phone,
                                             decoration: InputDecoration(
 
+                                              contentPadding: EdgeInsets.only(left:15,bottom: 0,top: 0,right: 0),
                                                 hintText: 'Phone number'),
                                             controller: phoneNoTxtController,
                                           ),
@@ -163,6 +182,7 @@ class _LoginPageState extends State<LoginPage> {
                                         padding: EdgeInsets.only(
                                             left: 50.0, right: 50.0),
                                         child: TextFormField(
+                                          focusNode: focusNode,
                                           keyboardType: TextInputType.phone,
                                           decoration:
                                               InputDecoration(hintText: 'OTP code'),
@@ -297,6 +317,8 @@ class _LoginPageState extends State<LoginPage> {
       this.verificationId = verId;
       setState(() {
         this.codeSent = true;
+        _scrollToTop();
+        focusNode.requestFocus();
       });
     };
 
