@@ -96,7 +96,7 @@ class _homeViewState extends State<HomeView> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15.0),
                             ),
-                            elevation: 3,
+                            elevation: 4,
                             child: InkWell(
                               child: Container(
                                 decoration: BoxDecoration(
@@ -142,7 +142,7 @@ class _homeViewState extends State<HomeView> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15.0),
                             ),
-                            elevation: 3,
+                            elevation: 4,
                             child: InkWell(
 
                               child: Container(

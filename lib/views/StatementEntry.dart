@@ -102,6 +102,10 @@ class _EntryItemState extends State<EntryItem> {
       onTap: () {
         if (root.debit != "N/A") // its a case
         {
+          if(int.parse(root.debit).isNegative){
+            showMOSAICDialog(
+                "Case Details unavailable");
+          return;}
           if (root.caseId == "N/A") {
             showMOSAICDialog("Case information currently unavailable.");
             return;

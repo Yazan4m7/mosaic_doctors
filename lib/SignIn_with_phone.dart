@@ -22,6 +22,7 @@ class _LoginPageState extends State<LoginPage> {
   bool _sendCodeEnabled = true;
   bool _keyboardVisible = false;
   var focusNode = FocusNode();
+  var keyboardVisibilityController = KeyboardVisibilityController();
   void startTimer() {
     const oneSec = const Duration(seconds: 1);
 
@@ -44,6 +45,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void dispose() {
+
     if(_timer !=null)
     _timer.cancel();
     super.dispose();
@@ -51,7 +53,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
-    var keyboardVisibilityController = KeyboardVisibilityController();
+
     keyboardVisibilityController.onChange.listen((bool visible) {
       print('Keyboard visibility update. Is visible: ${visible}');
       setState(() {

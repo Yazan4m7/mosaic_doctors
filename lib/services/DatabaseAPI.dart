@@ -24,8 +24,7 @@ class DatabaseAPI {
   static List<Job> caseJobsList = List<Job>();
   static List<String> docCasesIds = List<String>();
   static List<Job> allCaseJobsList = List<Job>();
-  static List<PreviousMonthBalance> previousMonthsBalances =
-      List<PreviousMonthBalance>();
+  static List<PreviousMonthBalance> previousMonthsBalances =  List<PreviousMonthBalance>();
   static Map<int, JobType> jobTypes = Map<int, JobType>();
   static Map<int, Material> materials = Map<int, Material>();
   static StatementTotals totals = StatementTotals();
@@ -94,6 +93,7 @@ class DatabaseAPI {
   }
 
   static Future getDoctorAccountStatement( String doctorId, bool forceReload) async {
+    drHasTransactionsThisMonth=true;
     // if already filled return it
     if (entries.isNotEmpty || forceReload) {
       print("Statement already has data.");
@@ -129,6 +129,7 @@ class DatabaseAPI {
       //   if (entryMonth == currentYearMonth) {
       // if payment fix the balance
       if(accountStatementEntry.credit !="N/A") accountStatementEntry.balance = (int.parse(accountStatementEntry.balance)- int.parse(accountStatementEntry.credit)).toString();
+      if(accountStatementEntry.createdAt.substring(2, 7) == currentYearMonth)
       if (accountStatementEntry.debit!="N/A") {
         totals.totalDebit =
             totals.totalDebit + double.parse(accountStatementEntry.debit);
@@ -192,7 +193,7 @@ class DatabaseAPI {
     map['query'] = getDocInfoQuery;
     String responseText = "N/A";
     print("getting doc info");
-    try {
+
       final response = await http.post(ROOT, body: map);
 
     print("finished posting");
@@ -208,14 +209,10 @@ class DatabaseAPI {
       getIt<SessionData>().doctor = doctor;
       await getDoctorDiscounts();
       return doctor;
+    }
 
-    }
-    }catch(e){
-      getIt<SessionData>().loginWelcomeMessage =
-      "Connection Failed, Please check your internet connection.";
-      print("doc is null");
-      AuthService.signOut();
-    }
+
+
   }
 
   static Future getDoctorDiscounts() async {
