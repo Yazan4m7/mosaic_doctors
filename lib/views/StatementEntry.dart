@@ -49,7 +49,8 @@ class _EntryItemState extends State<EntryItem> {
                             "-" +
                             root.createdAt.substring(2, 4)
                         : root.createdAt,
-                style: MyFontStyles.statementEntryFontStyle(context),
+                style: MyFontStyles.statementEntryFontStyle(context)
+                  ,textScaleFactor:1.0
               ),
             ),
             Container(
@@ -64,6 +65,7 @@ class _EntryItemState extends State<EntryItem> {
                     Responsiveness.patientNameFontSize.sp + 2)
                     : MyFontStyles.statementPatientNameFontStyle(context),
                 textAlign: TextAlign.right,
+                  textScaleFactor:1.0
               ),
             ),
             Container(
@@ -75,7 +77,8 @@ class _EntryItemState extends State<EntryItem> {
                     : addBracketsIfNegative(root.credit),
                 style: MyFontStyles.statementEntryFontStyle(context)
                     .copyWith(color: Colors.green),
-                textAlign: TextAlign.left,
+                textAlign: TextAlign.left
+                  ,textScaleFactor:1.0
               ),
             ),
             Container(
@@ -84,7 +87,8 @@ class _EntryItemState extends State<EntryItem> {
               child: Text(
                 root.debit == "N/A" ? "" : addBracketsIfNegative(root.debit),
                 style: MyFontStyles.statementEntryFontStyle(context),
-                textAlign: TextAlign.left,
+                textAlign: TextAlign.left
+                  ,textScaleFactor:1.0
               ),
             ),
             Container(
@@ -93,7 +97,8 @@ class _EntryItemState extends State<EntryItem> {
               child: Text(
                 addBracketsIfNegative(root.balance),
                 style: MyFontStyles.statementEntryFontStyle(context),
-                textAlign: TextAlign.left,
+                textAlign: TextAlign.left
+                  ,textScaleFactor:1.0
               ),
             )
           ],

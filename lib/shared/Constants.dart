@@ -13,8 +13,7 @@ class Constants{
   static final String g2pDepositAPI = "https://cms.gatetopay.com/G2P.OPENAPI/api/Broker/Deposit";
   static final String g2pInquireTransAPI = "https://cms.gatetopay.com/G2P.OPENAPI/api/Inquire/InquireTransaction";
   static final String g2pAppID = "fb1b2515-aa7a-4963-a4ce-48dd32e28705";
-  static final String encryptionKey = "-----BEGIN RSA PUBLIC KEY-----"
-      +"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5GBry4XDrucIKnt/nKSL"
+  static final String encryptionKey ="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5GBry4XDrucIKnt/nKSL"
   +"pByknQK+eEsWxVyktZgCtzGSGCQrALjLpDoY9PC1QYlp2Y/yc+2KFD9m5ecWIAIW"
   +"HMvjGImHk8Ec3J+Dj7a28w+r+hUlJrtyi2MgnqOIc5OYUtYdYSEcKk0hHflSZHat"
   +"QgoyNIqZQz38GO2t+x7XNa+cUNmtJIw/AhQQx3OLuM5LYSCgDVubmKNevltA+4eY"

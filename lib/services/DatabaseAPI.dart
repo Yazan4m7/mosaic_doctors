@@ -36,15 +36,11 @@ class DatabaseAPI {
   static Future get30sepBalance(String doctorId) async{
 
     var map = Map<String, dynamic>();
-    String getOpeningBalanceQuery =
-        "SELECT * FROM account_statements where doctor_id = $doctorId AND patient_name= 'رصيد افتتاحي'";
-
+    String getOpeningBalanceQuery = "SELECT * FROM account_statements where doctor_id = $doctorId AND patient_name= 'رصيد افتتاحي'";
     map['action'] = "GET";
     map['query'] = getOpeningBalanceQuery;
     final response = await http.post(ROOT, body: map);
-    print("Opening balance: $response");
     var parsed = await json.decode(response.body);
-    print("Opening balance: $parsed");
     AccountStatementEntry openingBalance = new AccountStatementEntry();
     openingBalance.debit = parsed[0]['debit'];
     openingBalance.credit = parsed[0]['credit'];
@@ -52,49 +48,34 @@ class DatabaseAPI {
     openingBalance.doctorId=parsed[0]['doctor_id'];
     openingBalance.createdAt=parsed[0]['created_at'];
     accountStatementEntrys.add(openingBalance);
-  print("addded opening balance $openingBalance");
   }
 
   static Future getMonthlyStatement(String doctorId, String month) async {
     if (accountStatementEntrys.isEmpty){
-      print("ASE empty, loading it.");
       await getDoctorAccountStatement(doctorId, false);
     }
-
-    print("Requested month : $month");
-   // print(accountStatementEntrys.first.createdAt.substring(2, 7));
     List<dynamic> singleMonthAccountStatementEntrys= accountStatementEntrys
-        .where((element) => element.createdAt.substring(2, 7) == month)
-        .toList();
+        .where((element) => element.createdAt.substring(2, 7) == month).toList();
     double balance=0;
     singleMonthTotals = new StatementTotals();
     for (int j = 0; j < singleMonthAccountStatementEntrys.length; j++) {
-
       if (singleMonthAccountStatementEntrys[j] is AccountStatementEntry) {
-
         singleMonthTotals.totalDebit =
             singleMonthTotals.totalDebit + double.parse(singleMonthAccountStatementEntrys[j].amount);
         singleMonthTotals.totalCases = singleMonthTotals.totalCases + 1;
-
         balance = balance + int.parse(singleMonthAccountStatementEntrys[j].amount);
-
-
       } else {
-
         singleMonthAccountStatementEntrys[j].balance = balance.toString();
         singleMonthTotals.totalCredit =
             singleMonthTotals.totalCredit + double.parse(singleMonthAccountStatementEntrys[j].amount);
         balance = balance - int.parse(singleMonthAccountStatementEntrys[j].amount);
-
       }
     }
     return singleMonthAccountStatementEntrys;
-
   }
 
   static Future getDoctorAccountStatement( String doctorId, bool forceReload) async {
     drHasTransactionsThisMonth=true;
-    // if already filled return it
     if (entries.isNotEmpty || forceReload) {
       print("Statement already has data.");
       return entries;
@@ -316,7 +297,6 @@ class DatabaseAPI {
 
     Case caseItem = Case.fromJson(parsed[0]);
 
-    print("case : ${caseItem.toString()}");
     return caseItem;
   }
 

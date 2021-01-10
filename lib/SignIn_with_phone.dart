@@ -55,7 +55,6 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
 
     keyboardVisibilityController.onChange.listen((bool visible) {
-      print('Keyboard visibility update. Is visible: ${visible}');
       setState(() {
 
         _keyboardVisible =  visible;
@@ -70,15 +69,17 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
   }
 
-   _scrollToTop(){
+   _scrollToTop() async{
+
+     await Future.delayed(Duration(milliseconds: 300));
      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent + 550,
+        _scrollController.position.maxScrollExtent,
         duration: Duration(milliseconds:600),
         curve: Curves.ease);
   }
   _scrollToBottom(){
     _scrollController.animateTo(
-        _scrollController.position.minScrollExtent - 550,
+        _scrollController.position.minScrollExtent ,
         duration: Duration(milliseconds:600),
         curve: Curves.ease);
   }
@@ -97,10 +98,11 @@ class _LoginPageState extends State<LoginPage> {
     return MaterialApp(
       theme: GlobalTheme.globalTheme,
       home:Scaffold (
-      //resizeToAvoidBottomPadding: false,
-        resizeToAvoidBottomInset: false,
+       resizeToAvoidBottomPadding: false,
+        //resizeToAvoidBottomInset: false,
 
         body: Container(
+
           height: screenHeight,
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -109,18 +111,8 @@ class _LoginPageState extends State<LoginPage> {
                 colors: [Color(0xffc3c3c3), Colors.white30]),
           ),
           child: Stack(
+
             children: [
-              Positioned(
-                bottom: _keyboardVisible? -325 : -100- (MediaQuery.of(context).viewInsets.bottom*-1),
-                right: -110,
-                child: Container(
-                  alignment: Alignment(2.5, 5),
-                  child: Image.asset(
-                    'assets/images/logo_transaperant.png',
-                    height: 600,
-                  ),
-                ),
-              ),
               SingleChildScrollView(
                 controller: _scrollController,
                 child: Column(
@@ -128,7 +120,6 @@ class _LoginPageState extends State<LoginPage> {
                     Form(
                         key: formKey,
                         child: Column(
-
                           children: <Widget>[
                             Column(
                               //mainAxisAlignment: MainAxisAlignment.center,
@@ -245,6 +236,17 @@ class _LoginPageState extends State<LoginPage> {
 //                        ? SizedBox(height: MediaQuery.of(context).viewInsets.bottom)
 //                        : SizedBox()
                   ],
+                ),
+              ),
+              Positioned(
+                bottom: _keyboardVisible? -325 : -100- (MediaQuery.of(context).viewInsets.bottom*-1),
+                right: -110,
+                child: Container(
+                  alignment: Alignment(2.5, 5),
+                  child: Image.asset(
+                    'assets/images/logo_transaperant.png',
+                    height: 600,
+                  ),
                 ),
               ),
             ],

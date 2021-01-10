@@ -357,7 +357,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                     Text("Debit: "),
                     Row(
                       children: [
-                        Text(addBracketsIfNegative(formatter.format(DatabaseAPI.totals.totalDebit)),
+                        Text( addBracketsIfNegative(formatter.format(DatabaseAPI.totals.totalDebit)),
                             style:
                                 MyFontStyles.statementHeaderFontStyle(context),
                             textAlign: TextAlign.left),
@@ -377,8 +377,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                     Row(
                       children: [
                         Text(
-                            addBracketsIfNegative(formatter.format(double.parse(
-                                getIt<SessionData>().doctor.balance))),
+                            addBracketsIfNegative(formatter.format(double.parse(getIt<SessionData>().doctor.balance))),
                             style:
                                 MyFontStyles.statementHeaderFontStyle(context)
                                     .copyWith(
@@ -426,6 +425,8 @@ class _AccountStatementViewState extends State<AccountStatementView> {
 
 
   }
+
+
   Widget _buildRoundedBalanceEntry(AccountStatementEntry ASE,
       [bool isCurrentMonthEntry = true]) {
     double rowWidth = MediaQuery
@@ -467,7 +468,8 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                       .copyWith(
                     fontWeight: FontWeight.w700,
                   ),
-                  textAlign: TextAlign.right,
+                  textAlign: TextAlign.right
+                    ,textScaleFactor:1.0
                 )),
             Container(
               width: rowWidth / creditCellWidthFactor,
@@ -485,8 +487,8 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                 style: MyFontStyles.statementEntryFontStyle(context).copyWith(
                   fontWeight: FontWeight.w600,
                 ),
-                textAlign: TextAlign.left,
-              ),
+                textAlign: TextAlign.left
+                  ,textScaleFactor:1.0),
             )
           ],
         ),
@@ -499,14 +501,16 @@ class _AccountStatementViewState extends State<AccountStatementView> {
 
   goBackAMonth() {
     Jiffy threeMonthsAgo = Jiffy()..subtract(months: 3);
+//    if (currentMonth.format("yy") == "21" &&currentMonth.format("MM") == "01" ) {
+//      showMOSAICDialog(
+//          "Sorry, Account statements of previous year is only available through MOSAIC. Please contact us.");
+//      return;
+//    }
     if (currentMonth.format("yy-MM") == twoMonthsAgo.format("yy-MM")) {
       showMOSAICDialog(
           "Sorry, If you wish to view the statement of ${threeMonthsAgo.format("MMMM, yyyy")} Please contact us.");
       return;
     }
-    print(Jiffy(DatabaseAPI.firstEntryDate, "yyyy-MM-dd").format("yy-MM") +
-        "===" +
-        currentMonth.format("yy-MM"));
     if (Jiffy(DatabaseAPI.firstEntryDate, "yyyy-MM-dd").format("yy-MM") ==
         currentMonth.format("yy-MM")) {
       showMOSAICDialog("Sorry, You have no transactions in that month");
@@ -528,7 +532,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
   }
 
   popupMenuAction(String optionSelected) {
-     return showMOSAICDialog("Currently unavailable");
+    return showMOSAICDialog("Currently unavailable");
     switch (optionSelected) {
       case "Next Month":
         goForwardAMonth();
@@ -599,9 +603,17 @@ class _AccountStatementViewState extends State<AccountStatementView> {
   }
 
   addBracketsIfNegative(String number) {
-    double num = double.parse(number);
-    if (num.isNegative) return ("(${num.abs()})");
-    return number;
+    double num;
+    try {
+      if (number[0] == "-") {
+        number.replaceAll("-", "");
+        return ("($number)");
+      }
+      else
+        return number;
+    }catch(e){
+      return number;
+    }
   }
 
   saveAsPDF() async {
