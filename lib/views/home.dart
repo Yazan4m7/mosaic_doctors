@@ -7,6 +7,7 @@ import 'package:mosaic_doctors/services/DatabaseAPI.dart';
 import 'package:mosaic_doctors/services/auth_service.dart';
 import 'package:mosaic_doctors/services/security.dart';
 import 'package:mosaic_doctors/shared/font_styles.dart';
+import 'package:mosaic_doctors/shared/globalVariables.dart';
 import 'package:mosaic_doctors/shared/locator.dart';
 import 'package:mosaic_doctors/shared/responsive_helper.dart';
 import 'package:mosaic_doctors/shared/styles.dart';
@@ -29,7 +30,7 @@ class _homeViewState extends State<HomeView> {
   getDoctorData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    Doctor doctor =  await DatabaseAPI.getDoctorInfo(prefs.getString("phoneNo"));
+    Doctor doctor =  await DatabaseAPI.getDoctorInfo(Global.prefs.getString("phoneNo"));
     if (doctor == null) {
       getIt<SessionData>().loginWelcomeMessage =
           "Number not assiocated with a doctor account, please contact MOSAIC";
@@ -61,7 +62,7 @@ class _homeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    checkSession();
+   // checkSession();
     //double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height ;
     GlobalKey _scaffoldKey = GlobalKey<ScaffoldState>();

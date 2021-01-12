@@ -56,7 +56,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
  print("checking session in AS Entry");
     if ( await Security.checkSession() == SessionStatus.inValid){
       print("Session is invalid");
-      AuthService.signOut();
+      await AuthService.signOut();
       Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
           LoginPage()), (Route<dynamic> route) => false);
 
@@ -90,7 +90,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
 
   @override
   Widget build(BuildContext context) {
-    checkSession(context);
+    //checkSession(context);
     _setMonthsNavigationFlags();
     pdfTable.clear();
     _roundedBalanceBuilt = false;

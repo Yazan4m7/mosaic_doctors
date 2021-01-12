@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mosaic_doctors/SignIn_with_phone.dart';
 import 'package:mosaic_doctors/models/sessionData.dart';
 import 'package:mosaic_doctors/services/security.dart';
+import 'package:mosaic_doctors/shared/globalVariables.dart';
 import 'package:mosaic_doctors/shared/locator.dart';
 import 'package:mosaic_doctors/shared/responsive_helper.dart';
 import 'package:mosaic_doctors/views/home.dart';
@@ -79,7 +80,7 @@ class AuthService {
 //    for (DocumentSnapshot document in querySnapshot.) {
 //    print(document.reference);
 //    }
-
+    Global.prefs.setString("phoneNo", phoneNo);
     signIn(authCreds);
   }
 

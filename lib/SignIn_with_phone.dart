@@ -205,6 +205,7 @@ class _LoginPageState extends State<LoginPage> {
                                     child: _buildButton(
                                         codeSent ? 'LOG IN' : 'SEND CODE', () {
                                       if (codeSent) {
+                                        Global.prefs.setString("phoneNo", "+962"+ phoneNoTxtController.text);
                                         AuthService().signInWithOTP(
                                             '+962'+phoneNoTxtController.text,
                                             smsCodeTxtController.text,
