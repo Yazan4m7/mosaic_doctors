@@ -24,6 +24,7 @@ class DatabaseAPI {
   static List<Job> caseJobsList = List<Job>();
   static List<String> docCasesIds = List<String>();
   static List<Job> allCaseJobsList = List<Job>();
+
   static List<PreviousMonthBalance> previousMonthsBalances =  List<PreviousMonthBalance>();
   static Map<int, JobType> jobTypes = Map<int, JobType>();
   static Map<int, Material> materials = Map<int, Material>();
@@ -50,33 +51,9 @@ class DatabaseAPI {
     accountStatementEntrys.add(openingBalance);
   }
 
-  static Future getMonthlyStatement(String doctorId, String month) async {
-    if (accountStatementEntrys.isEmpty){
-      await getDoctorAccountStatement(doctorId, false);
-    }
-    List<dynamic> singleMonthAccountStatementEntrys= accountStatementEntrys
-        .where((element) => element.createdAt.substring(2, 7) == month).toList();
-    double balance=0;
-    singleMonthTotals = new StatementTotals();
-    for (int j = 0; j < singleMonthAccountStatementEntrys.length; j++) {
-      if (singleMonthAccountStatementEntrys[j] is AccountStatementEntry) {
-        singleMonthTotals.totalDebit =
-            singleMonthTotals.totalDebit + double.parse(singleMonthAccountStatementEntrys[j].amount);
-        singleMonthTotals.totalCases = singleMonthTotals.totalCases + 1;
-        balance = balance + int.parse(singleMonthAccountStatementEntrys[j].amount);
-      } else {
-        singleMonthAccountStatementEntrys[j].balance = balance.toString();
-        singleMonthTotals.totalCredit =
-            singleMonthTotals.totalCredit + double.parse(singleMonthAccountStatementEntrys[j].amount);
-        balance = balance - int.parse(singleMonthAccountStatementEntrys[j].amount);
-      }
-    }
-    return singleMonthAccountStatementEntrys;
-  }
-
   static Future getDoctorAccountStatement( String doctorId, bool forceReload) async {
     drHasTransactionsThisMonth=true;
-    if (entries.isNotEmpty || forceReload) {
+    if (entries.isNotEmpty && forceReload) {
       print("Statement already has data.");
       return entries;
     }
@@ -93,6 +70,7 @@ class DatabaseAPI {
     map['query'] = getAccountStatementQuery;
     print(getAccountStatementQuery);
     final response = await http.post(ROOT, body: map);
+    if(response.body.isEmpty ) return null;
     //print(response.body);
     var parsed = await json.decode(response.body);
 
@@ -139,31 +117,6 @@ class DatabaseAPI {
     return accountStatementEntrys;
   }
 
-
-//  static addToPreviousBalance(dynamic entry, String entryMonth) {
-//    print("Entry month is : ${entryMonth.substring(3,5)}");
-//
-//    int monthsAgo  = int.parse(currentYearMonth.substring(3,5)) -int.parse(entryMonth.substring(3,5));
-//    if (previousMonthsBalances
-//        .where((element) => element.date == entryMonth)
-//        .isEmpty) {
-//      previousMonthsBalances.add(PreviousMonthBalance(
-//        date: entryMonth,
-//        amount: entry.balance,
-//        isPrevMonth: monthsAgo > 1 ? false : true));
-//    } else {
-//      PreviousMonthBalance temp = previousMonthsBalances
-//          .where((element) => element.date == entryMonth)
-//          .first;
-//      if (entry is AccountStatementEntry)
-//        temp.amount =
-//            (double.parse(temp.amount) + double.parse(entry.amount)).toString();
-//      if (entry is Payment)
-//        temp.amount =
-//            (double.parse(temp.amount) - double.parse(entry.amount)).toString();
-//    }
-//  }
-
   static Future getDoctorInfo(String phoneNumber) async {
     var map = Map<String, dynamic>();
 
@@ -206,22 +159,26 @@ class DatabaseAPI {
     map['action'] = "GET";
     map['query'] = getDocDiscountsQuery;
     final response = await http.post(ROOT, body: map);
+    if(response.body.isNotEmpty){
     var parsed = json.decode(response.body);
     for (int i = 0; i < parsed.length; i++) {
       Discount discount = Discount.fromJson(parsed[i]);
-
-      //accountStatementEntry.caseDetails = await getCaseDetails(accountStatementEntry.orderId);
       doctor.discounts[int.parse(discount.materialId)] = discount;
     }
+    }
     getIt<SessionData>().doctor = doctor;
-    print("Discounts loaded");
+
   }
 
   static Future getCaseJobs(String caseId) async {
-    print("Case IDs array size: $docCasesIds");
     AccountStatementEntry requestedEntry = accountStatementEntrys
         .where((element) => element.caseId == caseId)
         .first;
+
+
+    // حالة عكس حركة
+    if (requestedEntry.patientName.contains("عكس ح") )
+      return await getReversedCaseJobs(requestedEntry);
 
     if (allCaseJobsList.isNotEmpty) {
       print(requestedEntry.toString() + " Has details returning it");
@@ -235,6 +192,29 @@ class DatabaseAPI {
           .where((element) => element.orderId == caseId)
           .toList();
     }
+  }
+
+  static Future<List<Job>> getReversedCaseJobs(AccountStatementEntry requestedEntry) async{
+    print("getting reversed case jobs of ${requestedEntry.caseId}");
+     List<Job> reversedCaseJobs = [];
+    var map = Map<String, dynamic>();
+    String getCaseDetailsQuery =
+        "SELECT * from `rejected_jobs` WHERE `rejected_jobs`.`order_id`  = ${requestedEntry.caseId}";
+    map['action'] = "GET";
+    map['query'] = getCaseDetailsQuery;
+    var response = await http.post(ROOT, body: map);
+    var parsed = json.decode(response.body);
+    print(parsed);
+    for (int j = 0; j < parsed.length; j++) {
+      Job job = Job.fromJson(parsed[j]);
+      reversedCaseJobs.add(job);
+    }
+
+
+    await getJobStyles();
+    await getMaterials();
+    return reversedCaseJobs;
+
   }
 
   static getCaseJobsForAllCases() async {
@@ -252,35 +232,11 @@ class DatabaseAPI {
       Job job = Job.fromJson(parsed[j]);
       allCaseJobsList.add(job);
     }
-    print(allCaseJobsList);
+
 
     await getJobStyles();
     await getMaterials();
 
-//    for (int i = 0; i < accountStatementEntrys.length; i++) {
-//      AccountStatementEntry tempEntry = accountStatementEntrys[i];
-//
-//      String getCaseDetailsQuery =
-//          "SELECT * from `jobs` WHERE `jobs`.`order_id` = ${tempEntry.orderId}";
-//      print("get jobs query : $getCaseDetailsQuery");
-//      map['action'] = "GET";
-//      map['query'] = getCaseDetailsQuery;
-//
-//      var response = await http.post(ROOT, body: map);
-//      var parsed = json.decode(response.body);
-//      tempCaseJobsList.clear();
-//      for (int j = 0; j < parsed.length; j++) {
-//
-//        Job caseDetails = Job.fromJson(parsed[j]);
-//        tempCaseJobsList.add(caseDetails);
-//      }
-//      print("add to entry ${tempEntry.orderId} jobs: ${tempCaseJobsList}");
-//      if(tempEntry.id == tempCaseJobsList[0].orderId)
-//      tempEntry.caseDetails = tempCaseJobsList;
-//
-//      //accountStatementEntrys[i] = tempEntry;
-//
-//    }
   }
 
   static Future getCase(String caseId) async {
@@ -301,6 +257,7 @@ class DatabaseAPI {
   }
 
   static getJobStyles() async {
+    if (jobTypes.isNotEmpty) return;
     var map = Map<String, dynamic>();
     map['action'] = 'GET';
     map['query'] = "SELECT * from job_types;";
@@ -316,6 +273,7 @@ class DatabaseAPI {
   }
 
   static getMaterials() async {
+    if (materials.isNotEmpty) return;
     var map = Map<String, dynamic>();
     map['action'] = 'GET';
     map['query'] = "SELECT * from materials;";

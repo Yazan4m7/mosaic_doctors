@@ -75,7 +75,7 @@ class MyFontStyles {
   }
   static TextStyle doctorNameFontStyle(BuildContext context) {
     return Theme.of(context).textTheme.headline1.copyWith(
-        fontFamily: "droid", fontSize:Responsiveness.docNameFontSize.sp, fontWeight: FontWeight.bold, color: Colors.black87);
+        fontFamily: "droid", fontSize:Responsiveness.docNameFontSize.sp, fontWeight: FontWeight.bold, color: Color(0xff333333));
   }
 
 

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mosaic_doctors/services/auth_service.dart';
+import 'package:mosaic_doctors/shared/globalVariables.dart';
 import 'package:mosaic_doctors/shared/locator.dart';
 
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-
-
+  Global.initializeSharedPreferences();
+ //AuthService.signOut();
   setupLocator();
     runApp(MaterialApp(
       home: Scaffold(

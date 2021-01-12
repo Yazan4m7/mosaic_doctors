@@ -6,10 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mosaic_doctors/models/sessionData.dart';
 import 'package:mosaic_doctors/services/auth_service.dart';
+import 'package:mosaic_doctors/shared/globalVariables.dart';
 import 'package:mosaic_doctors/shared/locator.dart';
 import 'package:mosaic_doctors/shared/styles.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:mosaic_doctors/shared/widgets.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -21,6 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   int _start = 30;
   bool _sendCodeEnabled = true;
   bool _keyboardVisible = false;
+
   var focusNode = FocusNode();
   var keyboardVisibilityController = KeyboardVisibilityController();
   void startTimer() {
@@ -29,12 +32,13 @@ class _LoginPageState extends State<LoginPage> {
     _timer = new Timer.periodic(
       oneSec,
       (Timer timer) {
-        if (_start == 0) {
+        if (_start == 0 && mounted) {
           setState(() {
             _sendCodeEnabled = false;
             timer.cancel();
           });
         } else {
+          if(mounted)
           setState(() {
             _start--;
           });
@@ -55,6 +59,7 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
 
     keyboardVisibilityController.onChange.listen((bool visible) {
+      if(mounted)
       setState(() {
 
         _keyboardVisible =  visible;
@@ -113,6 +118,17 @@ class _LoginPageState extends State<LoginPage> {
           child: Stack(
 
             children: [
+              Positioned(
+                bottom: -100,
+                right: -110,
+                child: Container(
+                  alignment: Alignment(2.5, 5),
+                  child: Image.asset(
+                    'assets/images/logo_transaperant.png',
+                    height: 600,
+                  ),
+                ),
+              ),
               SingleChildScrollView(
                 controller: _scrollController,
                 child: Column(
@@ -125,11 +141,11 @@ class _LoginPageState extends State<LoginPage> {
                               //mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 SizedBox(
-                                  height: screenHeight / 12,
+                                  height: screenHeight / 8,
                                 ),
                                 Image.asset(
                                   'assets/images/logo_black_vertical.png',
-                                  width: 300,
+                                  width: 200,
                                 ),
                                 Divider(),
                                 Padding(
@@ -195,6 +211,9 @@ class _LoginPageState extends State<LoginPage> {
                                             verificationId);
                                       } else {
                                         startTimer();
+                                        print("Setting phone number ${"+962"+ phoneNoTxtController.text}");
+
+                                        Global.prefs.setString("phoneNo", "+962"+ phoneNoTxtController.text);
                                         verifyPhone('+962'+phoneNoTxtController.text);
                                       }
                                     })),
@@ -216,6 +235,8 @@ class _LoginPageState extends State<LoginPage> {
                                                         child:
                                                             Text('RE-SEND CODE')),
                                                     onPressed: () {
+                                                      print("Setting phone number ${"+962"+ phoneNoTxtController.text}");
+                                                      Global.prefs.setString("phoneNo", "+962"+ phoneNoTxtController.text);
                                                       verifyPhone(
                                                          "+962"+ phoneNoTxtController
                                                               .text);
@@ -238,17 +259,7 @@ class _LoginPageState extends State<LoginPage> {
                   ],
                 ),
               ),
-              Positioned(
-                bottom: _keyboardVisible? -325 : -100- (MediaQuery.of(context).viewInsets.bottom*-1),
-                right: -110,
-                child: Container(
-                  alignment: Alignment(2.5, 5),
-                  child: Image.asset(
-                    'assets/images/logo_transaperant.png',
-                    height: 600,
-                  ),
-                ),
-              ),
+
             ],
           ),
         ),

@@ -56,33 +56,29 @@ class Exporting {
                       children: <Widget>[
                         Text(
                             'Account Statment for ${month.format('MMMM-yyyy')}',
-                            textScaleFactor: 1.3),
+                        ),
                         Directionality(textDirection: TextDirection.rtl, child:  Text(
                             '${getIt<SessionData>().doctor.name} د. ',  style: TextStyle(font: ttf),
-                            textScaleFactor: 1.3))
+                           ))
                        ,
                       ])),
               Padding(padding: const EdgeInsets.all(10)),
               Table(
 
                   columnWidths: {
-                    0: FlexColumnWidth(1),
-                    1: FlexColumnWidth(3),
-                    2: FlexColumnWidth(3),
-                    3: FlexColumnWidth(2),
-                    4: FlexColumnWidth(2),
-                    5: FlexColumnWidth(2),
+                    0: FlexColumnWidth(2.5),
+                    1: FlexColumnWidth(4),
+                    2: FlexColumnWidth(1.5),
+                    3: FlexColumnWidth(1.5),
+                    4: FlexColumnWidth(1.5),
+
                   },
 
                   defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                   border: TableBorder.all(width: 1.0),
                   children: [
                     TableRow(children: [
-                      Container(
-                          padding: EdgeInsets.all(5),
-                          child: Text("ID",
-                              style:
-                                  TextStyle(fontWeight: FontWeight.values[1]))),
+
                       Container(
                           padding: EdgeInsets.all(5),
                           child: Text("Date created",
@@ -106,9 +102,7 @@ class Exporting {
                     ]),
                     ...entries
                         .map((item) => new TableRow(children: [
-                              Container(
-                                  padding: EdgeInsets.all(5),
-                                  child: Text("")),
+
                               Container(
                                   padding: EdgeInsets.all(5),
                                   child: Text(item.patientName == "رصيد مدور" ? "":item.createdAt.substring(0, 10))),
@@ -120,7 +114,8 @@ class Exporting {
                                         item.patientName == "رصيد افتتاحي"
                                             ? "رصيد مدور"
                                             : item.patientName,
-                                        style: TextStyle(font: ttf))),
+                                        style: TextStyle(font: ttf),textAlign: TextAlign.right),
+                                ),
                               ),
                               Container(
                                   padding: EdgeInsets.all(5),

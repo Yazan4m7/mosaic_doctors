@@ -4,7 +4,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     as notifs;
 import 'package:mosaic_doctors/shared/date_helper.dart';
-import 'package:mosaic_doctors/views/monthlyAccountStatement.dart';
+
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -72,10 +72,10 @@ class Notifications {
     String prevYear = prev.substring(2, 4);
     String prevMonth = prev.substring(5, 7);
     String prevFullDate = prevYear + "-" + prevMonth;
-    Navigator.of(BContext).push(MaterialPageRoute(
-        builder: (context) => MonthlyAccountStatementView(
-              month: prevFullDate,
-            )));
+//    Navigator.of(BContext).push(MaterialPageRoute(
+//        builder: (context) => MonthlyAccountStatementView(
+//              month: prevFullDate,
+//            )));
     debugPrint('notification payload: ' + payload);
   }
 

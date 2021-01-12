@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mosaic_doctors/SignIn_with_phone.dart';
 import 'package:mosaic_doctors/models/sessionData.dart';
+import 'package:mosaic_doctors/services/security.dart';
 import 'package:mosaic_doctors/shared/locator.dart';
 import 'package:mosaic_doctors/shared/responsive_helper.dart';
 import 'package:mosaic_doctors/views/home.dart';
@@ -27,11 +28,11 @@ class AuthService {
             print("handleAuth() snapshot has data");
             Responsiveness.setResponsiveProperties(context);
             FirebaseUser user = snapshot.data;
-            getIt<SessionData>().phoneNumber = user.phoneNumber;
+
 
             Notifications.initialize(context);
             //Notifications.scheduleNotification();
-
+            print("Redirecting to home page");
             return HomeView();
 
           } else {
@@ -52,8 +53,11 @@ class AuthService {
 
     try {
       await FirebaseAuth.instance.signInWithCredential(authCreds);
+
+      Security.registerSession();
       handleAuth();
     }catch(e){
+      print(e.message);
       getIt<SessionData>().loginWelcomeMessage =
       " Error: ${e.message}";
       AuthService.signOut();

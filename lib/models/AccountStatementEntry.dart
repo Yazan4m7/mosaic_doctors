@@ -1,5 +1,3 @@
-
-
 class AccountStatementEntry {
   String id;
   String patientName;
@@ -16,13 +14,8 @@ class AccountStatementEntry {
     return 'AccountStatementEntry{id: $id, patientName: $patientName, credit: $credit, debit: $debit, balance: $balance, createdAt: $createdAt, doctorId: $doctorId, caseId: $caseId, paymentId: $paymentId}';
   }
 
-
-
   AccountStatementEntry({this.id, this.patientName, this.doctorId,
       this.balance, this.createdAt, this.credit,this.debit,this.caseId,this.paymentId});
-
-
-
 
   factory AccountStatementEntry.fromJson(Map<String, dynamic> json) {
     return AccountStatementEntry(

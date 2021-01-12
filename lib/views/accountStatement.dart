@@ -7,6 +7,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mosaic_doctors/models/sessionData.dart';
 import 'package:mosaic_doctors/models/statementTotals.dart';
 import 'package:mosaic_doctors/services/DatabaseAPI.dart';
+import 'package:mosaic_doctors/services/auth_service.dart';
+import 'package:mosaic_doctors/services/security.dart';
 import 'package:mosaic_doctors/shared/Constants.dart';
 import 'package:mosaic_doctors/shared/customDialogBox.dart';
 import 'package:mosaic_doctors/shared/font_styles.dart';
@@ -16,6 +18,8 @@ import 'package:mosaic_doctors/shared/widgets.dart';
 import 'package:mosaic_doctors/shared/locator.dart';
 import 'package:mosaic_doctors/views/StatementEntry.dart';
 import 'package:intl/intl.dart';
+
+import '../SignIn_with_phone.dart';
 
 
 class AccountStatementView extends StatefulWidget {
@@ -35,15 +39,35 @@ class _AccountStatementViewState extends State<AccountStatementView> {
   static Jiffy previousMonth = Jiffy()..subtract(months: 1);
   static Jiffy currentMonth = Jiffy();
   StatementTotals totals = new StatementTotals();
-  List<PopupMenuEntry<String>> options = List<PopupMenuEntry<String>>();
+  List<PopupMenuEntry<String>> options = [];
 
   getAccountStatement() {
     accountStatementEntries = DatabaseAPI.getDoctorAccountStatement(
         getIt<SessionData>().doctor.id, false);
   }
+  refreshStatement() {
+    accountStatementEntries = DatabaseAPI.getDoctorAccountStatement(
+        getIt<SessionData>().doctor.id, true);
+    setState(() {
 
+    });
+  }
+  checkSession(BuildContext context) async{
+ print("checking session in AS Entry");
+    if ( await Security.checkSession() == SessionStatus.inValid){
+      print("Session is invalid");
+      AuthService.signOut();
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+          LoginPage()), (Route<dynamic> route) => false);
+
+    }
+    else
+      print("Session is valid.");
+
+  }
   @override
   void initState() {
+
     getAccountStatement();
     roundedBalance = 0;
 
@@ -66,6 +90,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
 
   @override
   Widget build(BuildContext context) {
+    checkSession(context);
     _setMonthsNavigationFlags();
     pdfTable.clear();
     _roundedBalanceBuilt = false;
@@ -73,7 +98,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
     screenHeight = MediaQuery.of(context).size.height - 22;
     rowWidth = MediaQuery.of(context).size.width; // 16 padding
     screenWidth = MediaQuery.of(context).size.width; // 16 padding
-
+  print("Screen height : $screenHeight");
     return Scaffold(
 //      floatingActionButton:  Padding(
 //        padding: const EdgeInsets.only(bottom: 50.0),
@@ -118,6 +143,13 @@ class _AccountStatementViewState extends State<AccountStatementView> {
 //                            child: Text("Save as PDF ",
 //                                style: TextStyle(color: Colors.black87)),
 //                            value: "SaveAsPDF"));
+                        options.add(PopupMenuItem(
+                          child: Text(
+                            "Refresh",
+                            style: TextStyle(color: Colors.black87),
+                          ),
+                          value: "Refresh",
+                        ));
                         return options;
                       },
                     )),
@@ -136,7 +168,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                         );
                       }
 
-                      if (accountStatementEntrys.data == null ||
+                      if (
                           accountStatementEntrys.connectionState ==
                               ConnectionState.none) {
                         return Center(
@@ -151,13 +183,24 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                         ));
                       }
 
-
+                      if (accountStatementEntrys.data == null) {
+                        return Center(
+                            child: Container(
+                              height: screenHeight - 300,
+                              width: screenWidth - 100,
+                              child: Center(
+                                child: Text(
+                                  "No Cases Found.",
+                                ),
+                              ),
+                            ));
+                      }
                       return Column(
                         //mainAxisSize: MainAxisSize.min,
 
                         children: [
                           Container(
-                            width: rowWidth - 16,
+                            width: rowWidth ,
                             child: Column(
                               //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
@@ -166,6 +209,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                                   child: Column(
                                     children: [
                                       Container(
+
                                         height: screenHeight / 20,
                                         child: Container(
                                           child: SingleChildScrollView(
@@ -233,57 +277,62 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                                       SingleChildScrollView(
                                         scrollDirection: Axis.horizontal,
                                         child: Container(
-                                          height: screenHeight / 1.48,
+
+                                          height: screenHeight /1.48  ,
                                           width: rowWidth,
-                                          child: ListView.builder(
-                                              scrollDirection: Axis.vertical,
-                                              itemCount: accountStatementEntrys
-                                                  .data.length,
-                                              itemBuilder: (context, index) {
-                                                AccountStatementEntry ASE =
-                                                    accountStatementEntrys
-                                                        .data[index];
+                                          child: Padding(
+                                            padding:  EdgeInsets.only(bottom: screenHeight/25),
+                                            child: ListView.builder(
 
-
-                                                //if doctor has no transactions this month, and we're at the latest month, build rounded balance and exit.
-                                                if (!DatabaseAPI
-                                                        .drHasTransactionsThisMonth &&
-                                                    !_roundedBalanceBuilt &&
-                                                    (currentMonth
-                                                            .format("yy-MM") ==
-                                                        Jiffy()
-                                                            .format("yy-MM"))) {
-                                                  index = accountStatementEntrys
-                                                          .data.length -
-                                                      1;
-                                                  pdfTable.add(ASE);
-                                                  return _buildRoundedBalanceEntry(
+                                                scrollDirection: Axis.vertical,
+                                                itemCount: accountStatementEntrys
+                                                    .data.length,
+                                                itemBuilder: (context, index) {
+                                                  AccountStatementEntry ASE =
                                                       accountStatementEntrys
-                                                              .data[
-                                                          accountStatementEntrys
-                                                                  .data.length -
-                                                              1],
-                                                      false);
-                                                }
+                                                          .data[index];
 
 
-                                                if (ASE.createdAt.substring(2, 7) !=
-                                                    currentMonth
-                                                        .format("yy-MM"))
-                                                  return SizedBox();
-                                                if (!_roundedBalanceBuilt){
-                                                  _addToTotals(ASE);
-                                                  return Column(
-                                                    children: [
-                                                      _buildRoundedBalanceEntry(
-                                                          ASE),
-                                                      EntryItem(ASE)
-                                                    ],
-                                                  );}
-                                                else{
-                                                  pdfTable.add(ASE);
-                                                  return EntryItem(ASE);}
-                                              }),
+                                                  //if doctor has no transactions this month, and we're at the latest month, build rounded balance and exit.
+                                                  if (!DatabaseAPI
+                                                          .drHasTransactionsThisMonth &&
+                                                      !_roundedBalanceBuilt &&
+                                                      (currentMonth
+                                                              .format("yy-MM") ==
+                                                          Jiffy()
+                                                              .format("yy-MM"))) {
+                                                    index = accountStatementEntrys
+                                                            .data.length -
+                                                        1;
+                                                    pdfTable.add(ASE);
+                                                    return _buildRoundedBalanceEntry(
+                                                        accountStatementEntrys
+                                                                .data[
+                                                            accountStatementEntrys
+                                                                    .data.length -
+                                                                1],
+                                                        false);
+                                                  }
+
+
+                                                  if (ASE.createdAt.substring(2, 7) !=
+                                                      currentMonth
+                                                          .format("yy-MM"))
+                                                    return SizedBox();
+                                                  if (!_roundedBalanceBuilt){
+                                                    _addToTotals(ASE);
+                                                    return Column(
+                                                      children: [
+                                                        _buildRoundedBalanceEntry(
+                                                            ASE),
+                                                        EntryItem(ASE)
+                                                      ],
+                                                    );}
+                                                  else{
+                                                    pdfTable.add(ASE);
+                                                    return EntryItem(ASE);}
+                                                }),
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -304,8 +353,11 @@ class _AccountStatementViewState extends State<AccountStatementView> {
               child: FutureBuilder(
                   future: accountStatementEntries,
                   builder: (context, accountStatementEntrys) {
-                    return _buildBottomCounters(screenHeight, screenWidth);
-                  }),
+                    if (accountStatementEntrys.data != null)
+                      return _buildBottomCounters(screenHeight, screenWidth);
+                    else
+                      return SizedBox();
+                  } ),
             )
           ],
         ),
@@ -357,7 +409,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                     Text("Debit: "),
                     Row(
                       children: [
-                        Text( addBracketsIfNegative(formatter.format(DatabaseAPI.totals.totalDebit)),
+                        Text( formatter.format(DatabaseAPI.totals.totalDebit),
                             style:
                                 MyFontStyles.statementHeaderFontStyle(context),
                             textAlign: TextAlign.left),
@@ -376,8 +428,8 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                     Text("Balance: "),
                     Row(
                       children: [
-                        Text(
-                            addBracketsIfNegative(formatter.format(double.parse(getIt<SessionData>().doctor.balance))),
+                        Text( getIt<SessionData>().doctor.balance == "N/A" ? "0" :
+                            formatter.format(double.parse(getIt<SessionData>().doctor.balance)),
                             style:
                                 MyFontStyles.statementHeaderFontStyle(context)
                                     .copyWith(
@@ -469,7 +521,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                     fontWeight: FontWeight.w700,
                   ),
                   textAlign: TextAlign.right
-                    ,textScaleFactor:1.0
+
                 )),
             Container(
               width: rowWidth / creditCellWidthFactor,
@@ -483,12 +535,12 @@ class _AccountStatementViewState extends State<AccountStatementView> {
               padding: EdgeInsets.only(left: 15),
               width: rowWidth / balanceCellWidthFactor,
               child: Text(
-                addBracketsIfNegative(openingBalance.toString()),
+               openingBalance.toString(),
                 style: MyFontStyles.statementEntryFontStyle(context).copyWith(
                   fontWeight: FontWeight.w600,
                 ),
                 textAlign: TextAlign.left
-                  ,textScaleFactor:1.0),
+              ),
             )
           ],
         ),
@@ -511,8 +563,13 @@ class _AccountStatementViewState extends State<AccountStatementView> {
           "Sorry, If you wish to view the statement of ${threeMonthsAgo.format("MMMM, yyyy")} Please contact us.");
       return;
     }
+    try{
     if (Jiffy(DatabaseAPI.firstEntryDate, "yyyy-MM-dd").format("yy-MM") ==
         currentMonth.format("yy-MM")) {
+      showMOSAICDialog("Sorry, You have no transactions in that month");
+      return;
+    }}
+    catch(e){
       showMOSAICDialog("Sorry, You have no transactions in that month");
       return;
     }
@@ -532,16 +589,21 @@ class _AccountStatementViewState extends State<AccountStatementView> {
   }
 
   popupMenuAction(String optionSelected) {
-    return showMOSAICDialog("Currently unavailable");
+
     switch (optionSelected) {
       case "Next Month":
         goForwardAMonth();
+        //return showMOSAICDialog("Currently unavailable");
         break;
       case "Previous Month":
-        goBackAMonth();
+       goBackAMonth();
+        // return showMOSAICDialog("Currently unavailable");
         break;
       case "SaveAsPDF":
         saveAsPDF();
+        break;
+      case "Refresh":
+        refreshStatement();
         break;
     }
   }
@@ -602,19 +664,6 @@ class _AccountStatementViewState extends State<AccountStatementView> {
       });
   }
 
-  addBracketsIfNegative(String number) {
-    double num;
-    try {
-      if (number[0] == "-") {
-        number.replaceAll("-", "");
-        return ("($number)");
-      }
-      else
-        return number;
-    }catch(e){
-      return number;
-    }
-  }
 
   saveAsPDF() async {
     Exporting.reportView(context, pdfTable, currentMonth);

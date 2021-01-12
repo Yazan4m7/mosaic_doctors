@@ -52,7 +52,7 @@ class _CaseDetailsViewState extends State<CaseDetailsView> {
                     context, _scaffoldKey, "Case Info")),
             SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.symmetric(vertical :20.0,horizontal: 10),
                 child: Align(
                   alignment: Alignment.topRight,
                   child: Container(
@@ -135,29 +135,29 @@ class _CaseDetailsViewState extends State<CaseDetailsView> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           Container(
-                            alignment: Alignment.center,
+
                             width: screenWidth / 4,
                             child: Text('Total Units',
                                 style: MyFontStyles.valueFontStyle(context)
                                     .copyWith(fontWeight: FontWeight.w700)),
                           ),
                           Container(
-                            alignment: Alignment.center,
-                            width: screenWidth / 4,
+
+                            width: screenWidth / 5,
                             child: Text('Type',
                                 style: MyFontStyles.valueFontStyle(context)
                                     .copyWith(fontWeight: FontWeight.w700)),
                           ),
                           Container(
-                            alignment: Alignment.center,
-                            width: screenWidth / 4,
+
+                            width: screenWidth / 3,
                             child: Text('Material',
                                 style: MyFontStyles.valueFontStyle(context)
                                     .copyWith(fontWeight: FontWeight.w700)),
                           ),
                           Container(
-                            alignment: Alignment.center,
-                            width: screenWidth / 5,
+
+                            width: screenWidth / 6,
                             child: Text('Price',
                                 style: MyFontStyles.valueFontStyle(context)
                                     .copyWith(fontWeight: FontWeight.w700)),
@@ -289,7 +289,7 @@ class _CaseDetailsViewState extends State<CaseDetailsView> {
                                           ),
                                           Container(
                                             alignment: Alignment.center,
-                                            width: screenWidth / 4,
+                                            width: screenWidth / 3,
                                             child: Text(
                                                 DatabaseAPI
                                                     .materials[int.parse(

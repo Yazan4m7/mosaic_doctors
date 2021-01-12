@@ -50,7 +50,7 @@ class _EntryItemState extends State<EntryItem> {
                             root.createdAt.substring(2, 4)
                         : root.createdAt,
                 style: MyFontStyles.statementEntryFontStyle(context)
-                  ,textScaleFactor:1.0
+
               ),
             ),
             Container(
@@ -65,7 +65,7 @@ class _EntryItemState extends State<EntryItem> {
                     Responsiveness.patientNameFontSize.sp + 2)
                     : MyFontStyles.statementPatientNameFontStyle(context),
                 textAlign: TextAlign.right,
-                  textScaleFactor:1.0
+
               ),
             ),
             Container(
@@ -74,31 +74,31 @@ class _EntryItemState extends State<EntryItem> {
               child: Text(
                 root.credit == "N/A"
                     ? ""
-                    : addBracketsIfNegative(root.credit),
+                    : root.credit,
                 style: MyFontStyles.statementEntryFontStyle(context)
                     .copyWith(color: Colors.green),
                 textAlign: TextAlign.left
-                  ,textScaleFactor:1.0
+
               ),
             ),
             Container(
               padding: EdgeInsets.only(left: 10),
               width: rowWidth / debitCellWidthFactor,
               child: Text(
-                root.debit == "N/A" ? "" : addBracketsIfNegative(root.debit),
+                root.debit == "N/A" ? "" : root.debit,
                 style: MyFontStyles.statementEntryFontStyle(context),
                 textAlign: TextAlign.left
-                  ,textScaleFactor:1.0
+
               ),
             ),
             Container(
               padding: EdgeInsets.only(left: 15),
               width: rowWidth / balanceCellWidthFactor,
               child: Text(
-                addBracketsIfNegative(root.balance),
+                root.balance,
                 style: MyFontStyles.statementEntryFontStyle(context),
                 textAlign: TextAlign.left
-                  ,textScaleFactor:1.0
+
               ),
             )
           ],
@@ -107,9 +107,9 @@ class _EntryItemState extends State<EntryItem> {
       onTap: () {
         if (root.debit != "N/A") // its a case
         {
-          if(int.parse(root.debit).isNegative){
-            showMOSAICDialog(
-                "Case Details unavailable");
+          print("root date : ${Jiffy(root.createdAt).format("yyyy-MM-dd")} ");
+          if(root.patientName.contains("عكس ح") && Jiffy(root.createdAt).isBefore(Jiffy([2021, 01, 09]))){
+            showMOSAICDialog("Case details unavailable.");
           return;}
           if (root.caseId == "N/A") {
             showMOSAICDialog("Case information currently unavailable.");
@@ -147,9 +147,5 @@ class _EntryItemState extends State<EntryItem> {
     return _buildTiles(widget.entry);
   }
 
-  addBracketsIfNegative(String number) {
-    int num = int.parse(number);
-    if (num.isNegative) return ("(${num.abs()})");
-    return number;
-  }
+
 }
