@@ -14,6 +14,7 @@ import 'package:mosaic_doctors/models/statementTotals.dart';
 import 'package:mosaic_doctors/services/auth_service.dart';
 import 'package:mosaic_doctors/shared/Constants.dart';
 import 'package:http/http.dart' as http;
+import 'package:mosaic_doctors/shared/globalVariables.dart';
 import 'package:mosaic_doctors/shared/locator.dart';
 
 class DatabaseAPI {
@@ -120,6 +121,9 @@ class DatabaseAPI {
   static Future getDoctorInfo(String phoneNumber) async {
     var map = Map<String, dynamic>();
 
+    if(phoneNumber == null){
+      getIt<SessionData>().loginWelcomeMessage = "Something went wrong, please log in again. err code : 0";
+      AuthService.signOut();}
     String getDocInfoQuery =
         "SELECT * from `doctors` WHERE `doctors`.`phone` LIKE '%${phoneNumber.substring(phoneNumber.length - 9)}%'";
 

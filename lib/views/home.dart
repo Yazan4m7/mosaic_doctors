@@ -28,7 +28,8 @@ class _homeViewState extends State<HomeView> {
   bool isLoading = true;
   List<PopupMenuEntry<String>> options = [];
   getDoctorData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+
 
     Doctor doctor =  await DatabaseAPI.getDoctorInfo(Global.prefs.getString("phoneNo"));
     if (doctor == null) {

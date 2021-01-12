@@ -8,9 +8,11 @@ import 'package:mosaic_doctors/shared/locator.dart';
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Global.initializeSharedPreferences();
- //AuthService.signOut();
   setupLocator();
+  await Global.initializeSharedPreferences();
+
+ //AuthService.signOut();
+
     runApp(MaterialApp(
       home: Scaffold(
           body: EntryPoint()),
