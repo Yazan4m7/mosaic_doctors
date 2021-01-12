@@ -592,12 +592,12 @@ class _AccountStatementViewState extends State<AccountStatementView> {
 
     switch (optionSelected) {
       case "Next Month":
-        goForwardAMonth();
-        //return showMOSAICDialog("Currently unavailable");
+        //goForwardAMonth();
+        return showMOSAICDialog("Currently unavailable");
         break;
       case "Previous Month":
-       goBackAMonth();
-        // return showMOSAICDialog("Currently unavailable");
+       //goBackAMonth();
+         return showMOSAICDialog("Currently unavailable");
         break;
       case "SaveAsPDF":
         saveAsPDF();
