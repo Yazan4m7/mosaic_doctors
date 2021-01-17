@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:mosaic_doctors/models/AccountStatementEntry.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -18,6 +19,7 @@ import 'package:mosaic_doctors/shared/widgets.dart';
 import 'package:mosaic_doctors/shared/locator.dart';
 import 'package:mosaic_doctors/views/StatementEntry.dart';
 import 'package:intl/intl.dart';
+import 'package:mosaic_doctors/views/paymentView.dart';
 
 import '../SignIn_with_phone.dart';
 
@@ -461,8 +463,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
               splashColor: Colors.blueAccent,
               child: Text("MAKE A PAYMENT", style: TextStyle(fontSize: 20.sp)),
               onPressed: () {
-                showMOSAICDialog(
-                    "Payments will be available soon, Thank you for your interest.");
+              //  Get.to(PaymentView());
               },
             ))
       ],

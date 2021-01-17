@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:mosaic_doctors/services/auth_service.dart';
 import 'package:mosaic_doctors/shared/globalVariables.dart';
 import 'package:mosaic_doctors/shared/locator.dart';
@@ -13,9 +14,11 @@ main() async {
 
  //AuthService.signOut();
 
-    runApp(MaterialApp(
-      home: Scaffold(
-          body: EntryPoint()),
+    runApp(GetMaterialApp(
+      home: MaterialApp(
+        home: Scaffold(
+            body: EntryPoint()),
+      ),
     ));
 }
 class EntryPoint extends StatelessWidget {

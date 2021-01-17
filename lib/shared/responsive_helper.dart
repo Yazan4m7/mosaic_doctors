@@ -23,16 +23,14 @@ class Responsiveness {
     }else if (screenWidth >= 412 && screenWidth < 600){
       docNameFontSize= 30.0;
       logoWidth= 190.0;
-      entryFontSize=16.0;
-      patientNameFontSize=14;
+      entryFontSize=15.0;
+      patientNameFontSize=13;
     }else if (screenWidth >= 600){
-      docNameFontSize= 40.0;
-      logoWidth= 200.0;
-      entryFontSize=24.0;
-      patientNameFontSize=24.0;
+      docNameFontSize= 32.0;
+      logoWidth= 230.0;
+      entryFontSize=16.0;
+      patientNameFontSize=14.0;
     }
-
-
   }
 
 

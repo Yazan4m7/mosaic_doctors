@@ -6,8 +6,8 @@ double balanceCellWidthFactor = 4.9;
 class Constants{
   //static const ROOT = 'http://10.0.2.2/flutter_api.php';
   static const USER_AUTH = 'http://manshore.com/mosaic_system_api.php';
-  //static const ROOT = 'http://10.0.2.2/mosaic_db_api.php';
-  static const ROOT = 'http://lab.manshore.com/mosaic_db_api.php';
+  static const ROOT = 'http://10.0.2.2/mosaic_db_api.php';
+  //static const ROOT = 'http://lab.manshore.com/mosaic_db_api.php';
 
   static final  String g2pGetCardsListAPI = "https://cms.gatetopay.com/G2P.OPENAPI/api/Broker/GetCardList";
   static final String g2pDepositAPI = "https://cms.gatetopay.com/G2P.OPENAPI/api/Broker/Deposit";

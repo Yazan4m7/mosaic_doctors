@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:jiffy/jiffy.dart';
 import 'package:mosaic_doctors/models/AccountStatementEntry.dart';
 import 'package:mosaic_doctors/models/case.dart';
+import 'package:mosaic_doctors/models/creditCard.dart';
 import 'package:mosaic_doctors/models/discount.dart';
 import 'package:mosaic_doctors/models/job.dart';
 import 'package:mosaic_doctors/models/doctor.dart';
@@ -291,5 +292,20 @@ class DatabaseAPI {
       materials[i] = (material);
       print('material added');
     }
+  }
+
+  static getCreditCardInfo() async {
+
+    var map = Map<String, dynamic>();
+    map['action'] = 'GET';
+    map['query'] = "SELECT * from credit_cards where doctor_id = ${getIt<SessionData>().doctor.id};";
+
+    final getCardResponse = await http.post(ROOT, body: map);
+
+    var parsed = json.decode(getCardResponse.body);
+    print("Card : $parsed");
+    CreditCard card = CreditCard.fromJson(parsed[0]);
+    return card;
+
   }
 }

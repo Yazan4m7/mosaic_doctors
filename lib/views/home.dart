@@ -162,8 +162,8 @@ class _homeViewState extends State<HomeView> {
                                     children: [
                                       Center(
                                           child: Text(
-                                        'Account Statement',
-                                        style: TextStyle(fontSize: 21.sp),
+                                        'View Account Statement',
+                                        style: TextStyle(fontSize: 18.sp),
                                       )),
 //                                      Image.asset(
 //                                        'assets/images/account-statement.png',
