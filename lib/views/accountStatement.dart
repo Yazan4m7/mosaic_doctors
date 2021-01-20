@@ -227,7 +227,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                       child: Column(
                         children: [
                           Container(
-                            height: screenHeight / 20,
+                            height: screenHeight / 12,
                             child: Container(
                               child: SingleChildScrollView(
                                 child: Row(
