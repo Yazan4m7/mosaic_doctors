@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:mosaic_doctors/models/AccountStatementEntry.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -18,6 +19,7 @@ import 'package:mosaic_doctors/shared/widgets.dart';
 import 'package:mosaic_doctors/shared/locator.dart';
 import 'package:mosaic_doctors/views/StatementEntry.dart';
 import 'package:intl/intl.dart';
+import 'package:mosaic_doctors/views/paymentView.dart';
 import '../SignIn_with_phone.dart';
 
 class AccountStatementView extends StatefulWidget {
@@ -219,6 +221,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
             children: [
               Container(
                 width: rowWidth,
+
                 child: Column(
                   //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -227,7 +230,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                       child: Column(
                         children: [
                           Container(
-                            height: screenHeight / 12,
+                            height: screenHeight / 21,
                             child: Container(
                               child: SingleChildScrollView(
                                 child: Row(
@@ -285,7 +288,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                           SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: Container(
-                              height: screenHeight / 1.48,
+                              height: screenHeight / 1.42,
                               width: rowWidth,
                               child: Padding(
                                 padding:
@@ -470,8 +473,8 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                   child:
                   Text("MAKE A PAYMENT", style: TextStyle(fontSize: 43.sp)),
                   onPressed: () {
-                    SharedWidgets.showMOSAICDialog("Payments will be available soon.",context);
-                    //  Get.to(PaymentView());
+                    //SharedWidgets.showMOSAICDialog("Payments will be available soon.",context);
+                      Get.to(PaymentView());
                   },
                 ))
           ],

@@ -306,9 +306,9 @@ class DatabaseAPI {
     var map = Map<String, dynamic>();
     map['action'] = 'GET';
     map['query'] = "SELECT * from credit_cards where doctor_id = ${getIt<SessionData>().doctor.id};";
-
+    print("get card  query : ${map['query'] }");
     final getCardResponse = await http.post(ROOT, body: map);
-
+    print("get card info before parsing : ${getCardResponse.body}");
     var parsed = json.decode(getCardResponse.body);
     print("Card : $parsed");
     CreditCard card = CreditCard.fromJson(parsed[0]);

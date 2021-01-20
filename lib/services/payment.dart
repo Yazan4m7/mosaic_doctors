@@ -40,10 +40,7 @@ class Payment {
 //          HttpHeaders.authorizationHeader: 'Token $token',
 //          HttpHeaders.contentTypeHeader: 'application/json',
         });
-
         print(response.body);
-
-
 //        String s = "Hi fellow";
 //        Encrypted encryptedKeyHeader = await encrypt(s);
 //        print(encryptedKeyHeader);

@@ -28,11 +28,11 @@ class Responsiveness {
     logoWidth = 480.0;
 
     if(!Global.prefs.containsKey('entryFontSize'))
-      entryFontSize = 37.0;
+      entryFontSize = 39.0;
     else
       entryFontSize = Global.prefs.getDouble('entryFontSize');
     if(!Global.prefs.containsKey('patientNameFontSize'))
-      patientNameFontSize = 35.0;
+      patientNameFontSize = 34.0;
     else
       patientNameFontSize = Global.prefs.getDouble('patientNameFontSize');
 
