@@ -473,8 +473,8 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                   child:
                   Text("MAKE A PAYMENT", style: TextStyle(fontSize: 43.sp)),
                   onPressed: () {
-                    //SharedWidgets.showMOSAICDialog("Payments will be available soon.",context);
-                      Get.to(PaymentView());
+                    SharedWidgets.showMOSAICDialog("Payments will be available soon.",context);
+                      //Get.to(PaymentView());
                   },
                 ))
           ],
