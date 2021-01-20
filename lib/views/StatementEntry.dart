@@ -23,7 +23,7 @@ class EntryItem extends StatefulWidget {
 class _EntryItemState extends State<EntryItem> {
   static bool isEven = false;
   Widget _buildTiles(AccountStatementEntry root) {
-    double rowWidth = MediaQuery.of(context).size.width - 16;
+    double rowWidth = MediaQuery.of(context).size.width ;
     isEven = !isEven;
 
     return InkWell(
@@ -54,6 +54,7 @@ class _EntryItemState extends State<EntryItem> {
               ),
             ),
             Container(
+              padding: EdgeInsets.only(right: patientNameRightPadding),
 
               width: rowWidth / entryCellWidthFactor,
               child: Text(
@@ -69,7 +70,7 @@ class _EntryItemState extends State<EntryItem> {
               ),
             ),
             Container(
-              padding: EdgeInsets.only(left: 16),
+              padding: EdgeInsets.only(left: cellsLeftPadding),
               width: rowWidth / creditCellWidthFactor,
               child: Text(
                 root.credit == "N/A"
@@ -82,7 +83,7 @@ class _EntryItemState extends State<EntryItem> {
               ),
             ),
             Container(
-              padding: EdgeInsets.only(left: 10),
+              padding: EdgeInsets.only(left: cellsLeftPadding),
               width: rowWidth / debitCellWidthFactor,
               child: Text(
                 root.debit == "N/A" ? "" : root.debit,
@@ -92,7 +93,7 @@ class _EntryItemState extends State<EntryItem> {
               ),
             ),
             Container(
-              padding: EdgeInsets.only(left: 15),
+              padding: EdgeInsets.only(left: cellsLeftPadding),
               width: rowWidth / balanceCellWidthFactor,
               child: Text(
                 root.balance,

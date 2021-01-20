@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:mosaic_doctors/shared/customDialogBox.dart';
 
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'font_styles.dart';
 
@@ -29,12 +30,13 @@ color: Colors.white,
             child: Material(
               color: Colors.white,
               child: InkWell(
+
                 borderRadius: const BorderRadius.all(
-                  Radius.circular(0.0),
+                  Radius.circular(50.0),
                 ),
                 onTap: onBackButtonTap ?? (){Navigator.pop(context);},
                 child: Padding(
-                  padding: const EdgeInsets.only(left:5.0),
+                  padding: const EdgeInsets.only(left:5.0,top:10,bottom: 10,right: 10),
                   child: onBackButtonTap ==null ?  Icon(Icons.arrow_back) : Icon(Icons.clear_rounded),
                 ),
               ),
@@ -100,4 +102,6 @@ color: Colors.white,
           );
         });
   }
+
+
 }

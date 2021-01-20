@@ -77,10 +77,7 @@ class DatabaseAPI {
     var parsed = await json.decode(response.body);
 
     accountStatementEntrys.clear();
-    //await get30sepBalance(doctorId);
-    // totals -> total debit,credit and balance
-    // balance increases with invoice and decreases with payment.
-    totals = StatementTotals();
+
 
 
     for (int i = 0; i < parsed.length; i++) {
@@ -91,14 +88,7 @@ class DatabaseAPI {
       // if payment fix the balance
       if(accountStatementEntry.credit !="N/A") accountStatementEntry.balance = (int.parse(accountStatementEntry.balance)- int.parse(accountStatementEntry.credit)).toString();
       if(accountStatementEntry.createdAt.substring(2, 7) == currentYearMonth)
-      if (accountStatementEntry.debit!="N/A") {
-        totals.totalDebit =
-            totals.totalDebit + double.parse(accountStatementEntry.debit);
 
-      } else {
-        totals.totalCredit =
-            totals.totalCredit + double.parse(accountStatementEntry.credit);
-      }
       if(accountStatementEntry.caseId !="N/A")
       docCasesIds.add(accountStatementEntry.caseId);
       accountStatementEntrys.add(accountStatementEntry);
@@ -197,6 +187,23 @@ class DatabaseAPI {
           .where((element) => element.orderId == caseId)
           .toList();
     }
+  }
+
+  static Future getAccountStatementTotals(Jiffy currentMonth) async{
+    if (accountStatementEntrys.isEmpty) await getDoctorAccountStatement(getIt<SessionData>().doctor.id, false);
+    totals = StatementTotals();
+
+    accountStatementEntrys.forEach((entry) {
+    if ( currentMonth.format("yy-MM") ==
+      entry.createdAt.substring(2, 7))
+      if (entry.credit != "N/A" ){
+        print("Adding to totals : $entry  total credit ${totals.totalCredit} total debit :${totals.totalDebit} ");
+        totals.totalCredit += double.parse(entry.credit);}
+      else if (entry.debit != "N/A") {
+        print("Adding to totals : $entry  total credit ${totals.totalCredit} total debit :${totals.totalDebit} ");
+        totals.totalDebit += double.parse(entry.debit);}
+    });
+    return totals;
   }
 
   static Future<List<Job>> getReversedCaseJobs(AccountStatementEntry requestedEntry) async{

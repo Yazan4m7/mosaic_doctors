@@ -29,11 +29,9 @@ class EntryPoint extends StatelessWidget {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
 
     return ScreenUtilInit(
-      designSize: Size(screenWidth, screenHeight),
+      designSize: Size(1080 , 1920 ),
       allowFontScaling: false,
       child:  AuthService().handleAuth()
     );

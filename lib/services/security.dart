@@ -89,9 +89,9 @@ class Security {
         "(NULL, '$identifier', '${getIt<SessionData>().doctor.id}','$platform' , '$deviceVersion', '$deviceName', '$ip', '1', current_timestamp())";
     map['action'] = "POST";
     map['query'] = registerDeviceQuery;
-
+      print("registering $registerDeviceQuery ");
     await http.post(Constants.ROOT, body: map);
-
+    print("registered");
     if(!completer.isCompleted)
     {completer.complete();
     isRegistering = null;}
@@ -128,9 +128,10 @@ class Security {
         "select * from mobile_sessions where user_id = ${getIt<SessionData>().doctor.id}";
     map['action'] = "GET";
     map['query'] = getDevicesQuery;
-
+    print("getting logge in devices  $getDevicesQuery");
     final response = await http.post(Constants.ROOT, body: map);
     var parsed = json.decode(response.body);
+    print("logged in : " + parsed);
     for (int i = 0; i < parsed.length; i++) {
     Device device = Device.fromJson(parsed[i]);
     loggedInDevices.add(device);

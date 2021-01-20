@@ -5,11 +5,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class MyFontStyles {
   static TextStyle textHeadingFontStyle(BuildContext context) {
     return Theme.of(context).textTheme.headline1.copyWith(
-        fontFamily: "montserrat", fontSize: 16.0.sp, fontWeight: FontWeight.bold, color: Colors.black87);
+        fontFamily: "montserrat", fontSize: 43.0.sp, fontWeight: FontWeight.bold, color: Colors.black87);
   }
   static TextStyle textValueheadingFontStyle(BuildContext context) {
     return Theme.of(context).textTheme.headline1.copyWith(
-        fontFamily: "montserrat", fontSize: 16.0.sp,fontWeight: FontWeight.w400, color: Colors.black87);
+        fontFamily: "montserrat", fontSize: 43.0.sp,fontWeight: FontWeight.w400, color: Colors.black87);
   }
   static TextStyle titleBlackFontStyle(BuildContext context) {
     return Theme
@@ -18,7 +18,7 @@ class MyFontStyles {
         .headline1
         .copyWith(
       fontFamily: "montserrat",
-      fontSize: 17.0.sp,
+      fontSize: 52.0.sp,
       letterSpacing: 0,
 
       fontWeight: FontWeight.w600,
@@ -31,7 +31,7 @@ class MyFontStyles {
         .headline1
         .copyWith(
       fontFamily: "montserrat",
-      fontSize: 16.0.sp,
+      fontSize: 43.0.sp,
       fontWeight: FontWeight.w400,
       color: Colors.black,);
   }
@@ -66,7 +66,7 @@ class MyFontStyles {
   }
   static TextStyle textFieldsLabelStyle(BuildContext context){
     return Theme.of(context).textTheme.headline1.copyWith(
-        fontSize: 18.0.sp,
+        fontSize: 43.0.sp,
         fontWeight: FontWeight.bold,
         color: Colors.grey);
 

@@ -65,6 +65,7 @@ class _homeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
    // checkSession();
     //double screenWidth = MediaQuery.of(context).size.width;
+
     double screenHeight = MediaQuery.of(context).size.height ;
     GlobalKey _scaffoldKey = GlobalKey<ScaffoldState>();
     return MaterialApp(
@@ -126,7 +127,7 @@ class _homeViewState extends State<HomeView> {
                           padding:  EdgeInsets.only(top: screenHeight/13),
                           child: Image.asset(
                             'assets/images/logo_black_vertical.png',
-                            width: Responsiveness.logoWidth,
+                            width: Responsiveness.logoWidth.w,
                           ),
                         ),
                         Padding(
@@ -152,7 +153,7 @@ class _homeViewState extends State<HomeView> {
                                       end: Alignment.bottomLeft,
                                     ),
                                     borderRadius: BorderRadius.circular(15.0)),
-                                height: screenHeight / 8,
+                                height: screenHeight / 8.5,
                                 child: Padding(
                                   padding:
                                       const EdgeInsets.symmetric(horizontal: 25),
@@ -163,7 +164,7 @@ class _homeViewState extends State<HomeView> {
                                       Center(
                                           child: Text(
                                         'View Account Statement',
-                                        style: TextStyle(fontSize: 18.sp),
+                                        style: TextStyle(fontSize: 51.sp),
                                       )),
 //                                      Image.asset(
 //                                        'assets/images/account-statement.png',
