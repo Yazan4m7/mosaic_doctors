@@ -1,6 +1,4 @@
 import 'dart:async';
-
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,7 +9,7 @@ import 'package:mosaic_doctors/shared/locator.dart';
 import 'package:mosaic_doctors/shared/styles.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:mosaic_doctors/shared/widgets.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -63,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
 
         _keyboardVisible =  visible;
-        print(_keyboardVisible);
+
         if(visible)
         _scrollToTop();
         else
@@ -104,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
       theme: GlobalTheme.globalTheme,
       home:Scaffold (
        resizeToAvoidBottomPadding: false,
-        //resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomInset: false,
 
         body: Container(
 
@@ -116,10 +114,9 @@ class _LoginPageState extends State<LoginPage> {
                 colors: [Color(0xffc3c3c3), Colors.white30]),
           ),
           child: Stack(
-
             children: [
               Positioned(
-                bottom: -100,
+                bottom:_keyboardVisible? MediaQuery.of(context).viewInsets.bottom *-1 -100 :  -100,
                 right: -110,
                 child: Container(
                   alignment: Alignment(2.5, 5),
@@ -205,6 +202,8 @@ class _LoginPageState extends State<LoginPage> {
                                     child: _buildButton(
                                         codeSent ? 'LOG IN' : 'SEND CODE', () {
                                       if (codeSent) {
+                                        // hide keyboard
+                                        FocusScope.of(context).unfocus();
                                         Global.prefs.setString("phoneNo", "+962"+ phoneNoTxtController.text);
                                         AuthService().signInWithOTP(
                                             '+962'+phoneNoTxtController.text,
@@ -278,7 +277,7 @@ class _LoginPageState extends State<LoginPage> {
     };
 
     final PhoneVerificationFailed verificationfailed =
-        (AuthException authException) {
+        (FirebaseAuthException  authException) {
           SharedWidgets.showMOSAICDialog(authException.message, context);
 
     };

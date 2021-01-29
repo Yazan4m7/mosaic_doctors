@@ -124,7 +124,7 @@ class _EntryItemState extends State<EntryItem> {
         } else // its a payment
         {
           showMOSAICDialog(
-              "You can view payment details in our next update, stay tuned!");
+              "You can view payment details in our next update.");
           return;
         }
       },

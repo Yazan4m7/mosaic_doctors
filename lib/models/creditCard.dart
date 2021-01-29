@@ -1,4 +1,6 @@
 
+import 'dart:convert';
+
 class CreditCard {
   String id;
   String doctorId;
@@ -23,5 +25,17 @@ class CreditCard {
 
     );
   }
-
+  factory CreditCard.fromString(String jsonString) {
+    Map<String, dynamic> jsonObject = json.decode(jsonString);
+    return CreditCard(
+      doctorId : jsonObject['doctorId']==null? "N/A":jsonObject['doctorId'],
+      cardNumber : jsonObject['cardNumber']==null? "N/A":jsonObject['cardNumber'],
+      expiryDate : jsonObject['expiryDate']==null? "N/A":jsonObject['expiryDate'],
+    );
+  }
+  static Map<String, dynamic> toJson(CreditCard card) => {
+    "cardNumber": card.cardNumber,
+    "doctorId": card.doctorId,
+    "expiryDate": card.expiryDate,
+  };
 }

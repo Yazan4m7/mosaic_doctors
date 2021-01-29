@@ -1,23 +1,88 @@
+import 'dart:io';
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     as notifs;
+import 'package:get/get.dart';
+import 'package:jiffy/jiffy.dart';
+import 'package:mosaic_doctors/models/sessionData.dart';
+import 'package:mosaic_doctors/services/DatabaseAPI.dart';
+import 'package:mosaic_doctors/shared/Constants.dart';
 import 'package:mosaic_doctors/shared/date_helper.dart';
+import 'package:mosaic_doctors/shared/globalVariables.dart';
+import 'package:mosaic_doctors/shared/locator.dart';
+import 'package:mosaic_doctors/views/accountStatement.dart';
 
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-
+import 'package:permission_handler/permission_handler.dart';
 class Notifications {
   static FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  FlutterLocalNotificationsPlugin();
   static BuildContext BContext;
-  static initialize(BuildContext context) async {
+
+  static initializeFCM() async{
+    await Firebase.initializeApp();
+    final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
+    if (Platform.isIOS)
+    await _firebaseMessaging.requestNotificationPermissions(
+      IosNotificationSettings(alert: true,
+        badge: true,
+        provisional: false,
+        sound: true,)
+    );
+    else{
+      final status = await Permission.notification.request();
+    print("N. Permission for android : $status");}
+
+    _firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        print("onMessage: $message");
+        const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails('1', 'MOSAIC', 'MOSAIC_DESC',
+            importance: Importance.max,
+            priority: Priority.high,
+            showWhen: false);
+        const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+
+        await flutterLocalNotificationsPlugin
+            .show(0, "Title", "body", platformChannelSpecifics, payload:message['data']['month']);
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print("onResume: $message");
+        showLastMonthAccountStatement(message['data']['month']);
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        print("onL: $message");
+        showLastMonthAccountStatement(message['data']['month']);
+      },
+    );
+   try {
+     String phoneNumber = await Global.getData("phoneNo");
+     if (Constants.debuggers.contains(phoneNumber)) {
+       _firebaseMessaging.subscribeToTopic('testing');
+       print("Subscribed to testing topic");
+     }
+     else{
+       print("Didnt subscribe $phoneNumber is not a debugger");
+     }
+   }catch(e){
+     print("Cannot subcribe to testing topic $e");
+   }
+    print("Notification services enabled.");
+    _firebaseMessaging.getToken().then((value) => print("N. Token : " + value));
+  }
+
+
+  static initializeLocalNotificationPlugin(BuildContext context) async {
     BContext = context;
     try {
-      // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
-
-      // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
       const AndroidInitializationSettings initializationSettingsAndroid =
           AndroidInitializationSettings('mipmap/mosaic_logo_1cmt');
       final IOSInitializationSettings initializationSettingsIOS =
@@ -31,52 +96,24 @@ class Notifications {
       await flutterLocalNotificationsPlugin.initialize(initializationSettings,
           onSelectNotification: showLastMonthAccountStatement);
     } catch (e) {
-      throw e;
+
     }
   }
 
   static Future onDidReceiveLocalNotification(
-      int id, String title, String body, String payload) async {
-    // display a dialog with the notification details, tap ok to go to another page
-    print("Notification fired");
+      int id, String title, String body,String extra) async {
+    String dateParameter = extra;
+    print("Local notifiation on recieve fired, month : $dateParameter");
+    Jiffy requiredMonth = Jiffy(dateParameter,'MM-yy');
+    Get.to(AccountStatementView(requiredMonth));
   }
 
-  requestIOSPermissions() async {
-    final bool result = await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin>()
-        ?.requestPermissions(
-          alert: true,
-          badge: true,
-          sound: true,
-        );
-  }
-
-  static void showNotification(String title, String body) async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails('1', 'MOSAIC', 'MOSAIC_DESC',
-            importance: Importance.max,
-            priority: Priority.high,
-            showWhen: false);
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
-
-    await flutterLocalNotificationsPlugin
-        .show(0, title, body, platformChannelSpecifics, payload: 'item x');
-  }
-
-  static Future showLastMonthAccountStatement(String payload) async {
-    var date = new DateTime.now();
-    String prev = new DateTime(date.year, date.month - 1).toString();
-
-    String prevYear = prev.substring(2, 4);
-    String prevMonth = prev.substring(5, 7);
-    String prevFullDate = prevYear + "-" + prevMonth;
-//    Navigator.of(BContext).push(MaterialPageRoute(
-//        builder: (context) => MonthlyAccountStatementView(
-//              month: prevFullDate,
-//            )));
-    debugPrint('notification payload: ' + payload);
+  static Future showLastMonthAccountStatement(String month) async {
+    Jiffy requiredMonth = Jiffy(month,'MM-yyyy');
+    String phoneNumber = await Global.getData('phoneNo');
+    await DatabaseAPI.getDoctorInfo(phoneNumber);
+    Get.to(AccountStatementView(requiredMonth));
+    print('notification payload: ' + month);
   }
 
   static Future<void> scheduleNotification({String title, String body}) async {

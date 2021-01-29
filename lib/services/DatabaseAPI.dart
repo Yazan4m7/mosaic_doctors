@@ -20,13 +20,13 @@ import 'package:mosaic_doctors/shared/locator.dart';
 
 class DatabaseAPI {
   static const ROOT = Constants.ROOT;
-  static List<AccountStatementEntry> accountStatementEntrys = List<AccountStatementEntry>();
-  static List<AccountStatementEntry> singleMonthAccountStatementEntrys = List<AccountStatementEntry>();
-  static List<dynamic> currentAccountStatementEntries = List<dynamic>();
-  static List<Job> caseJobsList = List<Job>();
-  static List<String> docCasesIds = List<String>();
-  static List<Job> allCaseJobsList = List<Job>();
-
+  static List<AccountStatementEntry> accountStatementEntrys = [];
+  static List<AccountStatementEntry> singleMonthAccountStatementEntrys = [];
+  static List<dynamic> currentAccountStatementEntries = [];
+  static List<Job> caseJobsList =[];
+  static List<String> docCasesIds = [];
+  static List<Job> allCaseJobsList = [];
+  static List<Payment> docPayments = [];
   static List<PreviousMonthBalance> previousMonthsBalances =  List<PreviousMonthBalance>();
   static Map<int, JobType> jobTypes = Map<int, JobType>();
   static Map<int, Material> materials = Map<int, Material>();
@@ -52,7 +52,20 @@ class DatabaseAPI {
     openingBalance.createdAt=parsed[0]['created_at'];
     accountStatementEntrys.add(openingBalance);
   }
+  static Future getDocPayments(String doctorId) async{
 
+    var map = Map<String, dynamic>();
+    String getPaymentsQuery = "SELECT * FROM `payment_logs` where doctor_id = $doctorId";
+    map['action'] = "GET";
+    map['query'] = getPaymentsQuery;
+    final response = await http.post(ROOT, body: map);
+    var parsed = await json.decode(response.body);
+    for (int i = 0; i < parsed.length; i++) {
+      Payment payment =
+      Payment.fromJson(parsed[i]);
+      docPayments.add(payment);
+    }
+  }
   static Future getDoctorAccountStatement( String doctorId, bool forceReload) async {
     drHasTransactionsThisMonth=true;
     if (entries.isNotEmpty && forceReload) {
@@ -76,22 +89,29 @@ class DatabaseAPI {
     //print(response.body);
     var parsed = await json.decode(response.body);
 
+    await getDocPayments(doctorId);
+
     accountStatementEntrys.clear();
-
-
-
     for (int i = 0; i < parsed.length; i++) {
       AccountStatementEntry accountStatementEntry =
           AccountStatementEntry.fromJson(parsed[i]);
       firstEntryDate = accountStatementEntry.createdAt;
       //   if (entryMonth == currentYearMonth) {
       // if payment fix the balance
-      if(accountStatementEntry.credit !="N/A") accountStatementEntry.balance = (int.parse(accountStatementEntry.balance)- int.parse(accountStatementEntry.credit)).toString();
+      if(accountStatementEntry.credit !="N/A") accountStatementEntry.balance = (double.parse(accountStatementEntry.balance)- double.parse(accountStatementEntry.credit)).toString();
       if(accountStatementEntry.createdAt.substring(2, 7) == currentYearMonth)
 
       if(accountStatementEntry.caseId !="N/A")
       docCasesIds.add(accountStatementEntry.caseId);
+
+      if(accountStatementEntry.paymentId !="N/A"){
+        String paymentNote = docPayments.where((element) => element.id == accountStatementEntry.paymentId).first.notes;
+        if(paymentNote != "N/A")
+          accountStatementEntry.patientName = paymentNote;
+         }
+
       accountStatementEntrys.add(accountStatementEntry);
+
 
       //   }
       //print("ASE added");
@@ -139,9 +159,6 @@ class DatabaseAPI {
       await getDoctorDiscounts();
       return doctor;
     }
-
-
-
   }
 
   static Future getDoctorDiscounts() async {
@@ -191,16 +208,20 @@ class DatabaseAPI {
 
   static Future getAccountStatementTotals(Jiffy currentMonth) async{
     if (accountStatementEntrys.isEmpty) await getDoctorAccountStatement(getIt<SessionData>().doctor.id, false);
-    totals = StatementTotals();
 
-    accountStatementEntrys.forEach((entry) {
-    if ( currentMonth.format("yy-MM") ==
-      entry.createdAt.substring(2, 7))
+    totals = StatementTotals();
+    AccountStatementEntry firstEntryOfTheMonth = accountStatementEntrys.where((element) => element.createdAt.substring(2, 7) == currentMonth.format("yy-MM")).first;
+    if (firstEntryOfTheMonth.credit != "N/A")
+    totals.openingBalance= double.parse(firstEntryOfTheMonth.balance) ;
+    else
+      totals.openingBalance= double.parse(firstEntryOfTheMonth.balance) - double.parse(firstEntryOfTheMonth.debit);
+
+
+    accountStatementEntrys.where((element) => element.createdAt.substring(2, 7) == currentMonth.format("yy-MM")).forEach((entry) {
       if (entry.credit != "N/A" ){
-        print("Adding to totals : $entry  total credit ${totals.totalCredit} total debit :${totals.totalDebit} ");
         totals.totalCredit += double.parse(entry.credit);}
       else if (entry.debit != "N/A") {
-        print("Adding to totals : $entry  total credit ${totals.totalCredit} total debit :${totals.totalDebit} ");
+
         totals.totalDebit += double.parse(entry.debit);}
     });
     return totals;
@@ -301,18 +322,18 @@ class DatabaseAPI {
     }
   }
 
-  static getCreditCardInfo() async {
-
-    var map = Map<String, dynamic>();
-    map['action'] = 'GET';
-    map['query'] = "SELECT * from credit_cards where doctor_id = ${getIt<SessionData>().doctor.id};";
-    print("get card  query : ${map['query'] }");
-    final getCardResponse = await http.post(ROOT, body: map);
-    print("get card info before parsing : ${getCardResponse.body}");
-    var parsed = json.decode(getCardResponse.body);
-    print("Card : $parsed");
-    CreditCard card = CreditCard.fromJson(parsed[0]);
-    return card;
-
-  }
+//  static getCreditCardInfo() async {
+//
+//    var map = Map<String, dynamic>();
+//    map['action'] = 'GET';
+//    map['query'] = "SELECT * from credit_cards where doctor_id = ${getIt<SessionData>().doctor.id};";
+//    print("get card  query : ${map['query'] }");
+//    final getCardResponse = await http.post(Constants.LOCAL_ROOT, body: map);
+//    print("get card info before parsing : ${getCardResponse.body}");
+//    var parsed = json.decode(getCardResponse.body);
+//    print("Card : $parsed");
+//    CreditCard card = CreditCard.fromJson(parsed[0]);
+//    return card;
+//
+//  }
 }

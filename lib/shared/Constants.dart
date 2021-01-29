@@ -1,7 +1,7 @@
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 double dateCellWidthFactor = 5.0;
-double entryCellWidthFactor = 3.2;
-double creditCellWidthFactor = 6.1;
+double entryCellWidthFactor = 3.1;
+double creditCellWidthFactor = 6.5;
 double debitCellWidthFactor =7;
 double balanceCellWidthFactor = 5.6;
 
@@ -13,7 +13,10 @@ class Constants{
   //static const ROOT = 'http://10.0.2.2/flutter_api.php';
   static const USER_AUTH = 'http://manshore.com/mosaic_system_api.php';
   //static const ROOT = 'http://10.0.2.2/mosaic_db_api.php';
+  static const PAYMENTS_ROOT = 'lab.manshore.com';
   static const ROOT = 'http://lab.manshore.com/mosaic_db_api.php';
+  static const LOCAL_ROOT = 'http://10.0.2.2/mosaic_db_api.php';
+
 
   static final  String g2pGetCardsListAPI = "https://cms.gatetopay.com/G2P.OPENAPI/api/Broker/GetCardList";
   static final String g2pDepositAPI = "https://cms.gatetopay.com/G2P.OPENAPI/api/Broker/Deposit";
@@ -27,6 +30,6 @@ class Constants{
   +"dKGuf+KyrE18Q2qKTx4yP0vjACLoEORk1GvHKyUKS5WUCqlijB1ck1Rro6XnhxAN"
   +"qQIDAQAB";
 
-  static final debuggers = ['+962788160099','+962788160098','+962795054504','+9620795054504'];
+  static final debuggers = ['+962788160099','+962788160098','+9620788160098','+962797552566','+9620797552566'];
 //10.0.2.2
 }

@@ -5,6 +5,7 @@ import 'package:mosaic_doctors/models/doctor.dart';
 import 'package:mosaic_doctors/models/sessionData.dart';
 import 'package:mosaic_doctors/services/DatabaseAPI.dart';
 import 'package:mosaic_doctors/services/auth_service.dart';
+import 'package:mosaic_doctors/services/notifications.dart';
 import 'package:mosaic_doctors/services/security.dart';
 import 'package:mosaic_doctors/shared/font_styles.dart';
 import 'package:mosaic_doctors/shared/globalVariables.dart';
@@ -57,7 +58,9 @@ class _homeViewState extends State<HomeView> {
   @override
   void initState() {
 
+    Responsiveness.setResponsiveProperties();
     getDoctorData();
+    Notifications.initializeFCM();
     super.initState();
   }
 
@@ -69,11 +72,11 @@ class _homeViewState extends State<HomeView> {
     double screenHeight = MediaQuery.of(context).size.height ;
     GlobalKey _scaffoldKey = GlobalKey<ScaffoldState>();
     return MaterialApp(
-        theme: GlobalTheme.globalTheme,
+      //  theme: GlobalTheme.globalTheme,
     //backgroundColor: Colors.white.withOpacity(.97),
     home: Scaffold(
         key: _scaffoldKey,
-
+      resizeToAvoidBottomInset:false,
       body: SafeArea(
         bottom: true,
         child: Container(
@@ -95,7 +98,7 @@ class _homeViewState extends State<HomeView> {
               ),
               isLoading
                   ? Container(
-                      child: SpinKitWanderingCubes(
+                      child: SpinKitChasingDots(
                       color: Colors.black,
                     ))
                   : Column(
@@ -107,16 +110,15 @@ class _homeViewState extends State<HomeView> {
                             options.clear();
 
                             options.add(PopupMenuItem(
-                              child: Text(
-                                "Logged in devices",
-                                style: TextStyle(color: Colors.black87),
-                              ),
-                              value: "Logged in devices",
-                            ));
-                            options.add(PopupMenuItem(
-                              child: Text(
-                                "Sign out",
-                                style: TextStyle(color: Colors.black87),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.logout),
+                                  SizedBox(width: 5,),
+                                  Text(
+                                    "Log out",
+                                    style: TextStyle(color: Colors.black87),
+                                  ),
+                                ],
                               ),
                               value: "Sign out",
                             ));
@@ -164,7 +166,7 @@ class _homeViewState extends State<HomeView> {
                                       Center(
                                           child: Text(
                                         'View Account Statement',
-                                        style: TextStyle(fontSize: 51.sp),
+                                        style: TextStyle(fontSize: Responsiveness.mainNavCardsFontSize),
                                       )),
 //                                      Image.asset(
 //                                        'assets/images/account-statement.png',

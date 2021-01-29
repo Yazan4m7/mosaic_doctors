@@ -3,12 +3,12 @@ class Payment {
   String id;
   String amount;
   String doctorId;
-  String paymentId;
-  String caseId;
+  String notes;
+  String collector;
   String createdAt;
-  String balance;
 
-  Payment({this.id, this.amount,  this.doctorId, this.paymentId,this.caseId,this.createdAt});
+
+  Payment({this.id, this.amount,  this.doctorId, this.notes,this.collector,this.createdAt});
 
 
 
@@ -17,8 +17,8 @@ class Payment {
         id : json['id']==null? "N/A":json['id'],
         amount : json['credit']==null? "N/A":json['credit'],
         doctorId : json['doctor_id']==null? "N/A":json['doctor_id'],
-        paymentId : json['payment_id']==null? "N/A":json['payment_id'],
-        caseId : json['case_id']==null? "N/A":json['case_id'],
+        notes : json['notes']==null? "N/A":json['notes'],
+        collector : json['collector']==null? "N/A":json['collector'],
         createdAt : json['created_at']==null? "N/A":json['created_at']);
   }
 }

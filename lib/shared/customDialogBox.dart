@@ -3,11 +3,13 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mosaic_doctors/shared/responsive_helper.dart';
 class CustomDialogBox extends StatefulWidget {
   final String title, descriptions, text;
   final Image img;
+  final Function onSubmit;
 
-  const CustomDialogBox({Key key, this.title, this.descriptions, this.text, this.img}) : super(key: key);
+  const CustomDialogBox({Key key, this.title, this.descriptions, this.text, this.img,this.onSubmit}) : super(key: key);
 
   @override
   _CustomDialogBoxState createState() => _CustomDialogBoxState();
@@ -46,15 +48,17 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Text(widget.title,style: TextStyle(fontSize: 53.sp,fontWeight: FontWeight.w600),),
+              Text(widget.title,style: TextStyle(fontSize: Responsiveness.dialogTitleFontSize,fontWeight: FontWeight.w600),),
               SizedBox(height: 15,),
-              Text(widget.descriptions,style: TextStyle(fontSize: 43.sp),textAlign: TextAlign.center,),
+              Text(widget.descriptions,style: TextStyle(fontSize: Responsiveness.dialogTextFontSize),textAlign: TextAlign.center,),
               SizedBox(height: 22,),
               Align(
                 alignment: Alignment.bottomRight,
                 child: FlatButton(
-                    onPressed: (){
+                    onPressed:  (){
                       Navigator.of(context).pop();
+                      if( widget.onSubmit!= null)
+                      widget.onSubmit();
                     },
                     child: Text(widget.text,style: TextStyle(fontSize: 18),)),
               ),

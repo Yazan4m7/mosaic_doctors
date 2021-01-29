@@ -9,12 +9,13 @@ import 'package:mosaic_doctors/models/sessionData.dart';
 import 'package:mosaic_doctors/models/statementTotals.dart';
 import 'package:mosaic_doctors/services/DatabaseAPI.dart';
 import 'package:mosaic_doctors/services/auth_service.dart';
+import 'package:mosaic_doctors/services/exportingService.dart';
+
 import 'package:mosaic_doctors/services/security.dart';
 import 'package:mosaic_doctors/shared/Constants.dart';
-import 'package:mosaic_doctors/shared/customDialogBox.dart';
 import 'package:mosaic_doctors/shared/font_styles.dart';
 import 'package:mosaic_doctors/shared/responsive_helper.dart';
-import 'package:mosaic_doctors/shared/test.dart';
+
 import 'package:mosaic_doctors/shared/widgets.dart';
 import 'package:mosaic_doctors/shared/locator.dart';
 import 'package:mosaic_doctors/views/StatementEntry.dart';
@@ -23,6 +24,8 @@ import 'package:mosaic_doctors/views/paymentView.dart';
 import '../SignIn_with_phone.dart';
 
 class AccountStatementView extends StatefulWidget {
+  Jiffy month;
+  AccountStatementView([this.month]);
   @override
   _AccountStatementViewState createState() => _AccountStatementViewState();
 }
@@ -36,12 +39,13 @@ class _AccountStatementViewState extends State<AccountStatementView> {
   bool isOldestMonth = false;
   Jiffy twoMonthsAgo = Jiffy()..subtract(months: 2);
   bool isNewestMonth = true;
-  static Jiffy previousMonth = Jiffy()..subtract(months: 1);
-  static Jiffy currentMonth = Jiffy();
 
+  static Jiffy currentMonth = Jiffy();
+  StatementTotals totalsItem;
   List<PopupMenuEntry<String>> options = [];
 
   getAccountStatement() {
+
     accountStatementEntries = DatabaseAPI.getDoctorAccountStatement(
         getIt<SessionData>().doctor.id, false);
   }
@@ -69,6 +73,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
 
   @override
   void initState() {
+    currentMonth = widget.month ?? Jiffy();
     getAccountStatement();
     getAccountStatementTotals(currentMonth);
     roundedBalance = 0;
@@ -94,7 +99,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
   bool _bottomCountersBuilt = false;
   @override
   Widget build(BuildContext context) {
-    print("Built");
+    print("Widgets Built");
 
     _setMonthsNavigationFlags();
     pdfTable.clear();
@@ -103,7 +108,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
     screenHeight = MediaQuery.of(context).size.height - 22;
     rowWidth = MediaQuery.of(context).size.width; // 16 padding
     screenWidth = MediaQuery.of(context).size.width;
-    print("Screen width : $screenWidth");
+
     return Scaffold(
       body: SafeArea(
         bottom: true,
@@ -112,57 +117,14 @@ class _AccountStatementViewState extends State<AccountStatementView> {
           children: [
             Positioned(
               child: Column(children: [
-                SharedWidgets.getAppBarUI(
+                SharedWidgets.getAccountStatementAppBarUI(
                     context,
                     _scaffoldKey,
-                    "Account Statetment ${currentMonth.format("yy-MM")}",
-                    PopupMenuButton<String>(
-                      onSelected: popupMenuAction,
-                      itemBuilder: (BuildContext context) {
-                        options.clear();
-                        if (!isOldestMonth)
-                          options.add(PopupMenuItem(
-                            child: Text(
-                              "Previous Month",
-                              style: TextStyle(color: Colors.grey),
-                            ),
-                            value: "Previous Month",
-                          ));
-                        if (!isNewestMonth)
-                          options.add(PopupMenuItem(
-                              child: Text("Next Month",
-                                  style: TextStyle(color: Colors.grey)),
-                              value: "Next Month"));
-//                        options.add(PopupMenuItem(
-//                            child: Text("Save as PDF ",
-//                                style: TextStyle(color: Colors.black87)),
-//                            value: "SaveAsPDF"));
-                        options.add(PopupMenuItem(
-                          child: Text(
-                            "Refresh",
-                            style: TextStyle(color: Colors.black87),
-                          ),
-                          value: "Refresh",
-                        ));
-                        options.add(PopupMenuItem(
-                          child: Text(
-                            "Change font size",
-                            style: TextStyle(color: Colors.black87),
-                          ),
-                          value: "fontSizeChange",
-                        ));
+                    "Account Statement ${currentMonth.format("MMMM yyyy")}",
+                    !isOldestMonth ? IconButton(icon: Icon(Icons.arrow_back_ios), onPressed: goBackAMonth) :IconButton(icon: Icon(Icons.arrow_back_ios,color: Colors.grey,), onPressed: null)  ,
+                    !isNewestMonth ? IconButton(icon: Icon(Icons.arrow_forward_ios), onPressed: goForwardAMonth):IconButton(icon: Icon(Icons.arrow_forward_ios,color: Colors.grey,), onPressed: null) ,
 
-                        if (Constants.debuggers.contains(getIt<SessionData>().doctor.phone))  options.add(PopupMenuItem(
-                          child: Text(
-                            "Debug info",
-                            style: TextStyle(color: Colors.black87),
-                          ),
-                          value: "debugInfo",
-                        ));
-
-                        return options;
-                      },
-                    )),
+                   IconButton(icon: Icon(Icons.menu,color: Colors.grey,), onPressed:(){ _settingModalBottomSheet(context);})),
                 _buildAccountStatement()
               ]),
             ),
@@ -230,7 +192,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                       child: Column(
                         children: [
                           Container(
-                            height: screenHeight / 21,
+                            height: screenHeight / 90.h,
                             child: Container(
                               child: SingleChildScrollView(
                                 child: Row(
@@ -284,11 +246,11 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                               ),
                             ),
                           ),
-                          Divider(),
+                          Divider(height: 1,),
                           SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: Container(
-                              height: screenHeight / 1.42,
+                              height: screenHeight / 1.35,
                               width: rowWidth,
                               child: Padding(
                                 padding:
@@ -365,11 +327,13 @@ class _AccountStatementViewState extends State<AccountStatementView> {
   Future totals ;
   Widget _buildBottomCounters(double screenHeight, double screenWidth) {
     print("building bottom counters");
+    getAccountStatementTotals(currentMonth);
     return FutureBuilder(
         future: totals,
         builder: (context, data)
     {
-      StatementTotals totalsItem = data.data;
+      totalsItem = data.data;
+      //print(" Totals : debit = ${totalsItem.totalDebit} credit ${totalsItem.totalCredit} opening = ${totalsItem.openingBalance}");
       if(data.data == null) return SizedBox();
       return Positioned(
         bottom: 0,
@@ -439,8 +403,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                             Text(
                                 getIt<SessionData>().doctor.balance == "N/A"
                                     ? "0"
-                                    : formatter.format(double.parse(
-                                    getIt<SessionData>().doctor.balance)),
+                                    : formatter.format(totalsItem.totalDebit+ totalsItem.openingBalance - totalsItem.totalCredit),
                                 style:
                                 MyFontStyles.statementHeaderFontStyle(context)
                                     .copyWith(
@@ -457,10 +420,10 @@ class _AccountStatementViewState extends State<AccountStatementView> {
             ),
             Container(
                 decoration: BoxDecoration(
-                  color: Colors.black87,
+                  color: Colors.black87.withOpacity(0.8),
                   boxShadow: <BoxShadow>[
                     BoxShadow(
-                        color: Colors.grey.withOpacity(0.4),
+                        color: Colors.grey.withOpacity(0.3),
                         offset: const Offset(0, 2),
                         blurRadius: 8.0),
                   ],
@@ -471,10 +434,37 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                   textColor: Colors.white,
                   splashColor: Colors.grey,
                   child:
-                  Text("MAKE A PAYMENT", style: TextStyle(fontSize: 43.sp)),
+                  Padding(
+                    padding: EdgeInsets.only(left:28.0.w),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Icon(Icons.credit_card,size: 80.w,),
+                        Text("MAKE A PAYMENT", style: TextStyle(fontSize: 43.sp)),
+                    Container(
+                      width: 60.w,
+                      padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 5),
+                      child: FlatButton(
+                        shape: new RoundedRectangleBorder(
+                            borderRadius:
+                            new BorderRadius.circular(28.0)),
+                        splashColor: Colors.white,
+                        color: Colors.transparent,
+                        child: Icon(
+                          Icons.arrow_forward_rounded,
+                          color: Colors.white
+                        ),
+                        onPressed: () => {},
+                      ),
+                    )],
+                    ),
+                  ),
                   onPressed: () {
-                    SharedWidgets.showMOSAICDialog("Payments will be available soon.",context);
-                      //Get.to(PaymentView());
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) =>
+                            PaymentView()));
+                    //SharedWidgets.showMOSAICDialog("Payments will be available soon.",context);
+
                   },
                 ))
           ],
@@ -483,24 +473,19 @@ class _AccountStatementViewState extends State<AccountStatementView> {
     });
   }
 
-
+  double openingBalance=0;
   Widget _buildRoundedBalanceEntry(AccountStatementEntry ASE,
       [bool isCurrentMonthEntry = true]) {
+
     double rowWidth = MediaQuery.of(context).size.width ;
-    double openingBalance = 0;
+     openingBalance = 0;
     if (isCurrentMonthEntry) {
-      print("Current month entry");
       if (ASE.credit != "N/A") {
-        print(
-            "Opening balance = $openingBalance + ${ASE.credit} = ${double.parse(ASE.balance) + double.parse(ASE.credit)}");
-        openingBalance = double.parse(ASE.balance) + double.parse(ASE.credit);
+        openingBalance = double.parse(ASE.balance) ;
       } else {
-        print(
-            "Opening balance = $openingBalance - ${ASE.debit} = ${double.parse(ASE.balance) - double.parse(ASE.debit)}");
         openingBalance = double.parse(ASE.balance) - double.parse(ASE.debit);
       }
     } else {
-      print("Opening balance = $openingBalance + Nothing");
       openingBalance = double.parse(ASE.balance);
     }
     AccountStatementEntry ASEtoPrint = new AccountStatementEntry(
@@ -512,47 +497,46 @@ class _AccountStatementViewState extends State<AccountStatementView> {
     pdfTable.add(ASEtoPrint);
     pdfTable.add(ASE);
     _roundedBalanceBuilt = true;
-    return InkWell(
-      child: Container(
-        decoration: BoxDecoration(color: Colors.transparent),
-        child: Row(
-          children: [
-            Container(
-              width: rowWidth / dateCellWidthFactor,
-              child: Text(""),
-            ),
-            Container(
-                padding: EdgeInsets.only(right: patientNameRightPadding),
-                width: rowWidth / entryCellWidthFactor,
-                child: Text("رصيد مدور",
-                    style: MyFontStyles.statementPatientNameFontStyle(context)
-                        .copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                    textAlign: TextAlign.right)),
-            Container(
-              width: rowWidth / creditCellWidthFactor,
-              child: Text(""),
-            ),
-            Container(
-              width: rowWidth / debitCellWidthFactor,
-              child: Text(""),
-            ),
-            Container(
-              padding: EdgeInsets.only(left: cellsLeftPadding),
-              width: rowWidth / balanceCellWidthFactor,
-              child: Text(openingBalance.toString(),
-                  style: MyFontStyles.statementEntryFontStyle(context).copyWith(
-                    fontWeight: FontWeight.w600,
+    return Container(
+      decoration: BoxDecoration(color: Colors.transparent),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Container(
+            width: rowWidth / dateCellWidthFactor,
+            child: Text(""),
+          ),
+          Container(
+
+              padding: EdgeInsets.only(right: patientNameRightPadding),
+              width: rowWidth / entryCellWidthFactor,
+              child: Text("رصيد مدور",
+                  style: MyFontStyles.statementPatientNameFontStyle(context)
+                      .copyWith(
+                    fontWeight: FontWeight.w700,fontSize: Responsiveness.patientNameFontSize.sp+3.sp
                   ),
-                  textAlign: TextAlign.left),
-            )
-          ],
-        ),
+                  textAlign: TextAlign.right)),
+          Container(
+            width: rowWidth / creditCellWidthFactor,
+            child: Text(""),
+          ),
+          Container(
+            width: rowWidth / debitCellWidthFactor,
+            child: Text(""),
+          ),
+          Container(
+
+            alignment: Alignment.bottomLeft,
+            padding: EdgeInsets.only(left: cellsLeftPadding),
+            width: rowWidth / balanceCellWidthFactor,
+            child: Text(openingBalance.toString(),
+                style: MyFontStyles.statementEntryFontStyle(context).copyWith(
+                  fontWeight: FontWeight.w700,fontSize: Responsiveness.patientNameFontSize.sp+7.sp
+                ),
+                textAlign: TextAlign.left),
+          )
+        ],
       ),
-      onTap: () {
-        //goBackAMonth();
-      },
     );
   }
 
@@ -574,7 +558,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
       return;
     }
     setState(() {
-      //_bottomCountersBuilt = false;
+      _bottomCountersBuilt = false;
       _accountStatementBuilt=false;
       _roundedBalanceBuilt=false;
       currentMonth = currentMonth..subtract(months: 1);
@@ -583,43 +567,15 @@ class _AccountStatementViewState extends State<AccountStatementView> {
 
   goForwardAMonth() {
     if (currentMonth.format("yy-MM") == Jiffy().format("yy-MM")) {
-      SharedWidgets.showMOSAICDialog("Sorry, We can't tell the future",context);
+      SharedWidgets.showMOSAICDialog("Sorry, We can't tell the future.",context);
       return;
     }
     setState(() {
-      //_bottomCountersBuilt = false;
+      _bottomCountersBuilt = false;
       _accountStatementBuilt=false;
       _roundedBalanceBuilt=false;
       currentMonth = currentMonth..add(months: 1);
     });
-  }
-
-  popupMenuAction(String optionSelected) {
-    switch (optionSelected) {
-      case "Next Month":
-        //goForwardAMonth();
-        return SharedWidgets.showMOSAICDialog("Currently unavailable",context);
-        break;
-      case "Previous Month":
-        //goBackAMonth();
-        return SharedWidgets.showMOSAICDialog("Currently unavailable",context);
-        break;
-      case "SaveAsPDF":
-        saveAsPDF();
-        break;
-      case "Refresh":
-        refreshStatement();
-        break;
-      case "fontSizeChange":
-        changeFontSize(context);
-        break;
-      case "debugInfo":
-        return SharedWidgets.showMOSAICDialog("Screen width: $screenWidth "
-            "Screen Height : $screenHeight,  "
-            "Current fonts size : ${Responsiveness.patientNameFontSize} , ${Responsiveness.entryFontSize}",context
-            );
-        break;
-    }
   }
 
   refreshState(){
@@ -627,8 +583,6 @@ class _AccountStatementViewState extends State<AccountStatementView> {
 
   });
   }
-
-
 
    changeFontSize(BuildContext context){
     showDialog(
@@ -685,7 +639,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
       setState(() {
         isNewestMonth = false;
       });
-    if (currentMonth.format("yy-MM") == twoMonthsAgo.format("yy-MM"))
+    if (currentMonth.format("yy-MM") == twoMonthsAgo.format("yy-MM") ||currentMonth.format("yy-MM") == Jiffy([2021,01,01]).format("yy-MM")  )
       setState(() {
         isOldestMonth = true;
       });
@@ -695,29 +649,41 @@ class _AccountStatementViewState extends State<AccountStatementView> {
       });
   }
 
-  saveAsPDF() async {
-    Exporting.reportView(context, pdfTable, currentMonth);
-//    pw.Widget printMe = pw.Column(children: [
-//
-//
-//    ]);
-//
-//    final pdf = pw.Document();
-//    var data = await rootBundle.load("assets/fonts/DroidKufi-Regular.ttf");
-//    pdf.addPage(pw.Page(
-//        pageFormat: PdfPageFormat.a4,
-//        build: (pw.Context context) {
-//          return pw.Center(
-//            child: printMe
-//          ); // Center
-//        })); // Page
-//    Directory tempDir = await getExternalStorageDirectory();
-//    File file = File("${tempDir.path}/MOSAIC.pdf");
-//    print("file created");
-//    await file.writeAsBytes(pdf.save());
-//    print("file written");
-//    file.open();
-//    print("file opened");
-//    print(file.path);
+  void _settingModalBottomSheet(context){
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc){
+          return Container(
+            child: new Wrap(
+              children: <Widget>[
+                new ListTile(
+                    leading: new Icon(Icons.refresh),
+                    title: new Text('Refresh'),
+                    onTap: (){refreshStatement();
+                    Navigator.of(context).pop();}
+                ),
+                new ListTile(
+                  leading: new Icon(Icons.save_alt),
+                  title: new Text('Save as PDF'),
+                  onTap: ()  {Exporting.saveAsPDF(context,pdfTable,currentMonth,totalsItem.totalDebit.toString(),totalsItem.totalCredit.toString());
+                  Navigator.of(context).pop();},
+                ),
+                new ListTile(
+                  leading: new Icon(Icons.print),
+                  title: new Text('Print'),
+                  onTap: () {Exporting.printPDF(context,pdfTable,currentMonth,totalsItem.totalDebit.toString(),totalsItem.totalCredit.toString());
+                  Navigator.of(context).pop();},
+                ),
+                new ListTile(
+                  leading: new Icon(Icons.format_size),
+                  title: new Text('Change font size'),
+                  onTap: () {changeFontSize(context);
+                               Navigator.of(context).pop();},
+                ),
+              ],
+            ),
+          );
+        }
+    );
   }
 }

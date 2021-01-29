@@ -13,35 +13,55 @@ import 'notifications.dart';
 
 class AuthService {
   getUserData() {
-    FirebaseUser user;
-    FirebaseAuth.instance.currentUser().then((value) => user = value);
+    User user = FirebaseAuth.instance.currentUser;
+
     return user;
   }
 
   handleAuth() {
 
-  print("handleAuth()");
-    return StreamBuilder(
-        stream: FirebaseAuth.instance.onAuthStateChanged,
+    return StreamBuilder<User>(
+        stream: FirebaseAuth.instance.authStateChanges(),
         builder: (BuildContext context, snapshot) {
-
-          if (snapshot.hasData) {
-            print("handleAuth() snapshot has data");
-            Responsiveness.setResponsiveProperties(context);
-            FirebaseUser user = snapshot.data;
-
-
-            Notifications.initialize(context);
-            //Notifications.scheduleNotification();
-            print("Redirecting to home page");
+          if (snapshot.hasData)
             return HomeView();
-
-          } else {
-            print("handleAuth() snapshot no data");
-
+          else
             return LoginPage();
-          }
         });
+
+//    return FirebaseAuth.instance.authStateChanges().listen((User userObj) {
+//      if (userObj == null) {
+//        print("handleAuth() snapshot no data");
+//
+//        return LoginPage();
+//      } else {
+//        print("handleAuth() snapshot has data");
+//
+//        User user = userObj;
+//        //Notifications.scheduleNotification();
+//        print("Redirecting to home page");
+//        return HomeView();
+//      }
+//    });
+  print("handleAuth()");
+//    return StreamBuilder(
+//        stream: FirebaseAuth.instance.authStateChanges,
+//        builder: (BuildContext context, snapshot) {
+//
+//          if (snapshot.hasData) {
+//            print("handleAuth() snapshot has data");
+//            Responsiveness.setResponsiveProperties(context);
+//            User user = snapshot.data;
+//            //Notifications.scheduleNotification();
+//            print("Redirecting to home page");
+//            return HomeView();
+//
+//          } else {
+//            print("handleAuth() snapshot no data");
+//
+//            return LoginPage();
+//          }
+//        });
   }
 
   static signOut() {
@@ -68,7 +88,7 @@ class AuthService {
   }
 
   signInWithOTP(phoneNo, smsCode, verId) {
-    AuthCredential authCreds = PhoneAuthProvider.getCredential(
+    AuthCredential authCreds = PhoneAuthProvider.credential(
         verificationId: verId, smsCode: smsCode);
 //    auth user will be connected to store by phone number, no need for a user record.
 //    registerUserToFireStore (phoneNo);

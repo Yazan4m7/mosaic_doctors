@@ -18,7 +18,7 @@ class MyFontStyles {
         .headline1
         .copyWith(
       fontFamily: "montserrat",
-      fontSize: 52.0.sp,
+      fontSize: Responsiveness.appBarTitleFontSize,
       letterSpacing: 0,
 
       fontWeight: FontWeight.w600,
@@ -75,7 +75,7 @@ class MyFontStyles {
   }
   static TextStyle doctorNameFontStyle(BuildContext context) {
     return Theme.of(context).textTheme.headline1.copyWith(
-        fontFamily: "droid", fontSize:Responsiveness.docNameFontSize.sp, fontWeight: FontWeight.bold, color: Color(0xff333333));
+        fontFamily: "droid", fontSize:Responsiveness.docNameFontSize, fontWeight: FontWeight.bold, color: Color(0xff333333));
   }
 
 
