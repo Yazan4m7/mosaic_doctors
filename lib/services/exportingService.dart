@@ -13,6 +13,7 @@ import 'package:open_file/open_file.dart';
 export  'package:flutter/src/painting/image_provider.dart';
 import 'package:pdf/widgets.dart'  ;
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:printing/printing.dart';
 
 
@@ -213,7 +214,14 @@ class Exporting {
   }
   static saveAsPDF(context, List<AccountStatementEntry> entries, Jiffy month,String totalDebit,String totalCredit) async{
     final pdf = await createPdf(context, entries, month,totalDebit,totalCredit);
-    Directory tempDir = await getExternalStorageDirectory();
+    Directory tempDir;
+
+    if(Platform.isIOS){
+       await Permission.storage.request();
+       tempDir = await getApplicationDocumentsDirectory();}
+    else
+       tempDir = await getExternalStorageDirectory();
+
     File file = File("${tempDir.path}/MOSAIC.pdf");
     print("file created");
     await file.writeAsBytes( await pdf.save(),flush: true);
