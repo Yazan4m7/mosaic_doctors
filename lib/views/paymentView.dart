@@ -116,12 +116,7 @@ class _PaymentViewState extends State<PaymentView> {
                       height: 20.0,
                     ),
                     TextFormField(
-                      inputFormatters: [
-                        MaskedTextInputFormatter(
-                          mask: 'xx/xx',
-                          separator: '/',
-                        ),
-                      ],
+
                       controller: expiryDateTF,
                       style: TextStyle(
                           fontSize: 20.0
@@ -226,6 +221,7 @@ class _PaymentViewState extends State<PaymentView> {
   Widget _paymentViewAppBar(){
     return AppBar(title: Text("PAY MOSAIC",style: TextStyle(color:Colors.black87),
     ) ,backgroundColor: Colors.transparent,
+      leading: IconButton(icon: Icon(Icons.arrow_back,color: Colors.black87,),onPressed: (){Navigator.of(context).pop();},),
       centerTitle: true,
       elevation: 0,
       actionsIconTheme: IconThemeData(color: Colors.black87),
