@@ -100,10 +100,9 @@ class DatabaseAPI {
       firstEntryDate = accountStatementEntry.createdAt;
       //   if (entryMonth == currentYearMonth) {
       // if payment fix the balance
-      if(accountStatementEntry.credit !="N/A") accountStatementEntry.balance = (double.parse(accountStatementEntry.balance)- double.parse(accountStatementEntry.credit)).toString();
-      if(accountStatementEntry.createdAt.substring(2, 7) == currentYearMonth)
+      if(accountStatementEntry.credit != "N/A" ) accountStatementEntry.balance = (double.parse(accountStatementEntry.balance)- double.parse(accountStatementEntry.credit)).toString();
 
-      if(accountStatementEntry.caseId !="N/A")
+      if(accountStatementEntry.caseId != "N/A" )
       docCasesIds.add(accountStatementEntry.caseId);
 
       if(accountStatementEntry.paymentId !="N/A" && docPayments.isNotEmpty){
@@ -259,12 +258,14 @@ class DatabaseAPI {
   }
 
   static getCaseJobsForAllCases() async {
+    print("Case IDs : ${docCasesIds.toString()}");
     var map = Map<String, dynamic>();
     String casesIds = docCasesIds.toString();
     casesIds = casesIds.replaceAll('[', '(');
     casesIds = casesIds.replaceAll(']', ')');
     String getCaseDetailsQuery =
         "SELECT * from `jobs` WHERE `jobs`.`order_id`  in $casesIds";
+
     map['action'] = "GET";
     map['query'] = getCaseDetailsQuery;
     var response = await http.post(ROOT, body: map);

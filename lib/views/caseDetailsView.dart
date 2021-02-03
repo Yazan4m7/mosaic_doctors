@@ -197,13 +197,15 @@ class _CaseDetailsViewState extends State<CaseDetailsView> {
                             }
                             Doctor doctor = getIt<SessionData>().doctor;
                             print(
-                                "Doctor disount list length: ${doctor.discounts.length}");
+                                "Doctor disount list length: ${doctor.discounts.length} case id : ${widget.caseId} jobs list len: ${projectSnap.data.length}");
                             return ListView.builder(
                               //scrollDirection: Axis.vertical,
                               padding: EdgeInsets.all(0),
                               shrinkWrap: true,
                               itemCount: projectSnap.data.length,
-                              itemBuilder: (context, index) {
+                              itemBuilder: (context, index)
+                              {
+
                                 Job job = projectSnap.data[index];
 
                                 String numOfUnits =
