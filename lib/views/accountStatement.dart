@@ -215,7 +215,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                                     ),
                                     Container(
                                       padding: EdgeInsets.only(left: 0),
-                                      //alignment: Alignment.center,
+
                                       width: rowWidth / creditCellWidthFactor,
                                       child: Text("Credit",
                                           style: MyFontStyles
@@ -326,7 +326,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
 
   Future totals ;
   Widget _buildBottomCounters(double screenHeight, double screenWidth) {
-    print("building bottom counters");
+
     getAccountStatementTotals(currentMonth);
     return FutureBuilder(
         future: totals,
@@ -334,7 +334,140 @@ class _AccountStatementViewState extends State<AccountStatementView> {
     {
       totalsItem = data.data;
       //print(" Totals : debit = ${totalsItem.totalDebit} credit ${totalsItem.totalCredit} opening = ${totalsItem.openingBalance}");
-      if(data.data == null) return SizedBox();
+      if(data.data == null)
+      return Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.only(
+                    left: screenWidth / 8, top: (screenHeight / 12) / 6),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: <BoxShadow>[
+                    BoxShadow(
+                        color: Colors.grey.withOpacity(0.4),
+                        offset: const Offset(0, -2),
+                        blurRadius: 8.0),
+                  ],
+                ),
+                height: screenHeight / 12,
+                width: screenWidth,
+                child: Row(
+                  children: [
+                    Flexible(
+                      flex: 3,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Credit: "),
+                          Row(
+                            children: [
+                              Text('0',
+                                  style: MyFontStyles.statementHeaderFontStyle(
+                                      context)),
+                              Text(" JOD")
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Flexible(
+                      flex: 3,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Debit: "),
+                          Row(
+                            children: [
+                              Text('0',
+                                  style: MyFontStyles.statementHeaderFontStyle(
+                                      context),
+                                  textAlign: TextAlign.left),
+                              Text(" JOD", style: TextStyle())
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Flexible(
+                      flex: 3,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Balance: "),
+                          Row(
+                            children: [
+                              Text(
+                                  getIt<SessionData>().doctor.balance,
+                                  style:
+                                  MyFontStyles.statementHeaderFontStyle(context)
+                                      .copyWith(
+                                    fontSize: Responsiveness.entryFontSize.sp + 3,
+                                  )),
+                              Text(" JOD")
+                            ],
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black87.withOpacity(0.8),
+                    boxShadow: <BoxShadow>[
+                      BoxShadow(
+                          color: Colors.grey.withOpacity(0.3),
+                          offset: const Offset(0, 2),
+                          blurRadius: 8.0),
+                    ],
+                  ),
+                  height: screenHeight / 13,
+                  width: screenWidth + 16,
+                  child: FlatButton(
+                    textColor: Colors.white,
+                    splashColor: Colors.grey,
+                    child:
+                    Padding(
+                      padding: EdgeInsets.only(left:28.0.w),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Icon(Icons.credit_card,size: 80.w,),
+                          Text("MAKE A PAYMENT", style: TextStyle(fontSize: 43.sp)),
+                          Container(
+                            width: 60.w,
+                            padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 5),
+                            child: FlatButton(
+                              shape: new RoundedRectangleBorder(
+                                  borderRadius:
+                                  new BorderRadius.circular(28.0)),
+                              splashColor: Colors.white,
+                              color: Colors.transparent,
+                              child: Icon(
+                                  Icons.arrow_forward_rounded,
+                                  color: Colors.white
+                              ),
+                              onPressed: () => {},
+                            ),
+                          )],
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) =>
+                              PaymentView()));
+                      //SharedWidgets.showMOSAICDialog("Payments will be available soon.",context);
+
+                    },
+                  ))
+            ],
+          ),
+        );
       return Positioned(
         bottom: 0,
         left: 0,
@@ -497,54 +630,57 @@ class _AccountStatementViewState extends State<AccountStatementView> {
     pdfTable.add(ASEtoPrint);
     pdfTable.add(ASE);
     _roundedBalanceBuilt = true;
-    return Container(
-      decoration: BoxDecoration(color: Colors.transparent),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Container(
-            width: rowWidth / dateCellWidthFactor,
-            child: Text(""),
-          ),
-          Container(
+    return InkWell(
+      onTap: (){goBackAMonth();},
+      child: Container(
+        decoration: BoxDecoration(color: Colors.transparent),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Container(
+              width: rowWidth / dateCellWidthFactor,
+              child: Text(""),
+            ),
+            Container(
 
-              padding: EdgeInsets.only(right: patientNameRightPadding),
-              width: rowWidth / entryCellWidthFactor,
-              child: Text("رصيد مدور",
-                  style: MyFontStyles.statementPatientNameFontStyle(context)
-                      .copyWith(
-                    fontWeight: FontWeight.w700,fontSize: Responsiveness.patientNameFontSize.sp+3.sp
+                padding: EdgeInsets.only(right: patientNameRightPadding),
+                width: rowWidth / entryCellWidthFactor,
+                child: Text("رصيد مدور",
+                    style: MyFontStyles.statementPatientNameFontStyle(context)
+                        .copyWith(
+                      fontWeight: FontWeight.w700,fontSize: Responsiveness.patientNameFontSize.sp+3.sp
+                    ),
+                    textAlign: TextAlign.right)),
+            Container(
+              width: rowWidth / creditCellWidthFactor,
+              child: Text(""),
+            ),
+            Container(
+              width: rowWidth / debitCellWidthFactor,
+              child: Text(""),
+            ),
+            Container(
+
+              alignment: Alignment.bottomLeft,
+              padding: EdgeInsets.only(left: cellsLeftPadding),
+              width: rowWidth / balanceCellWidthFactor,
+              child: Text(openingBalance.toString(),
+                  style: MyFontStyles.statementEntryFontStyle(context).copyWith(
+                    fontWeight: FontWeight.w700,fontSize: Responsiveness.patientNameFontSize.sp+7.sp
                   ),
-                  textAlign: TextAlign.right)),
-          Container(
-            width: rowWidth / creditCellWidthFactor,
-            child: Text(""),
-          ),
-          Container(
-            width: rowWidth / debitCellWidthFactor,
-            child: Text(""),
-          ),
-          Container(
-
-            alignment: Alignment.bottomLeft,
-            padding: EdgeInsets.only(left: cellsLeftPadding),
-            width: rowWidth / balanceCellWidthFactor,
-            child: Text(openingBalance.toString(),
-                style: MyFontStyles.statementEntryFontStyle(context).copyWith(
-                  fontWeight: FontWeight.w700,fontSize: Responsiveness.patientNameFontSize.sp+7.sp
-                ),
-                textAlign: TextAlign.left),
-          )
-        ],
+                  textAlign: TextAlign.left),
+            )
+          ],
+        ),
       ),
     );
   }
 
   goBackAMonth() {
     Jiffy threeMonthsAgo = Jiffy()..subtract(months: 3);
-    if (currentMonth.format("yy-MM") == twoMonthsAgo.format("yy-MM")) {
+    if (currentMonth.format("yy-MM") == twoMonthsAgo.format("yy-MM") || isOldestMonth) {
       SharedWidgets.showMOSAICDialog(
-          "Sorry, If you wish to view the statement of ${threeMonthsAgo.format("MMMM, yyyy")} Please contact us.",context);
+          "Sorry, If you wish to view more Please contact us.",context);
       return;
     }
     try {

@@ -59,7 +59,9 @@ class DatabaseAPI {
     map['action'] = "GET";
     map['query'] = getPaymentsQuery;
     final response = await http.post(ROOT, body: map);
+    if(response.body.isEmpty) return;
     var parsed = await json.decode(response.body);
+    print(parsed);
     for (int i = 0; i < parsed.length; i++) {
       Payment payment =
       Payment.fromJson(parsed[i]);
@@ -104,7 +106,7 @@ class DatabaseAPI {
       if(accountStatementEntry.caseId !="N/A")
       docCasesIds.add(accountStatementEntry.caseId);
 
-      if(accountStatementEntry.paymentId !="N/A"){
+      if(accountStatementEntry.paymentId !="N/A" && docPayments.isNotEmpty){
         String paymentNote = docPayments.where((element) => element.id == accountStatementEntry.paymentId).first.notes;
         if(paymentNote != "N/A")
           accountStatementEntry.patientName = paymentNote;
@@ -210,11 +212,17 @@ class DatabaseAPI {
     if (accountStatementEntrys.isEmpty) await getDoctorAccountStatement(getIt<SessionData>().doctor.id, false);
 
     totals = StatementTotals();
-    AccountStatementEntry firstEntryOfTheMonth = accountStatementEntrys.where((element) => element.createdAt.substring(2, 7) == currentMonth.format("yy-MM")).first;
-    if (firstEntryOfTheMonth.credit != "N/A")
-    totals.openingBalance= double.parse(firstEntryOfTheMonth.balance) ;
-    else
-      totals.openingBalance= double.parse(firstEntryOfTheMonth.balance) - double.parse(firstEntryOfTheMonth.debit);
+
+      AccountStatementEntry firstEntryOfTheMonth = accountStatementEntrys
+          .where((element) =>
+      element.createdAt.substring(2, 7) == currentMonth.format("yy-MM"))
+          .first;
+      if (firstEntryOfTheMonth.credit != "N/A")
+        totals.openingBalance = double.parse(firstEntryOfTheMonth.balance);
+      else
+        totals.openingBalance = double.parse(firstEntryOfTheMonth.balance) -
+            double.parse(firstEntryOfTheMonth.debit);
+
 
 
     accountStatementEntrys.where((element) => element.createdAt.substring(2, 7) == currentMonth.format("yy-MM")).forEach((entry) {
