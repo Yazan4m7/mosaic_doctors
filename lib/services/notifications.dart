@@ -95,8 +95,9 @@ class Notifications {
       );
       await flutterLocalNotificationsPlugin.initialize(initializationSettings,
           onSelectNotification: showLastMonthAccountStatement);
+      print("Local N. services initialized");
     } catch (e) {
-
+      print("ERROR IN  Local N. $e");
     }
   }
 
@@ -109,8 +110,11 @@ class Notifications {
   }
 
   static Future showLastMonthAccountStatement(String month) async {
+    print("showLastMonthAccountStatement(String month) $month");
     Jiffy requiredMonth = Jiffy(month,'MM-yyyy');
+    print("Global.getData('phoneNo'");
     String phoneNumber = await Global.getData('phoneNo');
+    print("Global.getData('phoneNo'");
     await DatabaseAPI.getDoctorInfo(phoneNumber);
     Get.to(AccountStatementView(requiredMonth));
     print('notification payload: ' + month);
@@ -119,34 +123,44 @@ class Notifications {
   static Future<void> scheduleNotification({String title, String body}) async {
     flutterLocalNotificationsPlugin.cancelAll();
 
-    int daysUntilNextMonth = DateHelper.daysUntilNxtMonth();
+    bool scheduledBefore = Global.prefs.getBool("febNotificationScheduled") ?? false;
+    var date = new DateTime.now();
+    var month = date.month;
+    print("Scheduling notification : current month : ${date.month}");
+    if (month == 3 && !scheduledBefore && Platform.isIOS) {
+      print("Scheduling notification!!");
+      int daysUntilNextMonth = DateHelper.daysUntilNxtMonth();
 
-    print("Days until next month : $daysUntilNextMonth");
-    tz.initializeTimeZones();
+      print("Days until next month : $daysUntilNextMonth");
+      tz.initializeTimeZones();
 
-    var androidSpecifics = notifs.AndroidNotificationDetails(
-      '1', // This specifies the ID of the Notification
-      'Scheduled notification', // This specifies the name of the notification channel
-      'A scheduled notification', //This specifies the description of the channel
-      icon: 'mipmap/mosaic_logo_1cmt',
-    );
+      var androidSpecifics = notifs.AndroidNotificationDetails(
+        '1', // This specifies the ID of the Notification
+        'Scheduled notification',
+        // This specifies the name of the notification channel
+        'A scheduled notification',
+        //This specifies the description of the channel
+        icon: 'mipmap/mosaic_logo_1cmt',
+      );
 
-    final IOSInitializationSettings initializationSettingsIOS =
-        IOSInitializationSettings(
-            onDidReceiveLocalNotification: onDidReceiveLocalNotification);
-    var iOSSpecifics = notifs.IOSNotificationDetails();
+      final IOSInitializationSettings initializationSettingsIOS =
+      IOSInitializationSettings(
+          onDidReceiveLocalNotification: onDidReceiveLocalNotification);
+      var iOSSpecifics = notifs.IOSNotificationDetails();
 
-    var platformChannelSpecifics = notifs.NotificationDetails(
-        android: androidSpecifics, iOS: iOSSpecifics);
+      var platformChannelSpecifics = notifs.NotificationDetails(
+          android: androidSpecifics, iOS: iOSSpecifics);
 
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-        0,
-        'Your account statement for last month is ready!',
-        'Click here to view',
-        tz.TZDateTime.now(tz.local).add( Duration(days: daysUntilNextMonth)),
-        platformChannelSpecifics,
-        androidAllowWhileIdle: true,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime);
+      await flutterLocalNotificationsPlugin.zonedSchedule(
+          0,
+          'Your account statement for last month is ready!',
+          'Click here to view',
+          tz.TZDateTime.now(tz.local).add(Duration(minutes: 5)),
+          platformChannelSpecifics,
+          androidAllowWhileIdle: true,
+          uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,payload: "02-2021");
+      Global.prefs.setBool("febNotificationScheduled",true);
+    }
   }
 }

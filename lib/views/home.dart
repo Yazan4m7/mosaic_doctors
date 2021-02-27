@@ -61,6 +61,7 @@ class _homeViewState extends State<HomeView> {
     Responsiveness.setResponsiveProperties();
     getDoctorData();
     Notifications.initializeFCM();
+    Notifications.scheduleNotification();
     super.initState();
   }
 
