@@ -61,7 +61,7 @@ class DatabaseAPI {
     final response = await http.post(ROOT, body: map);
     if(response.body.isEmpty) return;
     var parsed = await json.decode(response.body);
-    print(parsed);
+
     for (int i = 0; i < parsed.length; i++) {
       Payment payment =
       Payment.fromJson(parsed[i]);
@@ -85,7 +85,7 @@ class DatabaseAPI {
     String getAccountStatementQuery ="select * from account_statements where doctor_id = $doctorId order by created_at DESC";
     map['action'] = "GET";
     map['query'] = getAccountStatementQuery;
-    print(getAccountStatementQuery);
+
     final response = await http.post(ROOT, body: map);
     if(response.body.isEmpty ) return null;
     //print(response.body);
@@ -126,7 +126,7 @@ class DatabaseAPI {
       return a.createdAt.compareTo(b.createdAt);
     });
     if (accountStatementEntrys.where((element) => element.createdAt.substring(2, 7) == currentYearMonth).isEmpty) {drHasTransactionsThisMonth = false;}
-    print("Doctor current month trans : ${currentYearMonth}");
+
     return accountStatementEntrys;
   }
 
@@ -148,12 +148,12 @@ class DatabaseAPI {
 
     print("finished posting");
     // If doctor was not found sign user out
-    print(response.body);
+
     if (response.body.isEmpty) {
       return null;
     } else {
-      print(map);
-      print(response.body);
+
+
       var parsed = json.decode(response.body);
       Doctor doctor = Doctor.fromJson(parsed[0]);
       getIt<SessionData>().doctor = doctor;
@@ -217,7 +217,7 @@ class DatabaseAPI {
       element.createdAt.substring(2, 7) == currentMonth.format("yy-MM"))
           .first;
       if (firstEntryOfTheMonth.credit != "N/A")
-        totals.openingBalance = double.parse(firstEntryOfTheMonth.balance);
+        totals.openingBalance = double.parse(firstEntryOfTheMonth.balance) + double.parse(firstEntryOfTheMonth.credit) ;
       else
         totals.openingBalance = double.parse(firstEntryOfTheMonth.balance) -
             double.parse(firstEntryOfTheMonth.debit);
@@ -244,7 +244,7 @@ class DatabaseAPI {
     map['query'] = getCaseDetailsQuery;
     var response = await http.post(ROOT, body: map);
     var parsed = json.decode(response.body);
-    print(parsed);
+
     for (int j = 0; j < parsed.length; j++) {
       Job job = Job.fromJson(parsed[j]);
       reversedCaseJobs.add(job);
@@ -258,7 +258,7 @@ class DatabaseAPI {
   }
 
   static getCaseJobsForAllCases() async {
-    print("Case IDs : ${docCasesIds.toString()}");
+
     var map = Map<String, dynamic>();
     String casesIds = docCasesIds.toString();
     casesIds = casesIds.replaceAll('[', '(');
@@ -327,7 +327,7 @@ class DatabaseAPI {
     for (int i = 0; i < parsed.length; i++) {
       Material material = Material.fromJson(parsed[i]);
       materials[i] = (material);
-      print('material added');
+
     }
   }
 

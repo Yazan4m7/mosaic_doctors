@@ -250,7 +250,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                           SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: Container(
-                              height: screenHeight / 1.35,
+                              height: screenHeight - (screenHeight / 12) -328.h,
                               width: rowWidth,
                               child: Padding(
                                 padding:
@@ -468,6 +468,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
             ],
           ),
         );
+      print(totalsItem.totalDebit.toString()+ ' ' + totalsItem.openingBalance.toString()+ ' ' + totalsItem.totalCredit.toString());
       return Positioned(
         bottom: 0,
         left: 0,
@@ -612,9 +613,10 @@ class _AccountStatementViewState extends State<AccountStatementView> {
 
     double rowWidth = MediaQuery.of(context).size.width ;
      openingBalance = 0;
+     print("building rounded entry : Current month = $isCurrentMonthEntry credit: ${ASE.credit} debit : ${ASE.debit} ASE: $ASE");
     if (isCurrentMonthEntry) {
       if (ASE.credit != "N/A") {
-        openingBalance = double.parse(ASE.balance) ;
+        openingBalance = double.parse(ASE.balance) + double.parse(ASE.credit)  ;
       } else {
         openingBalance = double.parse(ASE.balance) - double.parse(ASE.debit);
       }
