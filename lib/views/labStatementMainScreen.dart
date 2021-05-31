@@ -7,7 +7,7 @@ import 'package:mosaic_doctors/models/AccountStatementEntry.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mosaic_doctors/models/sessionData.dart';
 import 'package:mosaic_doctors/models/statementTotals.dart';
-import 'package:mosaic_doctors/services/DatabaseAPI.dart';
+import 'package:mosaic_doctors/services/labDatabase.dart';
 import 'package:mosaic_doctors/services/auth_service.dart';
 import 'package:mosaic_doctors/services/exportingService.dart';
 
@@ -18,19 +18,19 @@ import 'package:mosaic_doctors/shared/responsive_helper.dart';
 
 import 'package:mosaic_doctors/shared/widgets.dart';
 import 'package:mosaic_doctors/shared/locator.dart';
-import 'package:mosaic_doctors/views/StatementEntry.dart';
+import 'package:mosaic_doctors/views/StatementEntryRow.dart';
 import 'package:intl/intl.dart';
 import 'package:mosaic_doctors/views/paymentView.dart';
 import '../SignIn_with_phone.dart';
 
-class AccountStatementView extends StatefulWidget {
+class LabStatementMainScreen extends StatefulWidget {
   Jiffy month;
-  AccountStatementView([this.month]);
+  LabStatementMainScreen([this.month]);
   @override
-  _AccountStatementViewState createState() => _AccountStatementViewState();
+  _LabStatementMainScreenState createState() => _LabStatementMainScreenState();
 }
 
-class _AccountStatementViewState extends State<AccountStatementView> {
+class _LabStatementMainScreenState extends State<LabStatementMainScreen> {
   // build bottom banner when statement is ready
   bool isStatementReady = false;
   Future accountStatementEntries;
@@ -46,15 +46,15 @@ class _AccountStatementViewState extends State<AccountStatementView> {
 
   getAccountStatement() {
 
-    accountStatementEntries = DatabaseAPI.getDoctorAccountStatement(
+    accountStatementEntries = LabDatabase.getDoctorAccountStatement(
         getIt<SessionData>().doctor.id, false);
   }
   getAccountStatementTotals(currentMonth){
-    totals = DatabaseAPI.getAccountStatementTotals(
+    totals = LabDatabase.getAccountStatementTotals(
         currentMonth);
   }
   refreshStatement() {
-    accountStatementEntries = DatabaseAPI.getDoctorAccountStatement(
+    accountStatementEntries = LabDatabase.getDoctorAccountStatement(
         getIt<SessionData>().doctor.id, true);
     setState(() {});
   }
@@ -117,7 +117,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
           children: [
             Positioned(
               child: Column(children: [
-                SharedWidgets.getAccountStatementAppBarUI(
+                SharedWidgets.getLabStatementAppBarUI(
                     context,
                     _scaffoldKey,
                     "Account Statement ${currentMonth.format("MMMM yyyy")}",
@@ -164,7 +164,6 @@ class _AccountStatementViewState extends State<AccountStatementView> {
               ),
             ));
           }
-
           if (accountStatementEntrys.data == null) {
             return Center(
                 child: Container(
@@ -179,11 +178,9 @@ class _AccountStatementViewState extends State<AccountStatementView> {
           }
           return Column(
             //mainAxisSize: MainAxisSize.min,
-
-            children: [
+            children:[
               Container(
                 width: rowWidth,
-
                 child: Column(
                   //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -199,14 +196,14 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                                   children: [
                                     Container(
                                       padding: EdgeInsets.only(left: 3),
-                                      width: rowWidth / dateCellWidthFactor,
+                                      width: rowWidth / labDateCellWidthFactor,
                                       child: Text(" Date",
                                           style: MyFontStyles
                                               .statementHeaderFontStyle(
                                                   context)),
                                     ),
                                     Container(
-                                      width: rowWidth / entryCellWidthFactor,
+                                      width: rowWidth / labEntryCellWidthFactor,
                                       child: Text("Entry",
                                           style: MyFontStyles
                                               .statementHeaderFontStyle(
@@ -216,7 +213,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                                     Container(
                                       padding: EdgeInsets.only(left: 0),
 
-                                      width: rowWidth / creditCellWidthFactor,
+                                      width: rowWidth / labCreditCellWidthFactor,
                                       child: Text("Credit",
                                           style: MyFontStyles
                                               .statementHeaderFontStyle(
@@ -224,7 +221,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                                           textAlign: TextAlign.left),
                                     ),
                                     Container(
-                                      width: rowWidth / debitCellWidthFactor,
+                                      width: rowWidth / labDebitCellWidthFactor,
                                       child: Text("Debit",
                                           style: MyFontStyles
                                               .statementHeaderFontStyle(
@@ -233,7 +230,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                                     ),
                                     Container(
                                       // alignment: Alignment.center,
-                                      width: rowWidth / balanceCellWidthFactor,
+                                      width: rowWidth / labBalanceCellWidthFactor,
                                       child: Text("Balance",
                                           style: MyFontStyles
                                               .statementHeaderFontStyle(
@@ -262,10 +259,8 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                                     itemBuilder: (context, index) {
                                       AccountStatementEntry ASE =
                                           accountStatementEntrys.data[index];
-
-
                                       //if doctor has no transactions this month, and we're at the latest month, build rounded balance and exit.
-                                      if (!DatabaseAPI
+                                      if (!LabDatabase
                                               .drHasTransactionsThisMonth &&
                                           !_roundedBalanceBuilt &&
                                           (currentMonth.format("yy-MM") ==
@@ -282,16 +277,14 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                                                     1],
                                             false);
                                       }
-
                                       if (ASE.createdAt.substring(2, 7) !=
                                           currentMonth.format("yy-MM"))
                                         return SizedBox();
                                       if (!_roundedBalanceBuilt) {
-
                                         return Column(
                                           children: [
                                             _buildRoundedBalanceEntry(ASE),
-                                            EntryItem(ASE)
+                                            LabEntryRow(ASE)
                                           ],
                                         );
                                       } else {
@@ -305,7 +298,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
 //                                          _bottomCountersBuilt = true;
 //                                        }));
 //                                        print("Finished building AS");}
-                                        return EntryItem(ASE);
+                                        return LabEntryRow(ASE);
                                       }
 
                                     }),
@@ -640,13 +633,13 @@ class _AccountStatementViewState extends State<AccountStatementView> {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Container(
-              width: rowWidth / dateCellWidthFactor,
+              width: rowWidth / labDateCellWidthFactor,
               child: Text(""),
             ),
             Container(
 
-                padding: EdgeInsets.only(right: patientNameRightPadding),
-                width: rowWidth / entryCellWidthFactor,
+                padding: EdgeInsets.only(right: labPatientNameRightPadding),
+                width: rowWidth / labEntryCellWidthFactor,
                 child: Text("رصيد مدور",
                     style: MyFontStyles.statementPatientNameFontStyle(context)
                         .copyWith(
@@ -654,18 +647,18 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                     ),
                     textAlign: TextAlign.right)),
             Container(
-              width: rowWidth / creditCellWidthFactor,
+              width: rowWidth / labCreditCellWidthFactor,
               child: Text(""),
             ),
             Container(
-              width: rowWidth / debitCellWidthFactor,
+              width: rowWidth / labDebitCellWidthFactor,
               child: Text(""),
             ),
             Container(
 
               alignment: Alignment.bottomLeft,
-              padding: EdgeInsets.only(left: cellsLeftPadding),
-              width: rowWidth / balanceCellWidthFactor,
+              padding: EdgeInsets.only(left: labCellsLeftPadding),
+              width: rowWidth / labBalanceCellWidthFactor,
               child: Text(openingBalance.toString(),
                   style: MyFontStyles.statementEntryFontStyle(context).copyWith(
                     fontWeight: FontWeight.w700,fontSize: Responsiveness.patientNameFontSize.sp+7.sp
@@ -686,7 +679,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
       return;
     }
     try {
-      if (Jiffy(DatabaseAPI.firstEntryDate, "yyyy-MM-dd").format("yy-MM") ==
+      if (Jiffy(LabDatabase.firstEntryDate, "yyyy-MM-dd").format("yy-MM") ==
           currentMonth.format("yy-MM")) {
         SharedWidgets.showMOSAICDialog("Sorry, You have no transactions in that month",context);
         return;
@@ -809,7 +802,7 @@ class _AccountStatementViewState extends State<AccountStatementView> {
                 new ListTile(
                   leading: new Icon(Icons.print),
                   title: new Text('Print'),
-                  onTap: () {Exporting.printPDF(context,pdfTable,currentMonth,totalsItem.totalDebit.toString(),totalsItem.totalCredit.toString());
+                  onTap: () {Exporting.printLabPDF(context,pdfTable,currentMonth,totalsItem.totalDebit.toString(),totalsItem.totalCredit.toString());
                   Navigator.of(context).pop();},
                 ),
                 new ListTile(

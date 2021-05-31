@@ -174,7 +174,7 @@ class _PaymentViewState extends State<PaymentView> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 50.0, vertical: 12.0),
                         child: Text(
-                          "PAY",
+                          "PAY NOW",
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 21.0
@@ -219,7 +219,7 @@ class _PaymentViewState extends State<PaymentView> {
   }
 
   Widget _paymentViewAppBar(){
-    return AppBar(title: Text("PAY MOSAIC",style: TextStyle(color:Colors.black87),
+    return AppBar(title: Text("NEW PAYMENT",style: TextStyle(color:Colors.black87),
     ) ,backgroundColor: Colors.transparent,
       leading: IconButton(icon: Icon(Icons.arrow_back,color: Colors.black87,),onPressed: (){Navigator.of(context).pop();},),
       centerTitle: true,

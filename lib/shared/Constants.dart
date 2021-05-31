@@ -1,14 +1,23 @@
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-double dateCellWidthFactor = 5.0;
-double entryCellWidthFactor = 3.1;
-double creditCellWidthFactor = 6.5;
-double debitCellWidthFactor =7;
-double balanceCellWidthFactor = 5.6;
+double labDateCellWidthFactor = 5.0;
+double labEntryCellWidthFactor = 3.1;
+double labCreditCellWidthFactor = 6.5;
+double labDebitCellWidthFactor =7;
+double labBalanceCellWidthFactor = 5.6;
+double labCellsLeftPadding = 25.w;
+double labPatientNameRightPadding = 35.w;
 
-double cellsLeftPadding = 25.w;
+double implantsDateCellWidthFactor = 6.5;
+double implantsEntryCellWidthFactor = 3.5;
+double implantsQtyCellWidthFactor = 14;
+double implantsAmountCellWidthFactor =10;
+double implantsPriceCellWidthFactor =12;
+double implantsTypeCellWidthFactor = 6.5;
+double implantsBalanceCellWidthFactor = 8;
 
-double patientNameRightPadding = 35.w;
 
+double implantsBottomTitleFS = 44.sp;
+double implantsBottomValueFS = 40.sp;
 class Constants{
   //static const ROOT = 'http://10.0.2.2/flutter_api.php';
   static const USER_AUTH = 'http://manshore.com/mosaic_system_api.php';

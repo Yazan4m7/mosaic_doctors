@@ -41,6 +41,7 @@ class MyFontStyles {
         .textTheme
         .headline1
         .copyWith(
+
       fontFamily: "droid",
       fontSize: Responsiveness.entryFontSize.sp,
       fontWeight: FontWeight.w400,

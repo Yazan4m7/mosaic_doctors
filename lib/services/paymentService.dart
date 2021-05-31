@@ -10,7 +10,7 @@ import 'package:mosaic_doctors/models/sessionData.dart';
 import 'package:mosaic_doctors/shared/globalVariables.dart';
 import 'package:mosaic_doctors/shared/locator.dart';
 import 'package:mosaic_doctors/shared/widgets.dart';
-import 'package:mosaic_doctors/views/accountStatement.dart';
+import 'package:mosaic_doctors/views/labStatementMainScreen.dart';
 import 'package:pointycastle/asymmetric/api.dart';
 
 
@@ -41,7 +41,7 @@ class PaymentService with ChangeNotifier {
           CCPaymentResponse resp = CCPaymentResponse.fromJson(data);
           if (resp.isSuccess == true)
           { SharedWidgets.showMOSAICDialog("Payment processed Successfully!", context,"Thank you",(){  Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
-              AccountStatementView()), (Route<dynamic> route) => false);
+              LabStatementMainScreen()), (Route<dynamic> route) => false);
           });
           }
           else //error occurred

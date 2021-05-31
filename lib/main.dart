@@ -39,7 +39,7 @@ class EntryPoint extends StatelessWidget {
     return ScreenUtilInit(
       designSize: Size(1080 , 1920 ),
       allowFontScaling: false,
-      child:  MaterialApp(home:AuthService().handleAuth() ,)
+        builder: () =>  MaterialApp(home:AuthService().handleAuth() ,)
     );
   }
 }

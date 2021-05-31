@@ -1,26 +1,23 @@
-// Create the Widget for the row
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:mosaic_doctors/models/AccountStatementEntry.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mosaic_doctors/models/previousMonthBalance.dart';
 import 'package:mosaic_doctors/shared/Constants.dart';
-
 import 'package:mosaic_doctors/shared/customDialogBox.dart';
 import 'package:mosaic_doctors/shared/font_styles.dart';
 import 'package:mosaic_doctors/shared/responsive_helper.dart';
-
 import 'package:mosaic_doctors/views/caseDetailsView.dart';
 
-class EntryItem extends StatefulWidget {
-  EntryItem(this.entry);
+class LabEntryRow extends StatefulWidget {
+  LabEntryRow(this.entry);
   final dynamic entry;
 
   @override
-  _EntryItemState createState() => _EntryItemState();
+  _LabEntryRowState createState() => _LabEntryRowState();
 }
 
-class _EntryItemState extends State<EntryItem> {
+class _LabEntryRowState extends State<LabEntryRow> {
   static bool isEven = false;
   Widget _buildTiles(AccountStatementEntry root) {
     double rowWidth = MediaQuery.of(context).size.width ;
@@ -35,7 +32,7 @@ class _EntryItemState extends State<EntryItem> {
           children: [
             Container(
               padding: EdgeInsets.only(left: 3),
-              width: rowWidth / dateCellWidthFactor,
+              width: rowWidth / labDateCellWidthFactor,
               child: Text(
                 root is PreviousMonthBalance
                     ? ""
@@ -54,9 +51,9 @@ class _EntryItemState extends State<EntryItem> {
               ),
             ),
             Container(
-              padding: EdgeInsets.only(right: patientNameRightPadding),
+              padding: EdgeInsets.only(right: labPatientNameRightPadding),
 
-              width: rowWidth / entryCellWidthFactor,
+              width: rowWidth / labEntryCellWidthFactor,
               child: Text(
                 root.patientName ,
                 style: root.patientName == "Payment"
@@ -70,8 +67,8 @@ class _EntryItemState extends State<EntryItem> {
               ),
             ),
             Container(
-              padding: EdgeInsets.only(left: cellsLeftPadding),
-              width: rowWidth / creditCellWidthFactor,
+              padding: EdgeInsets.only(left: labCellsLeftPadding),
+              width: rowWidth / labCreditCellWidthFactor,
               child: Text(
                 root.credit == "N/A"
                     ? ""
@@ -83,8 +80,8 @@ class _EntryItemState extends State<EntryItem> {
               ),
             ),
             Container(
-              padding: EdgeInsets.only(left: cellsLeftPadding),
-              width: rowWidth / debitCellWidthFactor,
+              padding: EdgeInsets.only(left: labCellsLeftPadding),
+              width: rowWidth / labDebitCellWidthFactor,
               child: Text(
                 root.debit == "N/A" ? "" : root.debit,
                 style: MyFontStyles.statementEntryFontStyle(context),
@@ -93,8 +90,8 @@ class _EntryItemState extends State<EntryItem> {
               ),
             ),
             Container(
-              padding: EdgeInsets.only(left: cellsLeftPadding),
-              width: rowWidth / balanceCellWidthFactor,
+              padding: EdgeInsets.only(left: labCellsLeftPadding),
+              width: rowWidth / labBalanceCellWidthFactor,
               child: Text(
                 root.balance,
                 style: MyFontStyles.statementEntryFontStyle(context),
@@ -123,8 +120,7 @@ class _EntryItemState extends State<EntryItem> {
                   deliveryDate: root.createdAt)));
         } else // its a payment
         {
-          showMOSAICDialog(
-              "You can view payment details in our next update.");
+
           return;
         }
       },

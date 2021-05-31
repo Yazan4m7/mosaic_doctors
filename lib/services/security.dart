@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:mosaic_doctors/models/doctor.dart';
 import 'package:mosaic_doctors/models/mobileDevice.dart';
 import 'package:mosaic_doctors/models/sessionData.dart';
-import 'package:mosaic_doctors/services/DatabaseAPI.dart';
+import 'package:mosaic_doctors/services/labDatabase.dart';
 import 'package:mosaic_doctors/services/auth_service.dart';
 import 'package:mosaic_doctors/shared/Constants.dart';
 import 'package:mosaic_doctors/shared/globalVariables.dart';
@@ -36,7 +36,7 @@ class Security {
     }
     var map = Map<String, dynamic>();
 
-    if(getIt<SessionData>().doctor == null ) await DatabaseAPI.getDoctorInfo(Global.prefs.getString("phoneNo"));
+    if(getIt<SessionData>().doctor == null ) await LabDatabase.getDoctorInfo(Global.prefs.getString("phoneNo"));
     String getSessionQuery =
         "select * from mobile_sessions where device_uid = '$UUID' AND is_allowed =1 AND user_id = ${getIt<SessionData>().doctor.id}";
     map['action'] = "GET";
@@ -83,7 +83,7 @@ class Security {
 
     String ip = await getIP();
 
-    if(getIt<SessionData>().doctor == null ) await DatabaseAPI.getDoctorInfo(Global.prefs.getString("phoneNo"));
+    if(getIt<SessionData>().doctor == null ) await LabDatabase.getDoctorInfo(Global.prefs.getString("phoneNo"));
     String registerDeviceQuery = "INSERT INTO `mobile_sessions` "
         "(`id`, `device_uid`, `user_id`, `platform` , `os_id`, `device_name`, `ip`, `is_allowed`, `date_created`) VALUES "
         "(NULL, '$identifier', '${getIt<SessionData>().doctor.id}','$platform' , '$deviceVersion', '$deviceName', '$ip', '1', current_timestamp())";
@@ -150,7 +150,7 @@ class Security {
     }
     var map = Map<String, dynamic>();
 
-    if(getIt<SessionData>().doctor == null ) await DatabaseAPI.getDoctorInfo(Global.prefs.getString("phoneNo"));
+    if(getIt<SessionData>().doctor == null ) await LabDatabase.getDoctorInfo(Global.prefs.getString("phoneNo"));
     String getSessionQuery =
         "select * from mobile_sessions where device_uid = '$UUID' AND is_allowed =1 AND user_id = ${getIt<SessionData>().doctor.id}";
     map['action'] = "GET";

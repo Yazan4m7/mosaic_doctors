@@ -5,7 +5,7 @@ import 'package:mosaic_doctors/models/discount.dart';
 import 'package:mosaic_doctors/models/doctor.dart';
 import 'package:mosaic_doctors/models/job.dart';
 import 'package:mosaic_doctors/models/sessionData.dart';
-import 'package:mosaic_doctors/services/DatabaseAPI.dart';
+import 'package:mosaic_doctors/services/labDatabase.dart';
 import 'package:mosaic_doctors/shared/font_styles.dart';
 import 'package:mosaic_doctors/shared/locator.dart';
 import 'package:mosaic_doctors/shared/styles.dart';
@@ -25,8 +25,8 @@ class _CaseDetailsViewState extends State<CaseDetailsView> {
   Future jobsList;
   Future caseItem;
   getCaseDetails() {
-    jobsList = DatabaseAPI.getCaseJobs(widget.caseId);
-    caseItem = DatabaseAPI.getCase(widget.caseId);
+    jobsList = LabDatabase.getCaseJobs(widget.caseId);
+    caseItem = LabDatabase.getCase(widget.caseId);
   }
 
   @override
@@ -214,7 +214,7 @@ class _CaseDetailsViewState extends State<CaseDetailsView> {
 
 
                                 double unitPriceAfterDiscount = double.parse(
-                                    DatabaseAPI
+                                    LabDatabase
                                         .materials[
                                     int.parse(job.materialId) - 1]
                                         .price);
@@ -227,7 +227,7 @@ class _CaseDetailsViewState extends State<CaseDetailsView> {
 
 
                                   double unitPriceAfterDiscount = double.parse(
-                                      DatabaseAPI
+                                      LabDatabase
                                           .materials[
                                       int.parse(job.materialId) - 1]
                                           .price);
@@ -242,7 +242,7 @@ class _CaseDetailsViewState extends State<CaseDetailsView> {
 
                                     discount = ((double.parse(unitDiscount.discount) /
                                         100) *
-                                        double.parse(DatabaseAPI
+                                        double.parse(LabDatabase
                                             .materials[
                                         int.parse(job.materialId) - 1]
                                             .price));
@@ -279,7 +279,7 @@ class _CaseDetailsViewState extends State<CaseDetailsView> {
                                             alignment: Alignment.center,
                                             width: screenWidth / 4,
                                             child: Text(
-                                              DatabaseAPI
+                                              LabDatabase
                                                   .jobTypes[
                                                       int.parse(job.typeId) - 1]
                                                   .name,
@@ -293,7 +293,7 @@ class _CaseDetailsViewState extends State<CaseDetailsView> {
                                             alignment: Alignment.center,
                                             width: screenWidth / 3,
                                             child: Text(
-                                                DatabaseAPI
+                                                LabDatabase
                                                     .materials[int.parse(
                                                             job.materialId) -
                                                         1]

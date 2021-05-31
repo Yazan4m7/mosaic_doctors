@@ -3,22 +3,22 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:mosaic_doctors/models/doctor.dart';
 import 'package:mosaic_doctors/models/sessionData.dart';
-import 'package:mosaic_doctors/services/DatabaseAPI.dart';
+import 'package:mosaic_doctors/services/labDatabase.dart';
 import 'package:mosaic_doctors/services/auth_service.dart';
+import 'package:mosaic_doctors/services/implantsDatabase.dart';
 import 'package:mosaic_doctors/services/notifications.dart';
 import 'package:mosaic_doctors/services/security.dart';
 import 'package:mosaic_doctors/shared/font_styles.dart';
 import 'package:mosaic_doctors/shared/globalVariables.dart';
 import 'package:mosaic_doctors/shared/locator.dart';
 import 'package:mosaic_doctors/shared/responsive_helper.dart';
-import 'package:mosaic_doctors/shared/styles.dart';
 import 'package:mosaic_doctors/shared/widgets.dart';
-import 'package:mosaic_doctors/views/accountStatement.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
+import 'implantsStatementMainScreen.dart';
+import 'labStatementMainScreen.dart';
 import 'loggedInDevices.dart';
+
 class HomeView extends StatefulWidget {
   @override
   _homeViewState createState() => _homeViewState();
@@ -27,12 +27,11 @@ class HomeView extends StatefulWidget {
 class _homeViewState extends State<HomeView> {
   String doctorName = "";
   bool isLoading = true;
+  bool isNobelClient;
+
   List<PopupMenuEntry<String>> options = [];
   getDoctorData() async {
-
-
-
-    Doctor doctor =  await DatabaseAPI.getDoctorInfo(Global.prefs.getString("phoneNo"));
+    Doctor doctor =  await LabDatabase.getDoctorInfo(Global.prefs.getString("phoneNo"));
     if (doctor == null) {
       getIt<SessionData>().loginWelcomeMessage =
           "Number not assiocated with a doctor account, please contact MOSAIC";
@@ -44,6 +43,7 @@ class _homeViewState extends State<HomeView> {
       if(mounted)
       setState(() {});
     }
+
   }
   checkSession() async{
     Future.delayed(Duration(seconds: 3));
@@ -60,6 +60,7 @@ class _homeViewState extends State<HomeView> {
 
     Responsiveness.setResponsiveProperties();
     getDoctorData();
+
     Notifications.initializeFCM();
     Notifications.scheduleNotification();
     super.initState();
@@ -127,21 +128,21 @@ class _homeViewState extends State<HomeView> {
                           },
                         ),_exitApp),
                         Padding(
-                          padding:  EdgeInsets.only(top: screenHeight/13),
+                          padding:  EdgeInsets.only(top: screenHeight/25),
                           child: Image.asset(
                             'assets/images/logo_black_vertical.png',
                             width: Responsiveness.logoWidth.w,
                           ),
                         ),
                         Padding(
-                            padding: EdgeInsets.only(top:screenHeight/18),
+                            padding: EdgeInsets.only(top:screenHeight/24),
                             child: Text(
                               getIt<SessionData>().doctor.id == "103" ? "" + doctorName: "د. " + doctorName,
                               style: MyFontStyles.doctorNameFontStyle(context),
                             )),
-                        SizedBox(height: screenHeight/120,),
+                        SizedBox(height: screenHeight/40,),
                         Padding(
-                          padding: const EdgeInsets.all(20),
+                          padding: const EdgeInsets.symmetric(horizontal:20),
                           child: Card(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15.0),
@@ -164,28 +165,80 @@ class _homeViewState extends State<HomeView> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Center(
-                                          child: Text(
-                                        'View Account Statement',
+                                      Text(
+                                        'Lab Statement',
                                         style: TextStyle(fontSize: Responsiveness.mainNavCardsFontSize),
-                                      )),
-//                                      Image.asset(
-//                                        'assets/images/account-statement.png',
-//                                        height: (screenHeight / 12).h,
-//                                      ),
+                                      ),
+                                      Row(
+                                        children: [
+
+                                          Image.asset(
+                                            'assets/images/mosaic_ibex.png',
+                                            alignment:Alignment.centerRight,
+                                            height: (screenHeight / 3.9).h,
+                                          ),
+                                        ],
+                                      ),
                                     ],
                                   ),
                                 ),
                               ),
                               onTap: () {
-
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) =>
-                                        AccountStatementView()));
+                                        LabStatementMainScreen()));
                               },
                             ),
                           ),
                         ),
+                        SizedBox(height: 15.h),
+                         Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                            elevation: 4,
+                            child: InkWell(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [Color(0xffEDEDED), Color(0xffF9F9F9)],
+                                      begin: Alignment.topRight,
+                                      end: Alignment.bottomLeft,
+                                    ),
+                                    borderRadius: BorderRadius.circular(15.0)),
+                                height: screenHeight / 8.5,
+                                child: Padding(
+                                  padding:
+                                  const EdgeInsets.symmetric(horizontal: 25),
+                                  child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children : [
+                                      Text(
+                                      'Implants Statement',
+                                      style: TextStyle(fontSize: Responsiveness.mainNavCardsFontSize),
+                                    ),
+                                     // SizedBox(width: 20,),
+                                      Image.asset(
+                                          'assets/images/nobel_N.png',
+                                          height: (screenHeight / 6.5).h)]
+                                  ),
+                                ),
+                              ),
+                              onTap: () async {
+                                if(isNobelClient == null)
+                                  isNobelClient = await ImplantsDatabase.isNobelClient(getIt<SessionData>().doctor.implantsRecordId);
+
+                                isNobelClient  ?
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        ImplantsStatementView())) :
+                                SharedWidgets.showMOSAICDialog("Sorry, you have not purchased any NobelBiocare® implants yet.",context);
+                              },
+                            ),
+                          ),
+                        )
 
                       ],
                     ),

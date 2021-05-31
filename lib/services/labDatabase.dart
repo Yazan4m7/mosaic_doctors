@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:jiffy/jiffy.dart';
 import 'package:mosaic_doctors/models/AccountStatementEntry.dart';
 import 'package:mosaic_doctors/models/case.dart';
-import 'package:mosaic_doctors/models/creditCard.dart';
 import 'package:mosaic_doctors/models/discount.dart';
 import 'package:mosaic_doctors/models/job.dart';
 import 'package:mosaic_doctors/models/doctor.dart';
@@ -15,13 +14,13 @@ import 'package:mosaic_doctors/models/statementTotals.dart';
 import 'package:mosaic_doctors/services/auth_service.dart';
 import 'package:mosaic_doctors/shared/Constants.dart';
 import 'package:http/http.dart' as http;
-import 'package:mosaic_doctors/shared/globalVariables.dart';
 import 'package:mosaic_doctors/shared/locator.dart';
 
-class DatabaseAPI {
+class LabDatabase {
   static const ROOT = Constants.ROOT;
-  static List<AccountStatementEntry> accountStatementEntrys = [];
-  static List<AccountStatementEntry> singleMonthAccountStatementEntrys = [];
+  static List<AccountStatementEntry> accountStatementEntries = [];
+
+  static List<AccountStatementEntry> singleMonthAccountStatementEntries = [];
   static List<dynamic> currentAccountStatementEntries = [];
   static List<Job> caseJobsList =[];
   static List<String> docCasesIds = [];
@@ -36,6 +35,7 @@ class DatabaseAPI {
   static List<dynamic> entries = List<dynamic>();
   static String firstEntryDate;
   static bool drHasTransactionsThisMonth = true;
+
   static Future get30sepBalance(String doctorId) async{
 
     var map = Map<String, dynamic>();
@@ -50,8 +50,9 @@ class DatabaseAPI {
     openingBalance.patientName=parsed[0]['patient_name'];
     openingBalance.doctorId=parsed[0]['doctor_id'];
     openingBalance.createdAt=parsed[0]['created_at'];
-    accountStatementEntrys.add(openingBalance);
+    accountStatementEntries.add(openingBalance);
   }
+
   static Future getDocPayments(String doctorId) async{
 
     var map = Map<String, dynamic>();
@@ -68,6 +69,7 @@ class DatabaseAPI {
       docPayments.add(payment);
     }
   }
+
   static Future getDoctorAccountStatement( String doctorId, bool forceReload) async {
     drHasTransactionsThisMonth=true;
     if (entries.isNotEmpty && forceReload) {
@@ -93,7 +95,7 @@ class DatabaseAPI {
 
     await getDocPayments(doctorId);
 
-    accountStatementEntrys.clear();
+    accountStatementEntries.clear();
     for (int i = 0; i < parsed.length; i++) {
       AccountStatementEntry accountStatementEntry =
           AccountStatementEntry.fromJson(parsed[i]);
@@ -111,7 +113,7 @@ class DatabaseAPI {
           accountStatementEntry.patientName = paymentNote;
          }
 
-      accountStatementEntrys.add(accountStatementEntry);
+      accountStatementEntries.add(accountStatementEntry);
 
 
       //   }
@@ -122,12 +124,12 @@ class DatabaseAPI {
       //   }
     }
 
-    accountStatementEntrys.sort((a, b) {
+    accountStatementEntries.sort((a, b) {
       return a.createdAt.compareTo(b.createdAt);
     });
-    if (accountStatementEntrys.where((element) => element.createdAt.substring(2, 7) == currentYearMonth).isEmpty) {drHasTransactionsThisMonth = false;}
+    if (accountStatementEntries.where((element) => element.createdAt.substring(2, 7) == currentYearMonth).isEmpty) {drHasTransactionsThisMonth = false;}
 
-    return accountStatementEntrys;
+    return accountStatementEntries;
   }
 
   static Future getDoctorInfo(String phoneNumber) async {
@@ -184,7 +186,7 @@ class DatabaseAPI {
   }
 
   static Future getCaseJobs(String caseId) async {
-    AccountStatementEntry requestedEntry = accountStatementEntrys
+    AccountStatementEntry requestedEntry = accountStatementEntries
         .where((element) => element.caseId == caseId)
         .first;
 
@@ -208,11 +210,11 @@ class DatabaseAPI {
   }
 
   static Future getAccountStatementTotals(Jiffy currentMonth) async{
-    if (accountStatementEntrys.isEmpty) await getDoctorAccountStatement(getIt<SessionData>().doctor.id, false);
+    if (accountStatementEntries.isEmpty) await getDoctorAccountStatement(getIt<SessionData>().doctor.id, false);
 
     totals = StatementTotals();
 
-      AccountStatementEntry firstEntryOfTheMonth = accountStatementEntrys
+      AccountStatementEntry firstEntryOfTheMonth = accountStatementEntries
           .where((element) =>
       element.createdAt.substring(2, 7) == currentMonth.format("yy-MM"))
           .first;
@@ -224,7 +226,7 @@ class DatabaseAPI {
 
 
 
-    accountStatementEntrys.where((element) => element.createdAt.substring(2, 7) == currentMonth.format("yy-MM")).forEach((entry) {
+    accountStatementEntries.where((element) => element.createdAt.substring(2, 7) == currentMonth.format("yy-MM")).forEach((entry) {
       if (entry.credit != "N/A" ){
         totals.totalCredit += double.parse(entry.credit);}
       else if (entry.debit != "N/A") {
@@ -331,18 +333,4 @@ class DatabaseAPI {
     }
   }
 
-//  static getCreditCardInfo() async {
-//
-//    var map = Map<String, dynamic>();
-//    map['action'] = 'GET';
-//    map['query'] = "SELECT * from credit_cards where doctor_id = ${getIt<SessionData>().doctor.id};";
-//    print("get card  query : ${map['query'] }");
-//    final getCardResponse = await http.post(Constants.LOCAL_ROOT, body: map);
-//    print("get card info before parsing : ${getCardResponse.body}");
-//    var parsed = json.decode(getCardResponse.body);
-//    print("Card : $parsed");
-//    CreditCard card = CreditCard.fromJson(parsed[0]);
-//    return card;
-//
-//  }
 }

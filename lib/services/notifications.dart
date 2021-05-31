@@ -10,12 +10,12 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart'
 import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:mosaic_doctors/models/sessionData.dart';
-import 'package:mosaic_doctors/services/DatabaseAPI.dart';
+import 'package:mosaic_doctors/services/labDatabase.dart';
 import 'package:mosaic_doctors/shared/Constants.dart';
 import 'package:mosaic_doctors/shared/date_helper.dart';
 import 'package:mosaic_doctors/shared/globalVariables.dart';
 import 'package:mosaic_doctors/shared/locator.dart';
-import 'package:mosaic_doctors/views/accountStatement.dart';
+import 'package:mosaic_doctors/views/labStatementMainScreen.dart';
 
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -106,7 +106,7 @@ class Notifications {
     String dateParameter = extra;
     print("Local notifiation on recieve fired, month : $dateParameter");
     Jiffy requiredMonth = Jiffy(dateParameter,'MM-yy');
-    Get.to(AccountStatementView(requiredMonth));
+    Get.to(LabStatementMainScreen(requiredMonth));
   }
 
   static Future showLastMonthAccountStatement(String month) async {
@@ -115,8 +115,8 @@ class Notifications {
     print("Global.getData('phoneNo'");
     String phoneNumber = await Global.getData('phoneNo');
     print("Global.getData('phoneNo'");
-    await DatabaseAPI.getDoctorInfo(phoneNumber);
-    Get.to(AccountStatementView(requiredMonth));
+    await LabDatabase.getDoctorInfo(phoneNumber);
+    Get.to(LabStatementMainScreen(requiredMonth));
     print('notification payload: ' + month);
   }
 
