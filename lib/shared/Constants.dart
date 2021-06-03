@@ -20,10 +20,10 @@ double implantsBottomTitleFS = 44.sp;
 double implantsBottomValueFS = 40.sp;
 class Constants{
   //static const ROOT = 'http://10.0.2.2/flutter_api.php';
-  static const USER_AUTH = 'http://manshore.com/mosaic_system_api.php';
+  static Uri USER_AUTH = Uri.parse('http://manshore.com/mosaic_system_api.php');
   //static const ROOT = 'http://10.0.2.2/mosaic_db_api.php';
   static const PAYMENTS_ROOT = 'lab.manshore.com';
-  static const ROOT = 'http://lab.manshore.com/mosaic_db_api.php';
+  static Uri ROOT = Uri.parse(  'http://lab.manshore.com/mosaic_db_api.php');
   static const LOCAL_ROOT = 'http://10.0.2.2/mosaic_db_api.php';
 
 

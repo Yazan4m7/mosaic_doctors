@@ -10,9 +10,10 @@ class ImplantStatementRowModel {
   String paymentId;
   String createdAt;
   String identifier;
-
+  String unitPrice;
+  String originalItemId;
   ImplantStatementRowModel({this.id, this.entry, this.qty,
-      this.type, this.amount, this.balance,this.orderId,this.itemId,this.paymentId,this.createdAt,this.identifier});
+      this.type, this.amount, this.balance,this.orderId,this.itemId,this.paymentId,this.createdAt,this.identifier,this.unitPrice,this.originalItemId});
 
   factory ImplantStatementRowModel.fromJson(Map<String, dynamic> json) {
     String type ='';
@@ -35,6 +36,8 @@ class ImplantStatementRowModel {
       paymentId : json['payment_id']==null? "N/A":json['payment_id'],
       createdAt : json['created_at']==null? "N/A":json['created_at'],
       identifier : json['identifier']==null? "N/A":json['identifier'],
+      unitPrice : json['price']==null? "N/A":json['price'],
+      originalItemId : json['orderItemId']==null? "N/A":json['orderItemId'],
     );
   }
 }

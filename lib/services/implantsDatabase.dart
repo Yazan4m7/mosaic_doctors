@@ -8,7 +8,7 @@ import 'package:mosaic_doctors/shared/Constants.dart';
 import 'package:mosaic_doctors/shared/locator.dart';
 
 class ImplantsDatabase {
-  static const ROOT = Constants.ROOT;
+  static var ROOT = Constants.ROOT;
   static List<ImplantStatementRowModel> implantsStatementEntries = [];
   static List<String> docImplantsOrdersIds = [];
 
@@ -35,7 +35,12 @@ class ImplantsDatabase {
       print("Statement already has data.");
       return implantsStatementEntries;
     }
-    var queryResults = await postQueryToDB("select * from nb_account_statements where doctor_id = $doctorId order by created_at DESC");
+    var queryResults = await postQueryToDB("SELECT nb_account_statements.*, nb_order_items.item_id as orderItemId, nb_items.price"+
+        " FROM nb_account_statements"+
+        " LEFT JOIN nb_order_items ON nb_account_statements.item_id=nb_order_items.id"+
+        " LEFT JOIN nb_items"+
+        " ON nb_order_items.item_id = nb_items.id"+
+        " WHERE nb_account_statements.doctor_id = $doctorId");
 
     implantsStatementEntries.clear();
 

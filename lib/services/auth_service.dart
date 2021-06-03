@@ -8,7 +8,7 @@ import 'package:mosaic_doctors/shared/locator.dart';
 import 'package:mosaic_doctors/shared/responsive_helper.dart';
 import 'package:mosaic_doctors/views/home.dart';
 
-import 'notifications.dart';
+import 'notifications_old.dart';
 
 
 class AuthService {

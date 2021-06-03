@@ -1,59 +1,45 @@
 name: mosaic_doctors
 description: MOSAIC doctors app
-
-# The following line prevents the package from being accidentally published to
-# pub.dev using `pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-
-# The following defines the version and build number for your application.
-# A version number is three numbers separated by dots, like 1.2.43
-# followed by an optional build number separated by a +.
-# Both the version and the builder number may be overridden in flutter
-# build by specifying --build-name and --build-number, respectively.
-# In Android, build-name is used as versionName while build-number used as versionCode.
-# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
-# In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
-# Read more about iOS versioning at
-# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+publish_to: 'none'
 version: 3.2.1+321
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.0.0 <2.14.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  http: ^0.12.0+4
+  http: ^0.13.3
   get: ^3.24.0
-  intl: ^0.16.0
+  intl: ^0.17.0
   flutter_spinkit: ^4.0.0
-  jiffy: ^3.0.1
-  flutter_keyboard_visibility: ^4.0.0
-  printing: ^4.0.0
-  flutter_local_notifications: ^3.0.1+2
+  jiffy: ^4.1.0
+  flutter_keyboard_visibility: ^5.0.2
+  printing: ^5.2.1
+  flutter_local_notifications: ^6.0.0
   rxdart: ^0.23.1
   linked_scroll_controller: ^0.1.2
-  firebase_messaging: ^6.0.13
-  firebase_core: ^0.7.0
-  firebase_auth: ^0.20.0+1
-  cloud_firestore: ^0.16.0
+  firebase_messaging:  ^10.0.0
+  firebase_core: ^1.2.0
+  firebase_auth: ^1.2.0
+  cloud_firestore: ^2.2.0
   loading_overlay: ^0.2.1
-  pdf: ^2.0.0
-  shared_preferences: ^0.5.12+4
-  encrypt: ^4.1.0
+  pdf: ^3.3.0
+  shared_preferences: ^2.0.6
+  encrypt: ^5.0.0
   cupertino_icons: ^1.0.0
   get_it: 3.0.3
   flutter_screenutil: ^4.0.2+8
-  path_provider: ^1.6.24
+  path_provider: ^2.0.2
   open_file: ^3.0.3
-  device_info: ^1.0.0
-  permission_handler: ^5.0.1+1
+  device_info: ^2.0.2
+  permission_handler: ^8.0.0+2
   marquee: ^1.7.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons: "^0.8.1"
+ # flutter_launcher_icons: "^0.9.0"
  # mation on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

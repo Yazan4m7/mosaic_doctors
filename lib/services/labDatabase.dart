@@ -17,7 +17,7 @@ import 'package:http/http.dart' as http;
 import 'package:mosaic_doctors/shared/locator.dart';
 
 class LabDatabase {
-  static const ROOT = Constants.ROOT;
+  static var ROOT = Constants.ROOT;
   static List<AccountStatementEntry> accountStatementEntries = [];
 
   static List<AccountStatementEntry> singleMonthAccountStatementEntries = [];

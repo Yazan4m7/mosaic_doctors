@@ -718,7 +718,7 @@ class _LabStatementMainScreenState extends State<LabStatementMainScreen> {
    changeFontSize(BuildContext context){
     showDialog(
         context: context,
-        child: new AlertDialog(
+        builder: (BuildContext context) =>  AlertDialog(
 
           title: Center(child: new Text("Change font size")),
           content:StatefulBuilder(

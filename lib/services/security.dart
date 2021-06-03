@@ -99,7 +99,7 @@ class Security {
 
   static getIP() async {
     try {
-      const url = 'https://api.ipify.org';
+       Uri url = Uri(host:'https://api.ipify.org' );
       var response = await http.get(url);
       if (response.statusCode == 200) {
         // The response body is the IP in plain text, so just

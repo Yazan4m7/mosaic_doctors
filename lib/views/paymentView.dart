@@ -57,8 +57,9 @@ class _PaymentViewState extends State<PaymentView> {
     final bottom = MediaQuery.of(context).viewInsets.bottom;
     return Scaffold(
       appBar: _paymentViewAppBar(),
+
       resizeToAvoidBottomInset: false,
-      resizeToAvoidBottomPadding: false,
+
       body: LoadingOverlay(
 
         color: Colors.black87,

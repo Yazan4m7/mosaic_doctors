@@ -609,7 +609,7 @@ class _ImplantsStatementViewState extends State<ImplantsStatementView> {
   changeFontSize(BuildContext context) {
     showDialog(
         context: context,
-        child: new AlertDialog(
+        builder: (BuildContext context) => new AlertDialog(
             title: Center(child: new Text("Change font size")),
             content: StatefulBuilder(
                 builder: (BuildContext context, StateSetter setState) {

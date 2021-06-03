@@ -22,7 +22,7 @@ class CaseDetailsView extends StatefulWidget {
 }
 
 class _CaseDetailsViewState extends State<CaseDetailsView> {
-  Future jobsList;
+  Future jobsList ;
   Future caseItem;
   getCaseDetails() {
     jobsList = LabDatabase.getCaseJobs(widget.caseId);

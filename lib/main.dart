@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:mosaic_doctors/services/auth_service.dart';
 import 'package:mosaic_doctors/services/notifications.dart';
+import 'package:mosaic_doctors/services/notifications_old.dart';
 import 'package:mosaic_doctors/shared/globalVariables.dart';
 import 'package:mosaic_doctors/shared/locator.dart';
 import 'package:mosaic_doctors/shared/responsive_helper.dart';
@@ -35,7 +36,7 @@ class EntryPoint extends StatelessWidget {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    Notifications.initializeLocalNotificationPlugin(context);
+    Notifications.initializeFCM();
     return ScreenUtilInit(
       designSize: Size(1080 , 1920 ),
       allowFontScaling: false,

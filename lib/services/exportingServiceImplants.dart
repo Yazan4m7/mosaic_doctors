@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter/material.dart' as mats hide Image;
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart' as intl;
@@ -44,7 +45,7 @@ class ExportingServiceImplants{
     final image = MemoryImage(imageData1.buffer.asUint8List());
     bool _isEvenRow = false;
 
-    final pdf = Document();
+    final pdf = pw.Document();
 
     final formatter = new intl.NumberFormat("#,###");
     var arialFontData = await rootBundle.load("assets/fonts/arial.ttf");
@@ -59,7 +60,7 @@ class ExportingServiceImplants{
             marginTop: 2 * PdfPageFormat.cm),
         crossAxisAlignment: CrossAxisAlignment.start,
         header: (Context context) {
-          return null;
+          return SizedBox();
         },
         footer: (Context context) {
           return Row(
@@ -247,10 +248,7 @@ class ExportingServiceImplants{
                         Container(
                             padding: EdgeInsets.symmetric(
                                 vertical: 3, horizontal: 5),
-                            child: Text((item.entry.contains('Parallel') ||
-                                item.entry.contains('parallel'))
-                                ? minusIfReturn + '270'
-                                : minusIfReturn + '240')),
+                            child: Text(item.qty == "-" ? "-" : minusIfReturn + item.unitPrice)),
                         Container(
                             padding: EdgeInsets.symmetric(
                                 vertical: 3, horizontal: 5),

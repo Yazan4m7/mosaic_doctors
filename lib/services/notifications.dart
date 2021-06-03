@@ -1,12 +1,12 @@
 import 'dart:io';
-
+import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'
-    as notifs;
+as notifs;
 import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:mosaic_doctors/models/sessionData.dart';
@@ -21,146 +21,121 @@ import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:permission_handler/permission_handler.dart';
 class Notifications {
-  static FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-  FlutterLocalNotificationsPlugin();
-  static BuildContext BContext;
+
+  /// To verify things are working, check out the native platform logs.
+   static Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+    // If you're going to use other Firebase services in the background, such as Firestore,
+    // make sure you call `initializeApp` before using other Firebase services.
+    await Firebase.initializeApp();
+    print('Handling a background message ${message.messageId}');
+  }
+
+  /// Create a [AndroidNotificationChannel] for heads up notifications
+  static AndroidNotificationChannel channel;
+
+  /// Initialize the [FlutterLocalNotificationsPlugin] package.
+ static FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin  = FlutterLocalNotificationsPlugin();
+
 
   static initializeFCM() async{
+    WidgetsFlutterBinding.ensureInitialized();
     await Firebase.initializeApp();
-    final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
-    if (Platform.isIOS)
-    await _firebaseMessaging.requestNotificationPermissions(
-      IosNotificationSettings(alert: true,
-        badge: true,
-        provisional: false,
-        sound: true,)
-    );
-    else{
-      final status = await Permission.notification.request();
-    print("N. Permission for android : $status");}
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-    _firebaseMessaging.configure(
-      onMessage: (Map<String, dynamic> message) async {
-        print("onMessage: $message");
-        const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails('1', 'MOSAIC', 'MOSAIC_DESC',
-            importance: Importance.max,
-            priority: Priority.high,
-            showWhen: false);
-        const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
-
-        await flutterLocalNotificationsPlugin
-            .show(0, "Title", "body", platformChannelSpecifics, payload:message['data']['month']);
-      },
-      onResume: (Map<String, dynamic> message) async {
-        print("onResume: $message");
-        showLastMonthAccountStatement(message['data']['month']);
-      },
-      onLaunch: (Map<String, dynamic> message) async {
-        print("onL: $message");
-        showLastMonthAccountStatement(message['data']['month']);
-      },
-    );
-   try {
-     String phoneNumber = await Global.getData("phoneNo");
-     if (Constants.debuggers.contains(phoneNumber)) {
-       _firebaseMessaging.subscribeToTopic('testing');
-       print("Subscribed to testing topic");
-     }
-     else{
-       print("Didnt subscribe $phoneNumber is not a debugger");
-     }
-   }catch(e){
-     print("Cannot subcribe to testing topic $e");
-   }
-    print("Notification services enabled.");
-    _firebaseMessaging.getToken().then((value) => print("N. Token : " + value));
-  }
-
-
-  static initializeLocalNotificationPlugin(BuildContext context) async {
-    BContext = context;
-    try {
-      const AndroidInitializationSettings initializationSettingsAndroid =
-          AndroidInitializationSettings('mipmap/mosaic_logo_1cmt');
-      final IOSInitializationSettings initializationSettingsIOS =
-          IOSInitializationSettings(
-              onDidReceiveLocalNotification: onDidReceiveLocalNotification);
-      final InitializationSettings initializationSettings =
-          InitializationSettings(
-        android: initializationSettingsAndroid,
-        iOS: initializationSettingsIOS,
+      channel = const AndroidNotificationChannel(
+        'high_importance_channel', // id
+        'High Importance Notifications', // title
+        'This channel is used for important notifications.', // description
+        importance: Importance.high,
       );
-      await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-          onSelectNotification: showLastMonthAccountStatement);
-      print("Local N. services initialized");
-    } catch (e) {
-      print("ERROR IN  Local N. $e");
-    }
-  }
 
-  static Future onDidReceiveLocalNotification(
-      int id, String title, String body,String extra) async {
-    String dateParameter = extra;
-    print("Local notifiation on recieve fired, month : $dateParameter");
-    Jiffy requiredMonth = Jiffy(dateParameter,'MM-yy');
-    Get.to(LabStatementMainScreen(requiredMonth));
-  }
+      flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-  static Future showLastMonthAccountStatement(String month) async {
-    print("showLastMonthAccountStatement(String month) $month");
-    Jiffy requiredMonth = Jiffy(month,'MM-yyyy');
-    print("Global.getData('phoneNo'");
-    String phoneNumber = await Global.getData('phoneNo');
-    print("Global.getData('phoneNo'");
-    await LabDatabase.getDoctorInfo(phoneNumber);
-    Get.to(LabStatementMainScreen(requiredMonth));
-    print('notification payload: ' + month);
+
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification notification = message.notification;
+      AndroidNotification android = message.notification?.android;
+      if (notification != null && android != null ) {
+        flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                channel.id,
+                channel.name,
+                channel.description,
+                // TODO add a proper drawable resource to android, for now using
+                //      one that already exists in example app.
+                icon: 'launch_background',
+              ),
+            ));
+      }
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('A new onMessageOpenedApp event was published!');
+    });
+
   }
 
   static Future<void> scheduleNotification({String title, String body}) async {
-    flutterLocalNotificationsPlugin.cancelAll();
+//    flutterLocalNotificationsPlugin.cancelAll();
+//
+//    bool scheduledBefore = Global.prefs.getBool("febNotificationScheduled") ?? false;
+//    var date = new DateTime.now();
+//    var month = date.month;
+//    print("Scheduling notification : current month : ${date.month}");
+//    if (month == 3 && !scheduledBefore && Platform.isIOS) {
+//      print("Scheduling notification!!");
+//      int daysUntilNextMonth = DateHelper.daysUntilNxtMonth();
+//
+//      print("Days until next month : $daysUntilNextMonth");
+//      tz.initializeTimeZones();
+//
+//      var androidSpecifics = notifs.AndroidNotificationDetails(
+//        '1', // This specifies the ID of the Notification
+//        'Scheduled notification',
+//        // This specifies the name of the notification channel
+//        'A scheduled notification',
+//        //This specifies the description of the channel
+//        icon: 'mipmap/mosaic_logo_1cmt',
+//      );
+//
+//      final IOSInitializationSettings initializationSettingsIOS =
+//      IOSInitializationSettings(
+//          onDidReceiveLocalNotification: onDidReceiveLocalNotification);
+//      var iOSSpecifics = notifs.IOSNotificationDetails();
+//
+//      var platformChannelSpecifics = notifs.NotificationDetails(
+//          android: androidSpecifics, iOS: iOSSpecifics);
+//
+//      await flutterLocalNotificationsPlugin.zonedSchedule(
+//          0,
+//          'Your account statement for last month is ready!',
+//          'Click here to view',
+//          tz.TZDateTime.now(tz.local).add(Duration(minutes: 5)),
+//          platformChannelSpecifics,
+//          androidAllowWhileIdle: true,
+//          uiLocalNotificationDateInterpretation:
+//          UILocalNotificationDateInterpretation.absoluteTime,payload: "02-2021");
+//      Global.prefs.setBool("febNotificationScheduled",true);
+//    }
+//  }
+}
 
-    bool scheduledBefore = Global.prefs.getBool("febNotificationScheduled") ?? false;
-    var date = new DateTime.now();
-    var month = date.month;
-    print("Scheduling notification : current month : ${date.month}");
-    if (month == 3 && !scheduledBefore && Platform.isIOS) {
-      print("Scheduling notification!!");
-      int daysUntilNextMonth = DateHelper.daysUntilNxtMonth();
 
-      print("Days until next month : $daysUntilNextMonth");
-      tz.initializeTimeZones();
-
-      var androidSpecifics = notifs.AndroidNotificationDetails(
-        '1', // This specifies the ID of the Notification
-        'Scheduled notification',
-        // This specifies the name of the notification channel
-        'A scheduled notification',
-        //This specifies the description of the channel
-        icon: 'mipmap/mosaic_logo_1cmt',
-      );
-
-      final IOSInitializationSettings initializationSettingsIOS =
-      IOSInitializationSettings(
-          onDidReceiveLocalNotification: onDidReceiveLocalNotification);
-      var iOSSpecifics = notifs.IOSNotificationDetails();
-
-      var platformChannelSpecifics = notifs.NotificationDetails(
-          android: androidSpecifics, iOS: iOSSpecifics);
-
-      await flutterLocalNotificationsPlugin.zonedSchedule(
-          0,
-          'Your account statement for last month is ready!',
-          'Click here to view',
-          tz.TZDateTime.now(tz.local).add(Duration(minutes: 5)),
-          platformChannelSpecifics,
-          androidAllowWhileIdle: true,
-          uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,payload: "02-2021");
-      Global.prefs.setBool("febNotificationScheduled",true);
-    }
-  }
 }

@@ -101,7 +101,7 @@ class _LoginPageState extends State<LoginPage> {
     return MaterialApp(
       theme: GlobalTheme.globalTheme,
       home:Scaffold (
-       resizeToAvoidBottomPadding: false,
+      // resizeToAvoidBottomPadding: false,
         resizeToAvoidBottomInset: false,
 
         body: Container(
