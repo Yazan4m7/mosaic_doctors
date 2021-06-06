@@ -141,7 +141,7 @@ class _LoginPageState extends State<LoginPage> {
                                   height: screenHeight / 8,
                                 ),
                                 Image.asset(
-                                  'assets/images/logo_black_vertical.png',
+                                  'assets/images/MOSAIC_Group.png',
                                   width: 200,
                                 ),
                                 Divider(),
@@ -214,6 +214,7 @@ class _LoginPageState extends State<LoginPage> {
                                         print("Setting phone number ${"+962"+ phoneNoTxtController.text}");
 
                                         Global.prefs.setString("phoneNo", "+962"+ phoneNoTxtController.text);
+
                                         verifyPhone('+962'+phoneNoTxtController.text);
                                       }
                                     })),

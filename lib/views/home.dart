@@ -62,7 +62,7 @@ class _homeViewState extends State<HomeView> {
     getDoctorData();
 
     Notifications.initializeFCM();
-    Notifications.scheduleNotification();
+   // Notifications.scheduleNotification();
     super.initState();
   }
 
@@ -130,7 +130,7 @@ class _homeViewState extends State<HomeView> {
                         Padding(
                           padding:  EdgeInsets.only(top: screenHeight/25),
                           child: Image.asset(
-                            'assets/images/logo_black_vertical.png',
+                            'assets/images/MOSAIC_Group.png',
                             width: Responsiveness.logoWidth.w,
                           ),
                         ),
@@ -160,7 +160,7 @@ class _homeViewState extends State<HomeView> {
                                 height: screenHeight / 8.5,
                                 child: Padding(
                                   padding:
-                                      const EdgeInsets.symmetric(horizontal: 25),
+                                       EdgeInsets.symmetric(horizontal: 50.w),
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -173,9 +173,9 @@ class _homeViewState extends State<HomeView> {
                                         children: [
 
                                           Image.asset(
-                                            'assets/images/mosaic_ibex.png',
+                                            'assets/images/MOSAIC_vertical2.png',
                                             alignment:Alignment.centerRight,
-                                            height: (screenHeight / 3.9).h,
+                                            height: (screenHeight / 5.6).h,
                                           ),
                                         ],
                                       ),
@@ -211,7 +211,7 @@ class _homeViewState extends State<HomeView> {
                                 height: screenHeight / 8.5,
                                 child: Padding(
                                   padding:
-                                  const EdgeInsets.symmetric(horizontal: 25),
+                                   EdgeInsets.symmetric(horizontal: 50.w),
                                   child: Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children : [
@@ -221,8 +221,8 @@ class _homeViewState extends State<HomeView> {
                                     ),
                                      // SizedBox(width: 20,),
                                       Image.asset(
-                                          'assets/images/nobel_N.png',
-                                          height: (screenHeight / 6.5).h)]
+                                          'assets/images/Nobel_vertical.png',
+                                          height: (screenHeight / 8.9).h)]
                                   ),
                                 ),
                               ),

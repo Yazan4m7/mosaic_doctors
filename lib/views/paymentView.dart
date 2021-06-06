@@ -78,7 +78,7 @@ class _PaymentViewState extends State<PaymentView> {
             Padding(
               padding:  EdgeInsets.only(top: screenHeight/19),
               child: Image.asset(
-                'assets/images/logo_black_vertical.png',
+                'assets/images/MOSAIC_Group.png',
                 width: Responsiveness.logoWidth.w -30,
               ),
             ),

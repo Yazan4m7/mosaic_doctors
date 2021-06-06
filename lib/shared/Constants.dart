@@ -39,6 +39,6 @@ class Constants{
   +"dKGuf+KyrE18Q2qKTx4yP0vjACLoEORk1GvHKyUKS5WUCqlijB1ck1Rro6XnhxAN"
   +"qQIDAQAB";
 
-  static final debuggers = ['+962788160099','+962788160098','+9620788160098','+962797552566','+9620797552566'];
+  static final debuggers = ['+962788160099','+9620788160099','+962788160098','+9620788160098'];
 //10.0.2.2
 }

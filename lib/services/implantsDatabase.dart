@@ -43,7 +43,7 @@ class ImplantsDatabase {
         " WHERE nb_account_statements.doctor_id = $doctorId");
 
     implantsStatementEntries.clear();
-
+    if (queryResults == null ) return null;
     for (int i = 0; i < queryResults.length; i++) {
       ImplantStatementRowModel implantStatementEntry =
       ImplantStatementRowModel.fromJson(queryResults[i]);
@@ -62,8 +62,10 @@ class ImplantsDatabase {
     if(getIt<SessionData>().nbDoctor != null && !forceReload) return  getIt<SessionData>().nbDoctor;
     var result = await postQueryToDB("SELECT * from `nb_doctors` WHERE `nb_doctors`.`id` = ${getIt<SessionData>().doctor.implantsRecordId} AND `phone` = '${getIt<SessionData>().doctor.phone}' ");
     if(result == null) {print("getDoc rec returning null");return null;}
-    print("returning doc record");
+
+    print("returning doc record $result");
     NbDoctor nbDoctor = NbDoctor.fromJson(result[0]);
+    if(nbDoctor.unitsBoughtParallel == '0' && nbDoctor.unitsBoughtActive == '0')return null;
     getIt<SessionData>().nbDoctor = nbDoctor;
     if(implantsStatementEntries.isEmpty) await getDoctorImplantAccountStatement(getIt<SessionData>().doctor.implantsRecordId, false);
     getIt<SessionData>().implantsFirstOrderDate = implantsStatementEntries.first.createdAt;

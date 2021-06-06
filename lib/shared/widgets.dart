@@ -210,7 +210,7 @@ class SharedWidgets {
                 child: Padding(
                   padding: const EdgeInsets.only(
                       left: 5.0, top: 10, bottom: 10, right: 10),
-                  child: Icon(Icons.clear_rounded),
+                  child: Icon(Icons.arrow_back),
                 ),
               ),
             ),
